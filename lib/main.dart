@@ -28,8 +28,8 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       routes: {
-        '/signinpage': (context) => SignInPage(),
-        '/signuppage': (context) => const SignUpPage.SignupPage(),
+        '/signinpage': (context) => const SignInPage(),
+        '/signuppage': (context) => const SignUpPage(),
         '/mainwrapper': (context) => const MainWrapper(),
         '/searchpage': (context) => const SearchPage()
       },

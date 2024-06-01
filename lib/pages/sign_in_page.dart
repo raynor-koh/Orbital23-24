@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:robinbank_app/components/auth_button.dart';
 import 'package:robinbank_app/components/auth_text_field.dart';
+import 'package:robinbank_app/services/auth_services.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
+  const SignInPage({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => SignInState();
+}
+
+class SignInState extends State<SignInPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final AuthService authService = AuthService();
 
-  SignInPage({super.key});
-
-  void signIn() {}
+  void signIn() {
+    authService.signInUser(
+        context: context,
+        email: emailController.text,
+        password: passwordController.text);
+  }
 
   void signInGoogle() {}
 
@@ -42,16 +54,15 @@ class SignInPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Container(
                 decoration: BoxDecoration(
-                  color: UIColours.darkBackground,
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: Color(0x33000000),
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(12)
-                ),
+                    color: UIColours.darkBackground,
+                    boxShadow: const [
+                      BoxShadow(
+                        blurRadius: 4,
+                        color: Color(0x33000000),
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                    borderRadius: BorderRadius.circular(12)),
                 child: Padding(
                   padding: const EdgeInsets.all(32),
                   child: Column(
@@ -60,7 +71,8 @@ class SignInPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24),
                         child: Text(
                           'Welcome Back',
                           style: UIText.heading,
@@ -84,7 +96,8 @@ class SignInPage extends StatelessWidget {
                         // onPressed: signIn,
                       ),
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 24),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 24),
                         child: Text(
                           'Or sign in with',
                           style: UIText.xsmall,
@@ -99,7 +112,8 @@ class SignInPage extends StatelessWidget {
                         onPressed: signInApple,
                       ),
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 12, 0, 12),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 12, 0, 12),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -113,7 +127,8 @@ class SignInPage extends StatelessWidget {
                               },
                               child: Text(
                                 'Sign up here',
-                                style: UIText.xsmall.copyWith(color: UIColours.blue),
+                                style: UIText.xsmall
+                                    .copyWith(color: UIColours.blue),
                               ),
                             ),
                           ],
