@@ -42,19 +42,18 @@ class SignUpPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Container(
                 decoration: BoxDecoration(
-                  color: UIColours.surfaceMuted,
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 4,
-                      color: Color(0x33000000),
-                      offset: Offset(
-                        0,
-                        2,
+                    color: UIColours.surfaceMuted,
+                    boxShadow: const [
+                      BoxShadow(
+                        blurRadius: 4,
+                        color: Color(0x33000000),
+                        offset: Offset(
+                          0,
+                          2,
+                        ),
                       ),
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(12)
-                ),
+                    ],
+                    borderRadius: BorderRadius.circular(12)),
                 child: Padding(
                   padding: const EdgeInsets.all(32),
                   child: Column(
@@ -63,7 +62,8 @@ class SignUpPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 24),
                         child: Text(
                           'Get Started',
                           style: UIText.heading,
@@ -84,7 +84,8 @@ class SignUpPage extends StatelessWidget {
                         onPressed: signUp,
                       ),
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 24),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 24),
                         child: Text(
                           'Or sign up with',
                           style: UIText.xsmall,
@@ -99,7 +100,8 @@ class SignUpPage extends StatelessWidget {
                         onPressed: signUpApple,
                       ),
                       Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(0, 12, 0, 12),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(0, 12, 0, 12),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -113,7 +115,8 @@ class SignUpPage extends StatelessWidget {
                               },
                               child: Text(
                                 'Sign in here',
-                                style: UIText.xsmall.copyWith(color: UIColours.blue),
+                                style: UIText.xsmall
+                                    .copyWith(color: UIColours.blue),
                               ),
                             ),
                           ],

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:robinbank_app/pages/main_wrapper.dart';
 import 'package:robinbank_app/pages/sign_in_page.dart';
 import 'package:robinbank_app/pages/sign_up_page.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+    providers: [],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
