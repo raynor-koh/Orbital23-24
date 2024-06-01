@@ -25,7 +25,7 @@ class _MainWrapperState extends State<MainWrapper> {
   void initState() {
     super.initState();
     bloc = NavDrawerBloc();
-    navDrawerItem = _getContentForState(bloc.state.selectedDestination);
+    navDrawerItem = getContentForState(bloc.state.selectedDestination);
   }
 
   @override
@@ -34,7 +34,7 @@ class _MainWrapperState extends State<MainWrapper> {
       create: (BuildContext context) => bloc,
       child: BlocConsumer<NavDrawerBloc, NavDrawerState>(
         listener: (BuildContext context, NavDrawerState state) {
-          navDrawerItem = _getContentForState(state.selectedDestination);
+          navDrawerItem = getContentForState(state.selectedDestination);
         },
         buildWhen: (previous, current) {
           return previous.selectedDestination != current.selectedDestination;
@@ -61,11 +61,11 @@ class _MainWrapperState extends State<MainWrapper> {
   AppBar buildAppBar(NavDrawerState state) {
     return AppBar(
       iconTheme: const IconThemeData(
-        color: UIColours.surface,
+        color: UIColours.white,
       ),
       title: Text(
         getAppBarTitle(state.selectedDestination),
-        style: UIText.small.copyWith(color: UIColours.surface),
+        style: UIText.large.copyWith(color: UIColours.white),
       ),
       centerTitle: false,
       backgroundColor: UIColours.blue,
@@ -89,7 +89,7 @@ class _MainWrapperState extends State<MainWrapper> {
     }
   }
 
-  Widget _getContentForState(NavDrawerDestination selectedDestination) {
+  Widget getContentForState(NavDrawerDestination selectedDestination) {
     switch (selectedDestination) {
       case NavDrawerDestination.homePage:
         return const HomePage();

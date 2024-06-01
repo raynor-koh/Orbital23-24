@@ -26,11 +26,11 @@ class AuthTextField extends StatelessWidget {
 
         decoration: InputDecoration(
           labelText: hintText,
-          labelStyle: UIText.small.copyWith(color: UIColours.surfaceShade),
+          labelStyle: UIText.small.copyWith(color: UIColours.secondaryText),
 
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(
-              color: UIColours.surface,
+              color: UIColours.white,
               width: 2,
             ),
             borderRadius: BorderRadius.circular(12),
@@ -61,7 +61,7 @@ class AuthTextField extends StatelessWidget {
           ),
 
           filled: true,
-          fillColor: UIColours.surface
+          fillColor: UIColours.white
         ),
 
         style: UIText.small,

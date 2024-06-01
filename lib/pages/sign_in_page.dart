@@ -23,7 +23,7 @@ class SignInPage extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [UIColours.blue, UIColours.surface],
+            colors: [UIColours.blue, UIColours.white],
             stops: [0, 1],
             begin: AlignmentDirectional(0.87, -1),
             end: AlignmentDirectional(-0.87, 1),
@@ -36,21 +36,18 @@ class SignInPage extends StatelessWidget {
           children: [
             Text(
               'RobinBank',
-              style: UIText.brand.copyWith(color: UIColours.surface),
+              style: UIText.brand.copyWith(color: UIColours.white),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Container(
                 decoration: BoxDecoration(
-                  color: UIColours.surfaceMuted,
+                  color: UIColours.darkBackground,
                   boxShadow: const [
                     BoxShadow(
                       blurRadius: 4,
                       color: Color(0x33000000),
-                      offset: Offset(
-                        0,
-                        2,
-                      ),
+                      offset: Offset(0, 2),
                     ),
                   ],
                   borderRadius: BorderRadius.circular(12)

@@ -15,43 +15,43 @@ class UIText {
     ),
   );
 
-  static final TextStyle heading = GoogleFonts.readexPro(
+  static final TextStyle heading = GoogleFonts.heebo(
     textStyle: const TextStyle(
       fontSize: 36,
       fontWeight: FontWeight.bold,
-      color: UIColours.neutral,
+      color: UIColours.primaryText,
     ),
   );
 
-  static final TextStyle large = GoogleFonts.readexPro(
+  static final TextStyle large = GoogleFonts.heebo(
     textStyle: const TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.normal,
-      color: UIColours.neutral,
+      color: UIColours.primaryText,
     ),
   );
 
-  static final TextStyle medium = GoogleFonts.readexPro(
+  static final TextStyle medium = GoogleFonts.heebo(
     textStyle: const TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.normal,
-      color: UIColours.neutral,
+      color: UIColours.primaryText,
     ),
   );
 
-  static final TextStyle small = GoogleFonts.readexPro(
+  static final TextStyle small = GoogleFonts.heebo(
     textStyle: const TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.normal,
-      color: UIColours.neutral,
+      color: UIColours.primaryText,
     ),
   );
 
-  static final TextStyle xsmall = GoogleFonts.readexPro(
+  static final TextStyle xsmall = GoogleFonts.heebo(
     textStyle: const TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.normal,
-      color: UIColours.neutral,
+      color: UIColours.primaryText,
     ),
   );
 }

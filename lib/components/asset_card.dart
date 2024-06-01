@@ -8,19 +8,15 @@ class AssetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {},
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 9),
-        child: Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            color: UIColours.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: UIColours.surfaceMuted),
-          ),
-          child: Image.asset(
-            'assets/images/Group_17.png',
-          ),
+      child: Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: UIColours.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Image.asset(
+          'assets/images/Group_17.png',
         ),
       ),
     );
