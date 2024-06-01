@@ -51,17 +51,17 @@ class NavDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: UIColours.surfaceDim,
+      backgroundColor: UIColours.white,
       child: Column(
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
               'Matthew',
-              style: UIText.medium.copyWith(color: UIColours.surface),
+              style: UIText.medium.copyWith(color: UIColours.white),
             ),
             accountEmail: Text(
               'matthew@gmail.com',
-              style: UIText.xsmall.copyWith(color: UIColours.surface),
+              style: UIText.small.copyWith(color: UIColours.white),
             ),
             decoration: const BoxDecoration(
               color: UIColours.blue,
@@ -88,7 +88,7 @@ class NavDrawer extends StatelessWidget {
 
   Widget buildNavDrawerItem(NavDrawerItem data, NavDrawerState state) {
     return Container(
-      color: UIColours.surfaceDim,
+      color: UIColours.white,
       child: Builder(
         builder: (BuildContext context) {
           return ListTile(
@@ -96,13 +96,13 @@ class NavDrawer extends StatelessWidget {
               data.title,
               style: data.destination == state.selectedDestination
                   ? UIText.medium.copyWith(color: UIColours.blue, fontWeight: FontWeight.bold)
-                  : UIText.small.copyWith(),
+                  : UIText.small,
             ),
             leading: Icon(
               data.icon,
               color: data.destination == state.selectedDestination
                   ? UIColours.blue
-                  : UIColours.surfaceShade,
+                  : UIColours.secondaryText,
             ),
             onTap: () => tapNavDrawerItem(context, data.destination),
           );

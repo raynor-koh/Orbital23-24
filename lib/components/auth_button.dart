@@ -28,7 +28,7 @@ class AuthButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: UIText.medium.copyWith(color: UIColours.surface),
+          style: UIText.medium.copyWith(color: UIColours.white),
         ),
       ),
     );
