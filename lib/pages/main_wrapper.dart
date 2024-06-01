@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:robinbank_app/bloc/nav_drawer_bloc.dart';
+import 'package:robinbank_app/bloc/nav_drawer/nav_drawer_bloc.dart';
 import 'package:robinbank_app/components/nav_drawer.dart';
 import 'package:robinbank_app/pages/home_page.dart';
 import 'package:robinbank_app/pages/test_page1.dart';
@@ -71,7 +71,7 @@ class _MainWrapperState extends State<MainWrapper> {
       backgroundColor: UIColours.blue,
     );
   }
-  
+
   String getAppBarTitle(NavDrawerDestination selectedDestination) {
     switch (selectedDestination) {
       case NavDrawerDestination.homePage:

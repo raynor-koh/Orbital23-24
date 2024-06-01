@@ -1,16 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:robinbank_app/components/auth_button.dart';
 import 'package:robinbank_app/components/auth_text_field.dart';
+import 'package:robinbank_app/services/auth_services.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
+  const SignUpPage.SignupPage({Key? key}) : super(key: key);
+
+  @override
+  State<SignUpPage> createState() => SignUpPageState();
+}
+
+class SignUpPageState extends State<SignUpPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final nameController = TextEditingController();
+  final AuthService authService = AuthService();
 
-  SignUpPage({super.key});
-
-  void signUp() {}
+  void signUp() {
+    authService.signUpUser(
+        context: context,
+        name: nameController.text,
+        email: emailController.text,
+        password: passwordController.text);
+  }
 
   void signUpGoogle() {}
 
@@ -42,7 +56,7 @@ class SignUpPage extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Container(
                 decoration: BoxDecoration(
-                    color: UIColours.surfaceMuted,
+                    color: UIColours.darkBackground,
                     boxShadow: const [
                       BoxShadow(
                         blurRadius: 4,
@@ -68,6 +82,11 @@ class SignUpPage extends StatelessWidget {
                           'Get Started',
                           style: UIText.heading,
                         ),
+                      ),
+                      AuthTextField(
+                        controller: nameController,
+                        hintText: 'Name',
+                        obscureText: false,
                       ),
                       AuthTextField(
                         controller: emailController,

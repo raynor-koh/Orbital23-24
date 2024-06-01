@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:robinbank_app/bloc/nav_drawer_bloc.dart';
+import 'package:robinbank_app/bloc/nav_drawer/nav_drawer_bloc.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
@@ -76,10 +76,10 @@ class NavDrawer extends StatelessWidget {
             itemCount: navDrawerItems.length,
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) =>
-              BlocBuilder<NavDrawerBloc, NavDrawerState>(
-                builder: (BuildContext context, NavDrawerState state) =>
+                BlocBuilder<NavDrawerBloc, NavDrawerState>(
+              builder: (BuildContext context, NavDrawerState state) =>
                   buildNavDrawerItem(navDrawerItems[index], state),
-              ),
+            ),
           ),
         ],
       ),
@@ -95,7 +95,8 @@ class NavDrawer extends StatelessWidget {
             title: Text(
               data.title,
               style: data.destination == state.selectedDestination
-                  ? UIText.medium.copyWith(color: UIColours.blue, fontWeight: FontWeight.bold)
+                  ? UIText.medium.copyWith(
+                      color: UIColours.blue, fontWeight: FontWeight.bold)
                   : UIText.small,
             ),
             leading: Icon(
@@ -110,8 +111,9 @@ class NavDrawer extends StatelessWidget {
       ),
     );
   }
-  
-  void tapNavDrawerItem(BuildContext context, NavDrawerDestination destination) {
+
+  void tapNavDrawerItem(
+      BuildContext context, NavDrawerDestination destination) {
     BlocProvider.of<NavDrawerBloc>(context).add(NavigateTo(destination));
     Navigator.pop(context);
   }
