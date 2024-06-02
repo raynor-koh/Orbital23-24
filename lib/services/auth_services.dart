@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:robinbank_app/pages/home_page.dart';
+// import 'package:robinbank_app/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:robinbank_app/models/user.dart';
@@ -42,8 +43,8 @@ class AuthService {
           response: response,
           context: context,
           onSuccess: () => {
-                showSnackBar(context,
-                    'Account created! Login with the same credentials!')
+                Navigator.pushNamed(context, '/mainwrapper'),
+                showSnackBar(context, 'Account successfully created!')
               });
     } catch (error) {
       log(error.toString());
@@ -58,7 +59,7 @@ class AuthService {
   }) async {
     try {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
-      final navigator = Navigator.of(context);
+      // final navigator = Navigator.of(context);
       http.Response response =
           await http.post(Uri.parse('${Constants.uri}/signin'),
               body: jsonEncode({
@@ -68,7 +69,6 @@ class AuthService {
               headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           });
-
       log('Status Code: ${response.statusCode}');
 
       httpErrorHandle(
