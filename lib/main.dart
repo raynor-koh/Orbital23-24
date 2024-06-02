@@ -17,20 +17,35 @@ void main() {
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final AuthService authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    authService.getUserData(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SignInPage(),
+      home: Provider.of<UserProvider>(context).user.token.isEmpty
+          ? const SignInPage()
+          : const MainWrapper(),
       theme: ThemeData(
         scaffoldBackgroundColor: UIColours.lightBackground,
       ),
       debugShowCheckedModeBanner: false,
       routes: {
-        '/signinpage': (context) => SignInPage(),
-        '/signuppage': (context) => SignUpPage(),
+        '/signinpage': (context) => const SignInPage(),
+        '/signuppage': (context) => const SignUpPage(),
         '/mainwrapper': (context) => const MainWrapper(),
         '/searchpage': (context) => const SearchPage()
       },

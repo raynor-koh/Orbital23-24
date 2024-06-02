@@ -3,6 +3,7 @@ import * as express from "express";
 import * as bcryptjs from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 import User from "../models/user";
+import auth from "../middleware/auth";
 const authRouter = express.Router();
 
 // Sign Up
@@ -64,6 +65,30 @@ authRouter.post("/signin", async (request, response) => {
     response.status(500).json({ error: error });
     throw error;
   }
+});
+
+// Check if token is valid
+authRouter.post("/tokenIsvalid", async (request, response) => {
+  try {
+    const token = request.header("x-auth-token");
+    if (!token) return response.json(false);
+    const verified = jwt.verify(token, "passwordKey");
+    if (!verified) return response.json(false);
+
+    const user = User.findById((verified as jwt.JwtPayload).id);
+    if (!user) return response.json(false);
+    response.json(true);
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ error: error });
+  }
+});
+
+// Check if user is authenticated
+authRouter.get("/", auth, async (request, response) => {
+  // Auth is middleware
+  const user = await User.findById(request.user);
+  response.json({ user: user, token: request.token });
 });
 
 export default authRouter;
