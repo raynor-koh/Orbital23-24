@@ -5,6 +5,7 @@ import 'package:robinbank_app/pages/search_page.dart';
 import 'package:robinbank_app/pages/sign_in_page.dart';
 import 'package:robinbank_app/pages/sign_up_page.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
+import 'package:robinbank_app/services/auth_services.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 
 void main() {
@@ -16,13 +17,28 @@ void main() {
   ));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => MyAppState();
+}
+
+class MyAppState extends State<MyApp> {
+  final AuthService authService = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    authService.getUserData(context);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SignInPage(),
+      home: Provider.of<UserProvider>(context).user.token.isEmpty
+          ? const SignInPage()
+          : const MainWrapper(),
       theme: ThemeData(
         scaffoldBackgroundColor: UIColours.lightBackground,
       ),

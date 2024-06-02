@@ -38,6 +38,8 @@ class AuthService {
         },
       );
 
+      log('Status Code: ${response.statusCode}');
+
       httpErrorHandle(
           response: response,
           context: context,
@@ -82,6 +84,44 @@ class AuthService {
           );
         },
       );
+    } catch (error) {
+      log(error.toString());
+      showSnackBar(context, error.toString());
+    }
+  }
+
+  void getUserData(
+    BuildContext context,
+  ) async {
+    try {
+      var userProvider = Provider.of<UserProvider>(context, listen: false);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('x-auth-token');
+
+      if (token == null) {
+        prefs.setString('x-auth-token', '');
+      }
+      var tokenResponse = await http.post(
+        Uri.parse('${Constants.uri}/tokenIsValid'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token!,
+        },
+      );
+
+      var response = jsonDecode(tokenResponse.body);
+
+      if (response == true) {
+        http.Response userResponse = await http.get(
+          Uri.parse('${Constants.uri}/'),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': token!,
+          },
+        );
+
+        userProvider.setUser(userResponse.body);
+      }
     } catch (error) {
       log(error.toString());
       showSnackBar(context, error.toString());
