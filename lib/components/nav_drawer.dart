@@ -1,14 +1,17 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
-import 'package:robinbank_app/bloc/nav_drawer_bloc.dart';
+import 'package:robinbank_app/bloc/nav_drawer/nav_drawer_bloc.dart';
+import 'package:robinbank_app/components/auth_button.dart';
+import 'package:robinbank_app/services/auth_services.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
 class NavDrawerItem {
-  final NavDrawerDestination destination;
+  final NavDrawerDestination? destination;
   final String title;
-  final IconData icon;
+  final IconData? icon;
 
   NavDrawerItem(
     this.destination,
@@ -44,9 +47,15 @@ class NavDrawer extends StatelessWidget {
       "TestPage4",
       IconlyBold.home,
     ),
+    NavDrawerItem(null, "Log Out", null),
   ];
 
   NavDrawer({super.key});
+
+  void signOutUser(BuildContext context) async {
+    log('Successfully signed out.');
+    AuthService().signOutUser(context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,42 +85,60 @@ class NavDrawer extends StatelessWidget {
             itemCount: navDrawerItems.length,
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) =>
-              BlocBuilder<NavDrawerBloc, NavDrawerState>(
-                builder: (BuildContext context, NavDrawerState state) =>
-                  buildNavDrawerItem(navDrawerItems[index], state),
-              ),
+                BlocBuilder<NavDrawerBloc, NavDrawerState>(
+              builder: (BuildContext context, NavDrawerState state) =>
+                  buildNavDrawerItem(navDrawerItems[index], state, context),
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget buildNavDrawerItem(NavDrawerItem data, NavDrawerState state) {
-    return Container(
-      color: UIColours.white,
-      child: Builder(
-        builder: (BuildContext context) {
-          return ListTile(
-            title: Text(
-              data.title,
-              style: data.destination == state.selectedDestination
-                  ? UIText.medium.copyWith(color: UIColours.blue, fontWeight: FontWeight.bold)
-                  : UIText.small,
+  Widget buildNavDrawerItem(
+      NavDrawerItem data, NavDrawerState state, BuildContext context) {
+    if (data.destination == null) {
+      return ElevatedButton(
+          onPressed: () => signOutUser(context),
+          style: ButtonStyle(
+            backgroundColor: WidgetStateProperty.all(Colors.blue),
+            textStyle: WidgetStateProperty.all(
+              const TextStyle(color: UIColours.secondaryText),
             ),
-            leading: Icon(
-              data.icon,
-              color: data.destination == state.selectedDestination
-                  ? UIColours.blue
-                  : UIColours.secondaryText,
+            minimumSize: WidgetStateProperty.all(
+              Size(MediaQuery.of(context).size.width / 2.5, 50),
             ),
-            onTap: () => tapNavDrawerItem(context, data.destination),
-          );
-        },
-      ),
-    );
+          ),
+          child: Text(data.title));
+    } else {
+      return Container(
+        color: UIColours.white,
+        child: Builder(
+          builder: (BuildContext context) {
+            return ListTile(
+              title: Text(
+                data.title,
+                style: data.destination == state.selectedDestination
+                    ? UIText.medium.copyWith(
+                        color: UIColours.blue, fontWeight: FontWeight.bold)
+                    : UIText.small,
+              ),
+              leading: Icon(
+                data.icon,
+                color: data.destination == state.selectedDestination
+                    ? UIColours.blue
+                    : UIColours.secondaryText,
+              ),
+              onTap: () => tapNavDrawerItem(context, data.destination!),
+            );
+          },
+        ),
+      );
+    }
   }
-  
-  void tapNavDrawerItem(BuildContext context, NavDrawerDestination destination) {
+
+  void tapNavDrawerItem(
+      BuildContext context, NavDrawerDestination destination) {
     BlocProvider.of<NavDrawerBloc>(context).add(NavigateTo(destination));
     Navigator.pop(context);
   }

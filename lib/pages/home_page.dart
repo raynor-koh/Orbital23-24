@@ -1,5 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/asset_card.dart';
+import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
@@ -35,23 +39,25 @@ class HomePage extends StatelessWidget {
           ),
           Expanded(
             child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                scrollDirection: Axis.vertical,
-                children: const [
-                  AssetCard(),
-                  AssetCard(),
-                  AssetCard(),
-                  AssetCard(),
-                  AssetCard(),
-                ],
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              scrollDirection: Axis.vertical,
+              children: const [
+                AssetCard(),
+                AssetCard(),
+                AssetCard(),
+                AssetCard(),
+                AssetCard(),
+              ],
             ),
+          ),
         ],
       ),
     );
   }
 
   Widget buildStatisticsPanel(BuildContext context) {
+    final user = Provider.of<UserProvider>(context).user;
+    log(user.email);
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
@@ -65,7 +71,7 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Net Account Value',
+              'Net Account Value ${user.name}',
               style: UIText.small.copyWith(color: UIColours.secondaryText),
             ),
             Text(
@@ -87,7 +93,8 @@ class HomePage extends StatelessWidget {
                   children: [
                     Text(
                       'Market Value',
-                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      style:
+                          UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
                       '\$8,794.40',
@@ -102,7 +109,8 @@ class HomePage extends StatelessWidget {
                   children: [
                     Text(
                       'Buying Power',
-                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      style:
+                          UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
                       '\$1187.20',
@@ -117,7 +125,8 @@ class HomePage extends StatelessWidget {
                   children: [
                     Text(
                       'Day\'s P&L',
-                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      style:
+                          UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
                       '-18.40',
