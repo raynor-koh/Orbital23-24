@@ -17,35 +17,20 @@ void main() {
   ));
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  State<StatefulWidget> createState() => MyAppState();
-}
-
-class MyAppState extends State<MyApp> {
-  final AuthService authService = AuthService();
-
-  @override
-  void initState() {
-    super.initState();
-    authService.getUserData(context);
-  }
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Provider.of<UserProvider>(context).user.token.isEmpty
-          ? const SignInPage()
-          : const MainWrapper(),
+      home: SignInPage(),
       theme: ThemeData(
         scaffoldBackgroundColor: UIColours.lightBackground,
       ),
       debugShowCheckedModeBanner: false,
       routes: {
-        '/signinpage': (context) => const SignInPage(),
-        '/signuppage': (context) => const SignUpPage(),
+        '/signinpage': (context) => SignInPage(),
+        '/signuppage': (context) => SignUpPage(),
         '/mainwrapper': (context) => const MainWrapper(),
         '/searchpage': (context) => const SearchPage()
       },
