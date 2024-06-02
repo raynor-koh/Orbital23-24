@@ -20,7 +20,7 @@ class HomePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(
-            height: 16,
+            height: 8,
           ),
           buildStatisticsPanel(context),
           const SizedBox(
@@ -61,7 +61,7 @@ class HomePage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(8, 24, 8, 24),
@@ -146,7 +146,7 @@ class HomePage extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Padding(
         padding: const EdgeInsets.all(4),
@@ -160,7 +160,7 @@ class HomePage extends StatelessWidget {
                 IconButton(
                   icon: const Icon(
                     Icons.candlestick_chart_outlined,
-                    size: 32,
+                    size: 30,
                     color: UIColours.blue,
                   ),
                   onPressed: () {
@@ -178,7 +178,7 @@ class HomePage extends StatelessWidget {
                 IconButton(
                   icon: const Icon(
                     Icons.receipt_long_outlined,
-                    size: 32,
+                    size: 30,
                     color: UIColours.blue,
                   ),
                   onPressed: () {},
@@ -194,7 +194,7 @@ class HomePage extends StatelessWidget {
                 IconButton(
                   icon: const Icon(
                     Icons.analytics_outlined,
-                    size: 32,
+                    size: 30,
                     color: UIColours.blue,
                   ),
                   onPressed: () {},
@@ -210,7 +210,7 @@ class HomePage extends StatelessWidget {
                 IconButton(
                   icon: const Icon(
                     Icons.restart_alt_outlined,
-                    size: 32,
+                    size: 30,
                     color: UIColours.blue,
                   ),
                   onPressed: () {},

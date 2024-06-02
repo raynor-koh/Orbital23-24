@@ -13,7 +13,7 @@ class AssetCard extends StatelessWidget {
         height: 100,
         decoration: BoxDecoration(
           color: UIColours.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(4),
         ),
         child: Image.asset(
           'assets/images/Group_17.png',

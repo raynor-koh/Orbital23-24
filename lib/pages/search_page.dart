@@ -37,8 +37,15 @@ class _SearchPageState extends State<SearchPage> {
           ],
         ),
       ),
-      body: const Center(
-        child: Text('search results will be shown here'),
+      body: Center(
+        child: TextButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/assetpage');
+          },
+          child: const Text(
+            'Click me',
+          ),
+        ),
       ),
     );
   }

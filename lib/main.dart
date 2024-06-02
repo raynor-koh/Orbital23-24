@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:robinbank_app/pages/asset_page.dart';
 import 'package:robinbank_app/pages/main_wrapper.dart';
 import 'package:robinbank_app/pages/search_page.dart';
 import 'package:robinbank_app/pages/sign_in_page.dart';
@@ -7,6 +8,7 @@ import 'package:robinbank_app/pages/sign_up_page.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/auth_services.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
+
 
 void main() {
   runApp(MultiProvider(
@@ -47,7 +49,8 @@ class _MyAppState extends State<MyApp> {
         '/signinpage': (context) => const SignInPage(),
         '/signuppage': (context) => const SignUpPage(),
         '/mainwrapper': (context) => const MainWrapper(),
-        '/searchpage': (context) => const SearchPage()
+        '/searchpage': (context) => const SearchPage(),
+        '/assetpage': (context) => AssetPage(),
       },
     );
   }
