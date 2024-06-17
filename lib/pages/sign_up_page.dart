@@ -6,7 +6,7 @@ import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
 class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key}) : super(key: key);
+  const SignUpPage({super.key});
 
   @override
   State<SignUpPage> createState() => SignUpPageState();
