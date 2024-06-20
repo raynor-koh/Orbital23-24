@@ -10,7 +10,7 @@ toHaveBeenCalledTimes(params): checks how many times the function has been calle
 // Describe => Test Suite Name
 // Test => Individual Test
 
-import { authSignUpHandler } from "../../handlers/auth/signUp";
+import { authSignUpHandler } from "../../handlers/auth/authSignUpHandler";
 import User from "../../models/user";
 import * as bcryptjs from "bcryptjs";
 
