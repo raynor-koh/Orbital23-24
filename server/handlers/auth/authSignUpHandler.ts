@@ -1,5 +1,6 @@
 import * as bcryptjs from "bcryptjs";
 import User from "../../models/user";
+import UserPosition from "../../models/userPosition";
 
 export const authSignUpHandler = async (request: any, response: any) => {
   try {
@@ -29,6 +30,13 @@ export const authSignUpHandler = async (request: any, response: any) => {
 
     // Save user and retrieve user documentId
     user = await user.save(); // MongoDB will add two more fields: documentId and version
+
+    // Create user starting position
+    let userPosition = new UserPosition({
+      userId: user._id,
+      accountBalance: 1000000,
+    });
+    userPosition = await userPosition.save();
     response.status(200).json(user);
     return;
   } catch (error) {

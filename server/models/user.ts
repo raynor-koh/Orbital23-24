@@ -1,6 +1,6 @@
 import * as mongoose from "mongoose";
 
-// Structure of userDocument
+// Structure of User Document
 const userSchema = new mongoose.Schema({
   name: { required: true, type: String, trim: true },
   email: {
