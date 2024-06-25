@@ -5,7 +5,7 @@ import 'package:robinbank_app/pages/search_page.dart';
 import 'package:robinbank_app/pages/sign_in_page.dart';
 import 'package:robinbank_app/pages/sign_up_page.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
-import 'package:robinbank_app/services/auth_services.dart';
+import 'package:robinbank_app/services/auth_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 
 void main() {

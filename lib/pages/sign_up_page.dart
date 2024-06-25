@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:robinbank_app/components/auth_button.dart';
 import 'package:robinbank_app/components/auth_text_field.dart';
-import 'package:robinbank_app/services/auth_services.dart';
+import 'package:robinbank_app/services/auth_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 

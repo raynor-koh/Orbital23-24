@@ -65,7 +65,6 @@ class AuthTextField extends StatelessWidget {
         ),
 
         style: UIText.small,
-        // validator: ,
       ),
     );
   }
