@@ -7,8 +7,18 @@ import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +67,6 @@ class HomePage extends StatelessWidget {
 
   Widget buildStatisticsPanel(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
-    log(user.email);
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,

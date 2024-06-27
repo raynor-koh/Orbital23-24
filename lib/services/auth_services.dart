@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/main.dart';
 import 'package:robinbank_app/pages/sign_in_page.dart';
-// import 'package:robinbank_app/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:robinbank_app/models/user.dart';
@@ -26,7 +25,6 @@ class AuthService {
         id: '',
         name: name,
         email: email,
-        password: password,
         token: '',
       );
 
@@ -37,8 +35,6 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-
-      log('Status Code: ${response.statusCode}');
 
       httpErrorHandle(
           response: response,
@@ -70,7 +66,6 @@ class AuthService {
               headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           });
-      log('Status Code: ${response.statusCode}');
 
       httpErrorHandle(
         response: response,
@@ -122,7 +117,6 @@ class AuthService {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': token,
         });
-
         userProvider.setUser(userResponse.body);
       }
     } catch (error) {

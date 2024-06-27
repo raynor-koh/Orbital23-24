@@ -15,7 +15,7 @@ userRouter.get("/:id", async (request, response) => {
   if (!userPosition) {
     return response.status(404).json({ error: "User position not found" });
   }
-  response.status(200).json({ user: user, userPosition: userPosition });
+  response.status(200).json({ userPosition: userPosition[0] });
 });
 
 export default userRouter;
