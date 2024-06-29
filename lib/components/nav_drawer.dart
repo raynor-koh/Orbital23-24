@@ -2,7 +2,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconly/iconly.dart';
+import 'package:provider/provider.dart';
 import 'package:robinbank_app/bloc/nav_drawer/nav_drawer_bloc.dart';
+import 'package:robinbank_app/models/user.dart';
+import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/auth_services.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -58,17 +61,18 @@ class NavDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User userData = Provider.of<UserProvider>(context).user;
     return Drawer(
       backgroundColor: UIColours.white,
       child: Column(
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              'Matthew',
+              userData.name,
               style: UIText.medium.copyWith(color: UIColours.white),
             ),
             accountEmail: Text(
-              'matthew@gmail.com',
+              userData.email,
               style: UIText.small.copyWith(color: UIColours.white),
             ),
             decoration: const BoxDecoration(

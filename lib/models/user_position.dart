@@ -24,12 +24,12 @@ class UserPosition {
 
   factory UserPosition.fromMap(Map<String, dynamic> map) {
     return UserPosition(
-      userId: map['userId'] ?? '',
-      accountBalance: map['accountBalance'] ?? 0,
-      accountPosition: (map['accountPosition'] as List)
+      userId: map['userPosition']['userId'] ?? '',
+      accountBalance: map['userPosition']['accountBalance'] ?? 0,
+      accountPosition: (map['userPosition']['accountPosition'] as List)
           .map((x) => AccountPosition.fromMap(x))
           .toList(),
-      buyingPower: map['buyingPower'] ?? 0,
+      buyingPower: map['userPosition']['buyingPower'] ?? 0,
     );
   }
 

@@ -7,7 +7,7 @@ import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/utils/constants.dart';
 import 'package:robinbank_app/utils/utils.dart';
 
-class UserDataService {
+class UserPositionService {
   void getUserPosition(BuildContext context, String userId) async {
     try {
       var userPositonProvider =
@@ -18,14 +18,8 @@ class UserDataService {
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           });
-
-      httpErrorHandle(
-        response: response,
-        context: context,
-        onSuccess: () async {
-          userPositonProvider.setUser(response.body);
-        },
-      );
+      ;
+      userPositonProvider.setUserPosition(response.body);
     } catch (error) {
       log(error.toString());
       showSnackBar(context, error.toString());

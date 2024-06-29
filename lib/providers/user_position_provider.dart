@@ -7,12 +7,12 @@ class UserPositionProvider extends ChangeNotifier {
 
   UserPosition get userPosition => _userPosition;
 
-  void setUser(String userPosition) {
+  void setUserPosition(String userPosition) {
     _userPosition = UserPosition.fromJson(userPosition);
     notifyListeners();
   }
 
-  void setUserFromModel(UserPosition userPosition) {
+  void setUserPositionFromModel(UserPosition userPosition) {
     _userPosition = userPosition;
     notifyListeners();
   }

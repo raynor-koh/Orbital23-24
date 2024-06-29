@@ -1,9 +1,11 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/asset_card.dart';
+import 'package:robinbank_app/models/user.dart';
+import 'package:robinbank_app/models/user_position.dart';
+import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
+import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
@@ -15,13 +17,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final UserPositionService userPositionService = UserPositionService();
+
   @override
   void initState() {
     super.initState();
+    String userId = Provider.of<UserProvider>(context, listen: false).user.id;
+    userPositionService.getUserPosition(context, userId);
   }
 
   @override
   Widget build(BuildContext context) {
+    List<AccountPosition> userAccountPosition =
+        Provider.of<UserPositionProvider>(context).userPosition.accountPosition;
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
       child: Column(
@@ -51,13 +59,15 @@ class _HomePageState extends State<HomePage> {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 4),
               scrollDirection: Axis.vertical,
-              children: const [
-                AssetCard(),
-                AssetCard(),
-                AssetCard(),
-                AssetCard(),
-                AssetCard(),
-              ],
+              children: userAccountPosition.isEmpty
+                  ? []
+                  : [
+                      AssetCard(),
+                      AssetCard(),
+                      AssetCard(),
+                      AssetCard(),
+                      AssetCard(),
+                    ],
             ),
           ),
         ],
@@ -66,7 +76,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildStatisticsPanel(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
+    User user = Provider.of<UserProvider>(context).user;
+    UserPosition userPosition =
+        Provider.of<UserPositionProvider>(context).userPosition;
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
@@ -84,7 +96,7 @@ class _HomePageState extends State<HomePage> {
               style: UIText.small.copyWith(color: UIColours.secondaryText),
             ),
             Text(
-              '\$9,981.60',
+              userPosition.accountBalance.toStringAsFixed(2),
               style: UIText.heading,
             ),
             const SizedBox(
@@ -122,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                           UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
-                      '\$1187.20',
+                      userPosition.buyingPower.toStringAsFixed(2),
                       style: UIText.medium,
                     ),
                   ],
