@@ -3,7 +3,6 @@ part of 'nav_drawer_bloc.dart';
 enum NavDrawerDestination {
   homePage,
   testPage1,
-  testPage2,
   testPage3,
   testPage4,
   logOut

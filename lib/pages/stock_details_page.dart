@@ -3,14 +3,35 @@ import 'package:robinbank_app/components/candlestick_chart.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
-class TestPage2 extends StatefulWidget {
-  const TestPage2({super.key});
+class StockDetailsPage extends StatefulWidget {
+  final String symbol;
+
+  const StockDetailsPage({
+    super.key,
+    required this.symbol,
+  });
 
   @override
-  State<TestPage2> createState() => _TestPage2State();
+  State<StockDetailsPage> createState() => _StockDetailsPageState();
 }
 
-class _TestPage2State extends State<TestPage2> {
+class _StockDetailsPageState extends State<StockDetailsPage> {
+  int quantity = 0;
+
+  void incrementQuantity() {
+    setState(() {
+      quantity++;
+    });
+  }
+
+  void decrementQuantity() {
+    if (quantity > 0) {
+      setState(() {
+        quantity--;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,10 +48,11 @@ class _TestPage2State extends State<TestPage2> {
               height: 8,
             ),
             buildMetricsPanel(context),
-            const CandlestickChart(),
+            CandlestickChart(symbol: widget.symbol),
             const SizedBox(
               height: 8,
             ),
+            buildTradePanel(context),
           ],
         ),
       ),
@@ -58,11 +80,11 @@ class _TestPage2State extends State<TestPage2> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'AAPL',
+                  widget.symbol,
                   style:  UIText.medium
                 ),
                 Text(
-                  'Apple Inc NASDAQ',
+                  'Placeholder name',
                   style: UIText.small,
                 ),
               ],
@@ -203,6 +225,86 @@ class _TestPage2State extends State<TestPage2> {
                   style: UIText.small,
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  
+  Widget buildTradePanel(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: UIColours.white,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(4, 0, 4, 0),
+        child: Column(
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Side',
+                  style: UIText.small,
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Buy',
+                        style: UIText.small,
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Sell',
+                        style: UIText.small,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Quantity',
+                  style: UIText.small,
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.remove),
+                      onPressed: decrementQuantity,
+                    ),
+                    Text(
+                      '$quantity',
+                      style: UIText.small,
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add),
+                      onPressed: incrementQuantity,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: Text(
+                'Confirm Trade',
+                style: UIText.small,
+              ),
             ),
           ],
         ),
