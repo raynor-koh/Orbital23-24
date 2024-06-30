@@ -6,8 +6,8 @@ import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/utils/constants.dart';
 import '../providers/user_provider.dart';
 
-class TestPage1 extends StatelessWidget {
-  const TestPage1({super.key});
+class UserDataPage extends StatelessWidget {
+  const UserDataPage({super.key});
 
   @override
   Widget build(BuildContext context) {
