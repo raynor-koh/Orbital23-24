@@ -15,7 +15,7 @@ authRouter.post("/signup", authSignUpHandler);
 authRouter.post("/signin", authSignInHandler);
 
 // Check if token is valid
-authRouter.post("/tokenIsvalid", authTokenIsValidHandler);
+authRouter.post("/tokenIsValid", authTokenIsValidHandler);
 
 // Check if user is authenticated
 authRouter.get("/", auth, authJWTTokenHandler);

@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/main.dart';
 import 'package:robinbank_app/pages/sign_in_page.dart';
-// import 'package:robinbank_app/pages/home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:robinbank_app/models/user.dart';
@@ -26,19 +25,16 @@ class AuthService {
         id: '',
         name: name,
         email: email,
-        password: password,
         token: '',
       );
 
       http.Response response = await http.post(
-        Uri.parse('${Constants.uri}/signup'),
+        Uri.parse('${Constants.serverUri}/signup'),
         body: user.toJson(),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
       );
-
-      log('Status Code: ${response.statusCode}');
 
       httpErrorHandle(
           response: response,
@@ -62,7 +58,7 @@ class AuthService {
       var userProvider = Provider.of<UserProvider>(context, listen: false);
       final navigator = Navigator.of(context);
       http.Response response =
-          await http.post(Uri.parse('${Constants.uri}/signin'),
+          await http.post(Uri.parse('${Constants.serverUri}/signin'),
               body: jsonEncode({
                 'email': email,
                 'password': password,
@@ -70,7 +66,6 @@ class AuthService {
               headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           });
-      log('Status Code: ${response.statusCode}');
 
       httpErrorHandle(
         response: response,
@@ -107,7 +102,7 @@ class AuthService {
       }
 
       var tokenResponse = await http.post(
-        Uri.parse('${Constants.uri}/tokenIsValid'),
+        Uri.parse('${Constants.serverUri}/tokenIsValid'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': token!,
@@ -117,11 +112,12 @@ class AuthService {
       var response = jsonDecode(tokenResponse.body);
 
       if (response == true) {
-        http.Response userResponse = await http
-            .get(Uri.parse('${Constants.uri}/'), headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-          'x-auth-token': token,
-        });
+        http.Response userResponse = await http.get(
+            Uri.parse('${Constants.serverUri}/'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'x-auth-token': token,
+            });
 
         userProvider.setUser(userResponse.body);
       }

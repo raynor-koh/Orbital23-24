@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import authRouter from "./routes/auth";
+import userRouter from "./routes/user";
 import cors from "cors";
 
 dotenv.config({ path: "../.env" });
@@ -11,6 +12,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(authRouter);
+app.use("/user", userRouter);
 
 const DB = process.env.MONGODB_DATABASE as string;
 
