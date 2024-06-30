@@ -92,8 +92,6 @@ class _MainWrapperState extends State<MainWrapper> {
         return const HomePage();
       case NavDrawerDestination.testPage1:
         return const UserDataPage();
-      case NavDrawerDestination.testPage2:
-        return const TestPage2();
       case NavDrawerDestination.testPage3:
         return const TestPage3();
       case NavDrawerDestination.testPage4:

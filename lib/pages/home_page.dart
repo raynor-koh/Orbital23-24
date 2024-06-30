@@ -2,7 +2,10 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robinbank_app/components/asset_card.dart';
+import 'package:robinbank_app/components/stock_card.dart';
+import 'package:robinbank_app/models/user.dart';
+import 'package:robinbank_app/models/user_position.dart';
+import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
@@ -58,13 +61,9 @@ class _HomePageState extends State<HomePage> {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 4),
               scrollDirection: Axis.vertical,
-              children: const [
-                AssetCard(),
-                AssetCard(),
-                AssetCard(),
-                AssetCard(),
-                AssetCard(),
-              ],
+              children: userAccountPosition.isEmpty
+                  ? []
+                  : [StockCard(), StockCard(), StockCard()],
             ),
           ),
         ],
