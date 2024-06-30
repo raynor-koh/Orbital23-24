@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:robinbank_app/bloc/nav_drawer/nav_drawer_bloc.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
-import 'package:robinbank_app/services/auth_services.dart';
+import 'package:robinbank_app/services/auth_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
