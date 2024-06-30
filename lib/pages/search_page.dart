@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import 'package:robinbank_app/pages/stock_details_page.dart';
+import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
@@ -12,6 +14,21 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  late TextEditingController _searchController;
+  List<String> _searchResults = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,9 +37,12 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: UIColours.lightBackground,
         title: Row(
           children: [
-            const Expanded(
+            Expanded(
               child: CupertinoSearchTextField(
                 prefixIcon: Icon(IconlyLight.search),
+                placeholder: 'Search',
+                controller: _searchController,
+                onSubmitted: _performSearch,
               ),
             ),
             TextButton(
@@ -37,9 +57,27 @@ class _SearchPageState extends State<SearchPage> {
           ],
         ),
       ),
-      body: const Center(
-        child: Text('search results will be shown here'),
+      body: ListView.builder(
+        itemCount: _searchResults.length,
+        itemBuilder: (context, index) {
+          String symbol = _searchResults[index];
+          return ListTile(
+            title: Text(symbol),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => StockDetailsPage(symbol: symbol)
+              ));
+            },
+          );
+        },
       ),
     );
+  }
+
+  void _performSearch(String query) async {
+    List<String> results = await AlpacaService().searchStock(query);
+    setState(() {
+      _searchResults = results;
+    });
   }
 }

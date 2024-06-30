@@ -1,8 +1,7 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robinbank_app/components/asset_card.dart';
+import 'package:robinbank_app/components/stock_card.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -34,7 +33,7 @@ class HomePage extends StatelessWidget {
             alignment: const AlignmentDirectional(-1, 0),
             child: Text(
               'Your Position(s)',
-              style: UIText.large,
+              style: UIText.medium,
             ),
           ),
           Expanded(
@@ -42,11 +41,11 @@ class HomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 4),
               scrollDirection: Axis.vertical,
               children: const [
-                AssetCard(),
-                AssetCard(),
-                AssetCard(),
-                AssetCard(),
-                AssetCard(),
+                StockCard(),
+                StockCard(),
+                StockCard(),
+                StockCard(),
+                StockCard(),
               ],
             ),
           ),

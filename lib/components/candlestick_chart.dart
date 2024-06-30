@@ -7,7 +7,12 @@ import 'package:robinbank_app/ui/ui_text.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class CandlestickChart extends StatefulWidget {
-  const CandlestickChart({super.key});
+  final String symbol;
+
+  const CandlestickChart({
+    super.key,
+    required this.symbol,
+  });
 
   @override
   State<CandlestickChart> createState() => _CandlestickChartState();
@@ -21,7 +26,7 @@ class _CandlestickChartState extends State<CandlestickChart> {
   @override
   void initState() {
     super.initState();
-    _chartDataPointsFuture = AlpacaService().getChartDataPoints('AAPL');
+    _chartDataPointsFuture = AlpacaService().getChartDataPoints(widget.symbol);
     _trackballBehaviour = TrackballBehavior(
       enable: true,
       activationMode: ActivationMode.longPress,
@@ -45,7 +50,7 @@ class _CandlestickChartState extends State<CandlestickChart> {
       future: _chartDataPointsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasError) {
@@ -54,8 +59,8 @@ class _CandlestickChartState extends State<CandlestickChart> {
           );
         } else {
           final chartDataPoints = snapshot.data!;
-          return Container(
-            height: 250,
+          return SizedBox(
+            height: 200,
             child: SfCartesianChart(
               trackballBehavior: _trackballBehaviour,
               zoomPanBehavior: _zoomPanBehaviour,
