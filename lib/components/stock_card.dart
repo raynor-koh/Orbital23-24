@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 
-class AssetCard extends StatelessWidget {
-  const AssetCard({super.key});
+class StockCard extends StatelessWidget {
+  const StockCard({super.key});
 
   @override
   Widget build(BuildContext context) {

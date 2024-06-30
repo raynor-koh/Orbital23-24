@@ -35,11 +35,6 @@ class NavDrawer extends StatelessWidget {
       IconlyBold.profile,
     ),
     NavDrawerItem(
-      NavDrawerDestination.testPage2,
-      "TestPage2",
-      IconlyBold.setting,
-    ),
-    NavDrawerItem(
       NavDrawerDestination.testPage3,
       "TestPage3",
       IconlyBold.home,

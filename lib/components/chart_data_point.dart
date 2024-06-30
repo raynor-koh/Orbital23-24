@@ -4,7 +4,6 @@ class ChartDataPoint {
   final num? high;
   final num? low;
   final num? close;
-  // volume
 
   ChartDataPoint({
     this.dateTime,

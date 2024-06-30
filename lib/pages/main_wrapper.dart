@@ -4,7 +4,6 @@ import 'package:robinbank_app/bloc/nav_drawer/nav_drawer_bloc.dart';
 import 'package:robinbank_app/components/nav_drawer.dart';
 import 'package:robinbank_app/pages/home_page.dart';
 import 'package:robinbank_app/pages/test_page1.dart';
-import 'package:robinbank_app/pages/test_page2.dart';
 import 'package:robinbank_app/pages/test_page3.dart';
 import 'package:robinbank_app/pages/test_page4.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
@@ -78,8 +77,6 @@ class _MainWrapperState extends State<MainWrapper> {
         return "HomePage";
       case NavDrawerDestination.testPage1:
         return "TestPage1";
-      case NavDrawerDestination.testPage2:
-        return "TestPage2";
       case NavDrawerDestination.testPage3:
         return "TestPage3";
       case NavDrawerDestination.testPage4:

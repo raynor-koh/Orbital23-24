@@ -90,9 +90,6 @@ class SignInState extends State<SignInPage> {
                       ),
                       AuthButton(
                         text: 'Sign In',
-                        // onPressed: () {
-                        //   Navigator.pushNamed(context, '/mainwrapper');
-                        // },
                         onPressed: signIn,
                       ),
                       Padding(

@@ -27,7 +27,7 @@ class AlpacaService {
 
   Future<List<ChartDataPoint>> getChartDataPoints(String symbol) async {
     final url = Uri.parse(
-        '${Constants.alpacaBaseUrl}/v2/stocks/$symbol/bars?timeframe=30Min&start=2024-06-01T00%3A00%3A00Z&end=2024-12-31T23%3A59%3A00Z&limit=10000&adjustment=raw&feed=iex&sort=asc');
+        '$_baseUrl/v2/stocks/$symbol/bars?timeframe=1D&start=2024-01-01T00%3A00%3A00Z&end=2024-06-24T23%3A59%3A00Z&limit=1000&adjustment=raw&feed=sip&sort=asc');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
