@@ -1,5 +1,5 @@
-import { authTokenIsValidHandler } from "../../handlers/auth/authTokenIsValidHandler";
-import User from "../../models/user";
+import { authTokenIsValidHandler } from "../../../handlers/auth/authTokenIsValidHandler";
+import User from "../../../models/user";
 import * as jwt from "jsonwebtoken";
 import * as bcryptjs from "bcryptjs";
 
@@ -8,7 +8,7 @@ const userEmail = "test@example.com";
 const userPassword = "password";
 
 // Mock Classes of the Functions to be mocked
-jest.mock("../../models/user");
+jest.mock("../../../models/user");
 jest.mock("jsonwebtoken");
 
 const mockRequest = {

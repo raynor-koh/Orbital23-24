@@ -1,8 +1,8 @@
 import * as bcryptjs from "bcryptjs";
-import { authJWTTokenHandler } from "../../handlers/auth/authJWTTokenHandler";
-import User from "../../models/user";
+import { authJWTTokenHandler } from "../../../handlers/auth/authJWTTokenHandler";
+import User from "../../../models/user";
 
-jest.mock("../../models/user");
+jest.mock("../../../models/user");
 
 const mockRequest = {
   user: "user_id",

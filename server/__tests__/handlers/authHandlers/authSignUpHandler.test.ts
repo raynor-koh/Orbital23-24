@@ -10,12 +10,14 @@ toHaveBeenCalledTimes(params): checks how many times the function has been calle
 // Describe => Test Suite Name
 // Test => Individual Test
 
-import { authSignUpHandler } from "../../handlers/auth/authSignUpHandler";
-import User from "../../models/user";
+import { authSignUpHandler } from "../../../handlers/auth/authSignUpHandler";
+import User from "../../../models/user";
+import UserPosition from "../../../models/userPosition";
 import * as bcryptjs from "bcryptjs";
 
 // Mock user model
-jest.mock("../../models/user");
+jest.mock("../../../models/user");
+jest.mock("../../../models/userPosition");
 
 const testName = "user";
 const testEmail = "test01@example.com";
@@ -56,6 +58,15 @@ describe("Sign Up Tests", () => {
       email: testEmail,
       password: hashedPassword,
     });
+
+    const userPosition = {
+      userId: "userId",
+      accountBalance: 1,
+      accountPosition: [],
+      buyingPower: 0,
+    };
+    // Mock UserPosition.findOne to return null
+    (UserPosition.findOne as jest.Mock).mockResolvedValue(userPosition);
 
     await authSignUpHandler(validRequest, mockResponse);
     expect(mockResponse.status).toHaveBeenCalledWith(200);
