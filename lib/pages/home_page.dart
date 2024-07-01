@@ -60,9 +60,10 @@ class _HomePageState extends State<HomePage> {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 4),
               scrollDirection: Axis.vertical,
-              children: userAccountPosition.isEmpty
-                  ? []
-                  : [StockCard(), StockCard(), StockCard()],
+              children: userAccountPosition.isEmpty &&
+                      Provider.of<UserProvider>(context).user.name == 'test'
+                  ? [const StockCard(), const StockCard(), const StockCard()]
+                  : [],
             ),
           ),
         ],
