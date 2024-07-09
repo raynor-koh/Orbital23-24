@@ -30,7 +30,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<AccountPosition> userAccountPosition =
-        Provider.of<UserPositionProvider>(context).userPosition.accountPositions;
+        Provider.of<UserPositionProvider>(context)
+            .userPosition
+            .accountPositions;
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
       child: Column(
@@ -73,7 +75,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget buildStatisticsPanel(BuildContext context) {
     User user = Provider.of<UserProvider>(context).user;
-    UserPosition userPosition = Provider.of<UserPositionProvider>(context).userPosition;
+    UserPosition userPosition =
+        Provider.of<UserPositionProvider>(context).userPosition;
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
@@ -330,15 +333,15 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _resetAccountBalance(BuildContext context, double newBalance) {
-    UserPositionProvider userPositionProvider = Provider.of<UserPositionProvider>(context, listen: false);
-
+    String userId = Provider.of<UserProvider>(context, listen: false).user.id;
     // Update the user account balance in the provider
-    userPositionProvider.updateAccountBalance(newBalance);
+    userPositionService.resetUserPosition(context, userId, newBalance);
 
     // Display a success message
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Account balance reset to \$${newBalance.toStringAsFixed(2)}'),
+        content:
+            Text('Account balance reset to \$${newBalance.toStringAsFixed(2)}'),
       ),
     );
 

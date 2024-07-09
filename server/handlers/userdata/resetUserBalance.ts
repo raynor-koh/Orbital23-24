@@ -18,7 +18,7 @@ export const resetBalanceHandler = async (request: any, response: any) => {
 
     // Reset balance
     const result = await UserPosition.updateOne(
-      { _id: userId },
+      { userId: userId },
       {
         $set: {
           accountBalance: resetAmount,
@@ -33,7 +33,9 @@ export const resetBalanceHandler = async (request: any, response: any) => {
         .status(400)
         .json({ message: "No changes were made to the UserPosition" });
     }
-    return response.status(200).json({ message: "UserPosition resetted" });
+    return response
+      .status(200)
+      .json({ message: `UserPosition resetted to ${resetAmount}` });
   } catch (error) {
     console.error(error);
     response.status(500).json({ error: error });
