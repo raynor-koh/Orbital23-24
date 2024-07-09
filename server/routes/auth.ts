@@ -3,10 +3,12 @@ import * as express from "express";
 import auth from "../middleware/auth";
 const authRouter = express.Router();
 
-import { authSignUpHandler } from "../handlers/auth/authSignUpHandler";
-import { authSignInHandler } from "../handlers/auth/authSignInHandler";
-import { authTokenIsValidHandler } from "../handlers/auth/authTokenIsValidHandler";
-import { authJWTTokenHandler } from "../handlers/auth/authJWTTokenHandler";
+import {
+  authSignUpHandler,
+  authSignInHandler,
+  authJWTTokenHandler,
+  authTokenIsValidHandler,
+} from "../handlers/auth";
 
 // Sign Up
 authRouter.post("/signup", authSignUpHandler);

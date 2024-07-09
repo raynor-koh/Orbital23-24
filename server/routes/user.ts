@@ -2,8 +2,23 @@ import * as express from "express";
 
 const userRouter = express.Router();
 
-import { userPositionHandler } from "../handlers/userdata/userPositionHandler";
+import {
+  getUserPositionHandler,
+  buyStockHandler,
+  sellStockHandler,
+  resetBalanceHandler,
+} from "../handlers/userdata";
 
-userRouter.get("/:id", userPositionHandler);
+// Get User Position
+userRouter.get("/:id", getUserPositionHandler);
+
+// Buy Stocks (Add position)
+userRouter.post("/buyStock/:id", buyStockHandler);
+
+// Sell Stocks (Sell position)
+userRouter.post("/sellStock/:id", sellStockHandler);
+
+// Reset Balance
+userRouter.post("/resetBalance/:id", resetBalanceHandler);
 
 export default userRouter;
