@@ -1,10 +1,10 @@
-import { authSignInHandler } from "../../handlers/auth/authSignInHandler";
-import User from "../../models/user";
+import { authSignInHandler } from "../../../handlers/auth/authSignInHandler";
+import User from "../../../models/user";
 import * as bcryptjs from "bcryptjs";
 import * as jwt from "jsonwebtoken";
 
 // Mock Classes of the Functions to be mocked
-jest.mock("../../models/user");
+jest.mock("../../../models/user");
 jest.mock("bcryptjs");
 jest.mock("jsonwebtoken");
 
