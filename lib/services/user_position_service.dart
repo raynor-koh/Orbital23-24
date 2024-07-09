@@ -14,7 +14,7 @@ class UserPositionService {
           Provider.of<UserPositionProvider>(context, listen: false);
 
       http.Response response = await http.get(
-          Uri.parse('${Constants.uri}/user/$userId'),
+          Uri.parse('${Constants.serverUri}/user/$userId'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
           });
