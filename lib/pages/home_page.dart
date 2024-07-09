@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<AccountPosition> userAccountPosition =
-        Provider.of<UserPositionProvider>(context).userPosition.accountPosition;
+        Provider.of<UserPositionProvider>(context).userPosition.accountPositions;
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
       child: Column(
@@ -73,8 +73,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget buildStatisticsPanel(BuildContext context) {
     User user = Provider.of<UserProvider>(context).user;
-    UserPosition userPosition =
-        Provider.of<UserPositionProvider>(context).userPosition;
+    UserPosition userPosition = Provider.of<UserPositionProvider>(context).userPosition;
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
@@ -230,7 +229,9 @@ class _HomePageState extends State<HomePage> {
                     size: 32,
                     color: UIColours.blue,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    _showResetAccountDialogue(context);
+                  },
                 ),
                 Text(
                   'Reset',
@@ -242,5 +243,106 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _showResetAccountDialogue(BuildContext context) async {
+    double? newBalance;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          //title: const Text('Reset Account Balance'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                const Text('Enter new starting balance:'),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(hintText: "New Balance"),
+                  onChanged: (value) {
+                    newBalance = double.tryParse(value);
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                if (newBalance != null) {
+                  _confirmReset(context, newBalance!);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter a valid number'),
+                    ),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _confirmReset(BuildContext context, double newBalance) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Reset'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                const Text('Are you sure you want to reset your account?'),
+                Text('New Balance: \$${newBalance.toStringAsFixed(2)}'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Confirm'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _resetAccountBalance(context, newBalance);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _resetAccountBalance(BuildContext context, double newBalance) {
+    UserPositionProvider userPositionProvider = Provider.of<UserPositionProvider>(context, listen: false);
+
+    // Update the user account balance in the provider
+    userPositionProvider.updateAccountBalance(newBalance);
+
+    // Display a success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Account balance reset to \$${newBalance.toStringAsFixed(2)}'),
+      ),
+    );
+
+    // Close the confirmation dialog
+    Navigator.of(context).pop();
   }
 }
