@@ -3,7 +3,11 @@ import 'package:robinbank_app/models/user_position.dart';
 
 class UserPositionProvider extends ChangeNotifier {
   UserPosition _userPosition = UserPosition(
-      userId: '', accountBalance: 0, accountPosition: [], buyingPower: 0);
+    userId: '',
+    accountBalance: 0,
+    accountPositions: [],
+    buyingPower: 0,
+  );
 
   UserPosition get userPosition => _userPosition;
 
@@ -14,6 +18,11 @@ class UserPositionProvider extends ChangeNotifier {
 
   void setUserPositionFromModel(UserPosition userPosition) {
     _userPosition = userPosition;
+    notifyListeners();
+  }
+
+  void updateAccountBalance(double newBalance) {
+    _userPosition = _userPosition.copyWith(accountBalance: newBalance);
     notifyListeners();
   }
 }
