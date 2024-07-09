@@ -1,6 +1,7 @@
 import * as bcryptjs from "bcryptjs";
 import User from "../../models/user";
 import UserPosition from "../../models/userPosition";
+import * as jwt from "jsonwebtoken";
 
 export const authSignUpHandler = async (request: any, response: any) => {
   try {
@@ -34,10 +35,13 @@ export const authSignUpHandler = async (request: any, response: any) => {
     // Create user starting position
     let userPosition = new UserPosition({
       userId: user._id,
-      accountBalance: 1000000,
+      accountBalance: 1000,
+      accountPositon: [],
+      buyingPower: 1000,
     });
     userPosition = await userPosition.save();
-    response.status(200).json(user);
+    const token = jwt.sign({ id: user._id }, "passworddKey");
+    response.status(200).json({ user: user, token: token });
     return;
   } catch (error) {
     console.error(error);

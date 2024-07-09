@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
@@ -48,11 +49,12 @@ class UserDataPage extends StatelessWidget {
 
   Future<dynamic> sendRequest(BuildContext context) async {
     final userId = Provider.of<UserProvider>(context).user.id;
-    final url = '${Constants.uri}/user/$userId';
+    final url = '${Constants.serverUri}/user/$userId';
     final response = await get(Uri.parse(url));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
+      debugPrint(response.body);
       throw Exception('Failed to load user');
     }
   }

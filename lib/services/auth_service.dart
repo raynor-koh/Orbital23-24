@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/main.dart';
+import 'package:robinbank_app/pages/main_wrapper.dart';
 import 'package:robinbank_app/pages/sign_in_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import '../utils/constants.dart';
@@ -26,8 +26,8 @@ class AuthService {
         name: name,
         email: email,
         token: '',
+        password: password,
       );
-
       http.Response response = await http.post(
         Uri.parse('${Constants.serverUri}/signup'),
         body: user.toJson(),
@@ -39,10 +39,19 @@ class AuthService {
       httpErrorHandle(
           response: response,
           context: context,
-          onSuccess: () => {
-                Navigator.pushNamed(context, '/mainwrapper'),
-                showSnackBar(context, 'Account successfully created!')
-              });
+          onSuccess: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            Provider.of<UserProvider>(context, listen: false)
+                .setUser(response.body);
+            await prefs.setString(
+                'x-auth-token', jsonDecode(response.body)['token']);
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const MainWrapper()),
+              (route) => false,
+            );
+            showSnackBar(context, 'Account successfully created!');
+          });
     } catch (error) {
       log(error.toString());
       showSnackBar(context, error.toString());
@@ -132,6 +141,7 @@ class AuthService {
     final navigator = Navigator.of(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('x-auth-token', '');
+    await prefs.remove("x-auth-token");
     navigator.pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const SignInPage()),
       (route) => false,
