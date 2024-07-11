@@ -35,13 +35,13 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: UIColours.lightBackground,
+        backgroundColor: UIColours.background1,
         title: Row(
           children: [
             Expanded(
               child: CupertinoSearchTextField(
                 prefixIcon: Icon(IconlyLight.search),
-                placeholder: 'Search',
+                placeholder: 'Symbol',
                 controller: _searchController,
                 onSubmitted: _performSearch,
               ),
@@ -71,10 +71,17 @@ class _SearchPageState extends State<SearchPage> {
         String symbol = _searchResults[index]['symbol']!;
         String name = _searchResults[index]['name']!;
         return ListTile(
-          title: Text('$symbol - $name'),
+          title: Text(
+            symbol,
+            style: UIText.medium,
+          ),
+          subtitle: Text(
+            name,
+            style: UIText.small,
+          ),
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => StockDetailsPage(symbol: symbol)
+              builder: (context) => StockDetailsPage(symbol: symbol, name: name)
             ));
           },
         );
@@ -95,7 +102,7 @@ class _SearchPageState extends State<SearchPage> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Failed to search stocks'),
+          content: Text('No such stock found!'),
           duration: Duration(seconds: 3),
         ),
       );

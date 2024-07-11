@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(8, 24, 8, 24),
+        padding: const EdgeInsetsDirectional.fromSTEB(8, 16, 8, 24),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +114,7 @@ class _HomePageState extends State<HomePage> {
                           UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
-                      '\$8,794.40',
+                      '8,794.40',
                       style: UIText.medium,
                     ),
                   ],

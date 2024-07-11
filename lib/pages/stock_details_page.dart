@@ -6,10 +6,12 @@ import 'package:robinbank_app/ui/ui_text.dart';
 
 class StockDetailsPage extends StatefulWidget {
   final String symbol;
+  final String name;
 
   const StockDetailsPage({
     super.key,
     required this.symbol,
+    required this.name,
   });
 
   @override
@@ -106,14 +108,17 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   PreferredSizeWidget buildAppBar(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: UIColours.lightBackground,
+      backgroundColor: UIColours.blue,
       title: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
+            icon: const Icon(
+              Icons.arrow_back_ios,
+              color: UIColours.white,
+            ),
             onPressed: () {
               Navigator.of(context).pop();
             },
@@ -123,10 +128,13 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.symbol, style: UIText.medium),
               Text(
-                'Placeholder name',
-                style: UIText.small,
+                widget.symbol, 
+                style: UIText.large.copyWith(color: UIColours.white)
+              ),
+              Text(
+                widget.name,
+                style: UIText.small.copyWith(color: UIColours.white),
               ),
             ],
           ),
@@ -136,36 +144,43 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   }
 
   Widget buildPricePanel(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: UIColours.white,
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(4, 8, 4, 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              stockMetrics['latestTradePrice'] != null ? '\$${stockMetrics['latestTradePrice'].toStringAsFixed(2)}' : 'N/A',
-              style: UIText.heading,
-            ),
-            Row(
-              children: [
-                Text(
-                  stockMetrics['priceDifference'] != null ? '\$${stockMetrics['priceDifference'].toStringAsFixed(2)}' : 'N/A',
-                  style: UIText.small.copyWith(color:UIColours.red),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  stockMetrics['percentageChange'] != null ? '(${stockMetrics['percentageChange'].toStringAsFixed(2)}%)' : 'N/A',
-                  style: UIText.small.copyWith(color:UIColours.red),
-                ),
-              ],
-            ),
-          ],
+    final latestTradePrice = stockMetrics['latestTradePrice'];
+    final priceDifference = stockMetrics['priceDifference'];
+    final percentageChange = stockMetrics['percentageChange'];
+
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: UIColours.white,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(4, 4, 4, 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                latestTradePrice.toStringAsFixed(2) ?? 'N/A',
+                style: UIText.heading.copyWith(color: priceDifference >= 0 ? UIColours.green : UIColours.red),
+              ),
+              Row(
+                children: [
+                  Text(
+                    '${priceDifference >= 0 ? '+' : ''}${priceDifference.toStringAsFixed(2) ?? 'N/A'}',
+                    style: UIText.medium.copyWith(color: priceDifference >= 0 ? UIColours.green : UIColours.red),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${percentageChange >= 0 ? '+' : ''}${percentageChange.toStringAsFixed(2)}%',
+                    style: UIText.medium.copyWith(color: priceDifference >= 0 ? UIColours.green : UIColours.red),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -190,7 +205,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  stockMetrics['high'] != null ? '\$${stockMetrics['high']}' : 'N/A',
+                  stockMetrics['high'] != null ? '${stockMetrics['high']}' : 'N/A',
                   style: UIText.small,
                 ),
               ],
@@ -203,7 +218,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  stockMetrics['low'] != null ? '\$${stockMetrics['low']}' : 'N/A',
+                  stockMetrics['low'] != null ? '${stockMetrics['low']}' : 'N/A',
                   style: UIText.small,
                 ),
               ],
