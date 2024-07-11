@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/stock_card.dart';
-import 'package:robinbank_app/models/account_position.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
@@ -32,10 +31,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     List<AccountPosition> userAccountPosition =
         Provider.of<UserPositionProvider>(context)
             .userPosition
             .accountPositions;
+=======
+>>>>>>> main
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
       child: Column(
@@ -62,6 +64,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
+<<<<<<< HEAD
             child: FutureBuilder(
                 future: Future.wait(userAccountPosition.map((position) async {
               List<String> stockData =
@@ -99,6 +102,21 @@ class _HomePageState extends State<HomePage> {
               }
             }),
           )
+=======
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              scrollDirection: Axis.vertical,
+              children: [
+                StockCard(),
+                StockCard(),
+                StockCard(),
+                StockCard(),
+                StockCard(),
+                StockCard(),
+              ],
+            ),
+          ),
+>>>>>>> main
         ],
       ),
     );

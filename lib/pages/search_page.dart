@@ -15,7 +15,8 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   late TextEditingController _searchController;
-  List<String> _searchResults = [];
+  List<Map<String, String>> _searchResults = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -57,27 +58,51 @@ class _SearchPageState extends State<SearchPage> {
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: _searchResults.length,
-        itemBuilder: (context, index) {
-          String symbol = _searchResults[index];
-          return ListTile(
-            title: Text(symbol),
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => StockDetailsPage(symbol: symbol)
-              ));
-            },
-          );
-        },
-      ),
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : _buildSearchResults(),
+    );
+  }
+
+  Widget _buildSearchResults() {
+    return ListView.builder(
+      itemCount: _searchResults.length,
+      itemBuilder: (context, index) {
+        String symbol = _searchResults[index]['symbol']!;
+        String name = _searchResults[index]['name']!;
+        return ListTile(
+          title: Text('$symbol - $name'),
+          onTap: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => StockDetailsPage(symbol: symbol)
+            ));
+          },
+        );
+      },
     );
   }
 
   void _performSearch(String query) async {
-    List<String> results = await AlpacaService().searchStock(query);
     setState(() {
-      _searchResults = results;
+      _isLoading = true;
     });
+
+    try {
+      List<Map<String, String>> results = await AlpacaService().searchStock(query.toUpperCase());
+      setState(() {
+        _searchResults = results;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to search stocks'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }
