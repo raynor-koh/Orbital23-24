@@ -4,7 +4,10 @@ import UserPosition from "../../models/userPosition";
 export const buyStockHandler = async (request: any, response: any) => {
   try {
     const userId = request.params.id;
-    const { symbol, name, quantity, price } = request.body;
+    const symbol = request.body.symbol;
+    const name = request.body.name;
+    const quantity = request.body.quantity;
+    const price = request.body.price;
     const user = await User.findById(userId);
     if (!user) {
       return response.status(404).json({ message: "User not found" });
@@ -16,6 +19,7 @@ export const buyStockHandler = async (request: any, response: any) => {
     }
     // Parse DB data
     let accountBalance = userPositionData.accountBalance;
+    console.log(userPositionData.buyingPower);
     let buyingPower = userPositionData.buyingPower;
     let accountPosition = userPositionData.accountPosition;
 

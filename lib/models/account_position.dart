@@ -1,7 +1,7 @@
 class AccountPosition {
   final String name;
   final String symbol;
-  final num quantity;
+  final int quantity;
   final num price;
 
   AccountPosition({

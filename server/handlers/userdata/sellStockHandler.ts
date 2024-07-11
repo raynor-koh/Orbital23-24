@@ -4,7 +4,10 @@ import UserPosition from "../../models/userPosition";
 export const sellStockHandler = async (request: any, response: any) => {
   try {
     const userId = request.params.id;
-    const { symbol, name, quantity, price } = request.body;
+    const symbol = request.body.symbol;
+    const name = request.body.name;
+    const quantity = request.body.quantity;
+    const price = request.body.price;
     const user = await User.findById(userId);
 
     if (!user) {

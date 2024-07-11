@@ -6,9 +6,11 @@ import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
+import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
+import 'dart:developer';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -19,6 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final UserPositionService userPositionService = UserPositionService();
+  final AlpacaService alpacaService = AlpacaService();
 
   @override
   void initState() {
@@ -59,21 +62,43 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              scrollDirection: Axis.vertical,
-              children: [
-                StockCard(
-                  symbol: 'NVDA',
-                  name: 'Nvidia Corporation',
-                  marketValue: 91000.00,
-                  quantity: 700,
-                  pnl: 1540.00,
-                  pnlPercentage: 1.66,
-                )
-              ],
-            ),
-          ),
+            child: FutureBuilder(
+                future: Future.wait(userAccountPosition.map((position) async {
+              List<String> stockData =
+                  await alpacaService.searchStock(position.symbol);
+              log(stockData.toString());
+              // TODO: Calculate market value
+              // TODO: Calculate pnl
+              // TODO: Calculate pnl percentage
+              return StockCard(
+                symbol: position.symbol,
+                name: position.name,
+                marketValue: 100,
+                quantity: position.quantity,
+                pnl: 10,
+                pnlPercentage: 10,
+              );
+            })), builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data!.isNotEmpty) {
+                  return ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    scrollDirection: Axis.vertical,
+                    children:
+                        snapshot.data!.map((stockCard) => stockCard).toList(),
+                  );
+                } else {
+                  return const Center(child: Text('No positions available'));
+                }
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            }),
+          )
         ],
       ),
     );
