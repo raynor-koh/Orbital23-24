@@ -4,7 +4,7 @@ import UserPosition from "../../models/userPosition";
 export const buyStockHandler = async (request: any, response: any) => {
   try {
     const userId = request.params.id;
-    const buyStockPosition = request.body.position;
+    const { symbol, name, quantity, price } = request.body;
     const user = await User.findById(userId);
     if (!user) {
       return response.status(404).json({ message: "User not found" });
@@ -20,30 +20,28 @@ export const buyStockHandler = async (request: any, response: any) => {
     let accountPosition = userPositionData.accountPosition;
 
     // Check if buying power enough to execute buy order
-    const buyCost = buyStockPosition.quantity * buyStockPosition.buyPrice;
-    if (buyingPower < buyCost) {
+    const cost = quantity * price;
+    if (buyingPower < cost) {
       return response
         .status(400)
         .json({ message: "Insufficient buying power" });
     }
-
     // Check if stock exists in current portfolio
     const stockExists = accountPosition.find((position) => {
-      position.name == buyStockPosition.name;
+      return position.name == name && position.symbol == symbol;
     });
-
     if (!stockExists) {
       // Add new stock to portfolio
-      accountPosition.push(buyStockPosition);
-      buyingPower -= buyCost;
+      const newPosition = { symbol, name, quantity, price };
+      accountPosition.push(newPosition);
+      buyingPower -= cost;
     } else {
       // Update stock quantity
-      stockExists.quantity += buyStockPosition.quantity;
-      buyingPower -= buyCost;
-      const totalBuyCost =
-        stockExists.quantity * stockExists.buyPrice + buyCost;
-      const newQuantity = stockExists.quantity + buyStockPosition.quantity;
-      stockExists.buyPrice = totalBuyCost / newQuantity;
+      stockExists.quantity += quantity;
+      buyingPower -= cost;
+      const totalBuyCost = stockExists.quantity * stockExists.price + cost;
+      const newQuantity = stockExists.quantity + quantity;
+      stockExists.price = totalBuyCost / newQuantity;
     }
 
     // Update database

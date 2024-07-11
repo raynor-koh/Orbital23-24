@@ -8,9 +8,9 @@ const userPositionSchema = new mongoose.Schema({
     type: [
       {
         name: { required: true, type: String },
-        label: { required: true, type: String },
+        symbol: { required: true, type: String },
         quantity: { required: true, type: Number },
-        buyPrice: { required: true, type: Number },
+        price: { required: true, type: Number },
       },
     ],
   },

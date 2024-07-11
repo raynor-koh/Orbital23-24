@@ -31,11 +31,11 @@ export const resetBalanceHandler = async (request: any, response: any) => {
     if (result.modifiedCount == 0) {
       return response
         .status(400)
-        .json({ message: "No changes were made to the UserPosition" });
+        .json({ message: "No changes were made to the user position" });
     }
     return response
       .status(200)
-      .json({ message: `UserPosition resetted to ${resetAmount}` });
+      .json({ message: `User position reset to ${resetAmount}` });
   } catch (error) {
     console.error(error);
     response.status(500).json({ error: error });

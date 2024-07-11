@@ -2,21 +2,93 @@ import 'package:flutter/material.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 
 class StockCard extends StatelessWidget {
-  const StockCard({super.key});
+  final String symbol;
+  final String name;
+  double marketValue;
+  int quantity;
+  double pnl;
+  double pnlPercentage;
+
+  StockCard(
+      {super.key,
+      required this.symbol,
+      required this.name,
+      required this.marketValue,
+      required this.quantity,
+      required this.pnl,
+      required this.pnlPercentage});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {},
       child: Container(
-        width: 100,
-        height: 100,
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: UIColours.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Image.asset(
-          'assets/images/Group_17.png',
+            color: UIColours.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300)),
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    symbol,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(name,
+                      style: const TextStyle(color: Colors.grey, fontSize: 12))
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '\$${marketValue.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  Text(
+                    '$quantity',
+                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '${pnl >= 0 ? '+' : ''}\$${pnl.toStringAsFixed(2)}',
+                    style: TextStyle(
+                      color: pnl >= 0 ? Colors.green : Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${pnlPercentage >= 0 ? '+' : ''}${pnlPercentage.toStringAsFixed(2)}%',
+                    style: TextStyle(
+                      color: pnlPercentage >= 0 ? Colors.green : Colors.red,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
         ),
       ),
     );

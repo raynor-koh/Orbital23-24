@@ -62,10 +62,16 @@ class _HomePageState extends State<HomePage> {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 4),
               scrollDirection: Axis.vertical,
-              children: userAccountPosition.isEmpty &&
-                      Provider.of<UserProvider>(context).user.name == 'test'
-                  ? [const StockCard(), const StockCard(), const StockCard()]
-                  : [],
+              children: [
+                StockCard(
+                  symbol: 'NVDA',
+                  name: 'Nvidia Corporation',
+                  marketValue: 91000.00,
+                  quantity: 700,
+                  pnl: 1540.00,
+                  pnlPercentage: 1.66,
+                )
+              ],
             ),
           ),
         ],
@@ -90,7 +96,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Net Account Value ${user.name}',
+              'Net Account Value',
               style: UIText.small.copyWith(color: UIColours.secondaryText),
             ),
             Text(
@@ -336,6 +342,7 @@ class _HomePageState extends State<HomePage> {
     String userId = Provider.of<UserProvider>(context, listen: false).user.id;
     // Update the user account balance in the provider
     userPositionService.resetUserPosition(context, userId, newBalance);
+    userPositionService.getUserPosition(context, userId);
 
     // Display a success message
     ScaffoldMessenger.of(context).showSnackBar(

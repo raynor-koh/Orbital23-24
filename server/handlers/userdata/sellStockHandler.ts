@@ -4,11 +4,7 @@ import UserPosition from "../../models/userPosition";
 export const sellStockHandler = async (request: any, response: any) => {
   try {
     const userId = request.params.id;
-    const sellStockPosition = request.body.sellStockPosition;
-    const sellStockName = request.body.name;
-    const sellStockLabel = request.body.label;
-    const sellStockPrice = request.body.price;
-    const sellStockQuantity = request.body.quantity;
+    const { symbol, name, quantity, price } = request.body;
     const user = await User.findById(userId);
 
     if (!user) {
@@ -27,7 +23,7 @@ export const sellStockHandler = async (request: any, response: any) => {
 
     // Check if stock exists
     const stockExists = accountPosition.find((position) => {
-      position.name === sellStockPosition.name;
+      position.name === name && position.symbol === symbol;
     });
 
     if (!stockExists) {
@@ -38,26 +34,25 @@ export const sellStockHandler = async (request: any, response: any) => {
 
     // Check if sufficient quantity owned
     const stockQuantity = stockExists.quantity;
-    if (stockQuantity < sellStockPosition.quantity) {
+    if (stockQuantity < quantity) {
       return response
         .status(404)
         .json({ message: "You do not own sufficient quantity of this" });
     }
 
-    buyingPower += sellStockPosition.quantity * sellStockPosition.buyPrice;
+    buyingPower += quantity * price;
 
-    const remainingQuantity = stockQuantity - sellStockPosition.quantity;
+    const remainingQuantity = stockQuantity - quantity;
     // If no stock remaining, remove from position
     if (remainingQuantity == 0) {
       accountPosition.pull(stockExists);
     } else {
       // Else, update quantity
-      const totalBuyCost = stockExists.quantity * stockExists.buyPrice;
-      const newBuyCost =
-        totalBuyCost - sellStockPosition.quantity * sellStockPosition.buyPrice;
+      const totalBuyCost = stockExists.quantity * stockExists.price;
+      const newBuyCost = totalBuyCost - quantity * price;
       const newBuyPrice = newBuyCost / remainingQuantity;
       stockExists.quantity = remainingQuantity;
-      stockExists.buyPrice = newBuyPrice;
+      stockExists.price = newBuyPrice;
     }
     userPositionData.buyingPower = buyingPower;
     await userPositionData.save();

@@ -30,8 +30,10 @@ class UserPositionService {
   void resetUserPosition(
       BuildContext context, String userId, double resetAmount) async {
     try {
+      var payload = json.encode({'amount': resetAmount});
       http.Response response = await http.post(
         Uri.parse('${Constants.serverUri}/user/resetBalance/$userId'),
+        body: payload,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
