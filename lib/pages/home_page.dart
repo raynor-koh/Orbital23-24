@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/stock_card.dart';
-import 'package:robinbank_app/models/account_position.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
@@ -29,8 +28,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<AccountPosition> userAccountPosition =
-        Provider.of<UserPositionProvider>(context).userPosition.accountPositions;
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
       child: Column(
@@ -60,10 +57,14 @@ class _HomePageState extends State<HomePage> {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 4),
               scrollDirection: Axis.vertical,
-              children: userAccountPosition.isEmpty &&
-                      Provider.of<UserProvider>(context).user.name == 'test'
-                  ? [const StockCard(), const StockCard(), const StockCard()]
-                  : [],
+              children: [
+                StockCard(),
+                StockCard(),
+                StockCard(),
+                StockCard(),
+                StockCard(),
+                StockCard(),
+              ],
             ),
           ),
         ],
@@ -87,7 +88,7 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Net Account Value ${user.name}',
+              'Net Account Value',
               style: UIText.small.copyWith(color: UIColours.secondaryText),
             ),
             Text(
