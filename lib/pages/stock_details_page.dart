@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:robinbank_app/components/candlestick_chart.dart';
+import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
@@ -17,6 +18,35 @@ class StockDetailsPage extends StatefulWidget {
 
 class _StockDetailsPageState extends State<StockDetailsPage> {
   int quantity = 0;
+  Map<String, dynamic> stockMetrics = {};
+  bool isLoading = true;
+
+   @override
+  void initState() {
+    super.initState();
+    _refreshStockMetrics();
+  }
+
+  Future<void> _refreshPage() async {
+    await _refreshStockMetrics();
+  }
+
+  Future<void> _refreshStockMetrics() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      Map<String, dynamic> data = await AlpacaService().getStockMetrics(widget.symbol);
+      setState(() {
+        stockMetrics = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
 
   void incrementQuantity() {
     setState(() {
@@ -32,65 +62,76 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
     }
   }
 
+  String formatVolume(int volume) {
+    if (volume >= 1000000) {
+      return '${(volume / 1000000).toStringAsFixed(1)}M';
+    } else if (volume >= 1000) {
+      return '${(volume / 1000).toStringAsFixed(1)}K';
+    } else {
+      return '$volume';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context),
-      body: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            buildPricePanel(context),
-            const SizedBox(
-              height: 8,
-            ),
-            buildMetricsPanel(context),
-            CandlestickChart(symbol: widget.symbol),
-            const SizedBox(
-              height: 8,
-            ),
-            buildTradePanel(context),
-          ],
-        ),
-      ),
-    );
+      body: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : RefreshIndicator(
+                onRefresh: _refreshPage,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        buildPricePanel(context),
+                        const SizedBox(height: 8),
+                        buildMetricsPanel(context),
+                        CandlestickChart(symbol: widget.symbol),
+                        const SizedBox(height: 8),
+                        buildTradePanel(context),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
   }
 
   PreferredSizeWidget buildAppBar(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
-        backgroundColor: UIColours.lightBackground,
-        title: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.symbol,
-                  style:  UIText.medium
-                ),
-                Text(
-                  'Placeholder name',
-                  style: UIText.small,
-                ),
-              ],
-            ),
-          ],          
-        ),
+      backgroundColor: UIColours.lightBackground,
+      title: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(widget.symbol, style: UIText.medium),
+              Text(
+                'Placeholder name',
+                style: UIText.small,
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -108,21 +149,19 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '192.25',
+              stockMetrics['latestTradePrice'] != null ? '\$${stockMetrics['latestTradePrice'].toStringAsFixed(2)}' : 'N/A',
               style: UIText.heading,
             ),
             Row(
               children: [
                 Text(
-                  '+0.96',
-                  style: UIText.small.copyWith(color: UIColours.green),
+                  stockMetrics['priceDifference'] != null ? '\$${stockMetrics['priceDifference'].toStringAsFixed(2)}' : 'N/A',
+                  style: UIText.small.copyWith(color:UIColours.red),
                 ),
-                const SizedBox(
-                  width: 8,
-                ),
+                const SizedBox(width: 8),
                 Text(
-                  '+0.50%',
-                  style: UIText.small.copyWith(color: UIColours.green),
+                  stockMetrics['percentageChange'] != null ? '(${stockMetrics['percentageChange'].toStringAsFixed(2)}%)' : 'N/A',
+                  style: UIText.small.copyWith(color:UIColours.red),
                 ),
               ],
             ),
@@ -151,25 +190,10 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  '192.57',
-                  style: UIText.small,
-                ),
-                const SizedBox(
-                  width: 100,
-                  height: 8,
-                ),
-                Text(
-                  '52 Week High',
-                  style: UIText.small,
-                ),
-                Text(
-                  '199.62',
+                  stockMetrics['high'] != null ? '\$${stockMetrics['high']}' : 'N/A',
                   style: UIText.small,
                 ),
               ],
-            ),
-            const Expanded(
-              child: SizedBox(),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,27 +203,10 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  '189.91',
-                  style: UIText.small,
-                ),
-                const SizedBox(
-                  width: 100,
-                  height: 8,
-                ),
-                Text(
-                  '52 Week Low',
-                  style: UIText.small,
-                ),
-                Text(
-                  '163.85',
+                  stockMetrics['low'] != null ? '\$${stockMetrics['low']}' : 'N/A',
                   style: UIText.small,
                 ),
               ],
-            ),
-            const Expanded(
-              child: SizedBox(
-                height: 100,
-              ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -209,19 +216,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  '75.16M',
-                  style: UIText.small,
-                ),
-                const SizedBox(
-                  width: 100,
-                  height: 8,
-                ),
-                Text(
-                  'Mkt Cap',
-                  style: UIText.small,
-                ),
-                Text(
-                  '2.95T',
+                  stockMetrics['volume'] != null ? formatVolume(stockMetrics['volume']) : 'N/A',
                   style: UIText.small,
                 ),
               ],
@@ -231,7 +226,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
       ),
     );
   }
-  
+
   Widget buildTradePanel(BuildContext context) {
     return Container(
       decoration: BoxDecoration(

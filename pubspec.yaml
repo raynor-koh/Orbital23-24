@@ -45,6 +45,7 @@ dependencies:
   permission_handler: ^11.3.1
   envied: ^0.5.4+1
   dio: ^5.4.3+1
+  riverpod: ^2.5.1
 
 dev_dependencies:
   flutter_test:

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'dart:developer';
 import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
