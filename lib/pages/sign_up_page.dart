@@ -56,7 +56,7 @@ class SignUpPageState extends State<SignUpPage> {
               padding: const EdgeInsets.all(16),
               child: Container(
                 decoration: BoxDecoration(
-                    color: UIColours.darkBackground,
+                    color: UIColours.background2,
                     boxShadow: const [
                       BoxShadow(
                         blurRadius: 4,
