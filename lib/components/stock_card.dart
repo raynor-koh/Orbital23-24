@@ -52,7 +52,7 @@ class StockCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '\$${marketValue.toStringAsFixed(2)}',
+                    marketValue.toStringAsFixed(2),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16),
                   ),
@@ -72,7 +72,7 @@ class StockCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${pnl >= 0 ? '+' : ''}\$${pnl.toStringAsFixed(2)}',
+                    '${pnl >= 0 ? '+' : ''}${pnl.toStringAsFixed(2)}',
                     style: TextStyle(
                       color: pnl >= 0 ? Colors.green : Colors.red,
                       fontWeight: FontWeight.bold,

@@ -52,4 +52,52 @@ class UserPositionService {
       showSnackBar(context, error.toString());
     }
   }
+
+  void executeBuyTrade(
+      BuildContext context, String userId, Map<String, dynamic> payload) async {
+    try {
+      var body = json.encode(payload);
+      http.Response response = await http.post(
+        Uri.parse('${Constants.serverUri}/user/buyStock/$userId'),
+        body: body,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        getUserPosition(context, userId);
+        var jsonResponse = jsonDecode(response.body);
+        String buyMessage = jsonResponse['message'];
+        showSnackBar(context, buyMessage);
+      }
+    } catch (error) {
+      log(error.toString());
+      showSnackBar(context, error.toString());
+    }
+  }
+
+  void executeSellTrade(
+      BuildContext context, String userId, Map<String, dynamic> payload) async {
+    try {
+      var body = json.encode(payload);
+      http.Response response = await http.post(
+        Uri.parse('${Constants.serverUri}/user/sellStock/$userId'),
+        body: body,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        getUserPosition(context, userId);
+        var jsonResponse = jsonDecode(response.body);
+        String sellMessage = jsonResponse['message'];
+        showSnackBar(context, sellMessage);
+      }
+    } catch (error) {
+      log(error.toString());
+      showSnackBar(context, error.toString());
+    }
+  }
 }

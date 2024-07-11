@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/stock_card.dart';
+import 'package:robinbank_app/models/account_position.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
@@ -9,7 +10,6 @@ import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
-import 'dart:developer';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -31,13 +31,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     List<AccountPosition> userAccountPosition =
         Provider.of<UserPositionProvider>(context)
             .userPosition
             .accountPositions;
-=======
->>>>>>> main
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
       child: Column(
@@ -64,22 +61,23 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-<<<<<<< HEAD
             child: FutureBuilder(
                 future: Future.wait(userAccountPosition.map((position) async {
-              List<String> stockData =
-                  await alpacaService.searchStock(position.symbol);
-              log(stockData.toString());
-              // TODO: Calculate market value
-              // TODO: Calculate pnl
-              // TODO: Calculate pnl percentage
+              Map<String, dynamic> stockMetrics =
+                  await alpacaService.getStockMetrics(position.symbol);
+              double marketValue =
+                  stockMetrics['latestTradePrice'] * position.quantity;
+              num initialInvestment =
+                  position.price * (position.quantity.toDouble());
+              double pnl = marketValue - initialInvestment;
+              double pnlPercentage = pnl / initialInvestment * 100;
               return StockCard(
                 symbol: position.symbol,
                 name: position.name,
-                marketValue: 100,
+                marketValue: marketValue,
                 quantity: position.quantity,
-                pnl: 10,
-                pnlPercentage: 10,
+                pnl: pnl,
+                pnlPercentage: pnlPercentage,
               );
             })), builder: (context, snapshot) {
               if (snapshot.hasData) {
@@ -102,21 +100,6 @@ class _HomePageState extends State<HomePage> {
               }
             }),
           )
-=======
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              scrollDirection: Axis.vertical,
-              children: [
-                StockCard(),
-                StockCard(),
-                StockCard(),
-                StockCard(),
-                StockCard(),
-                StockCard(),
-              ],
-            ),
-          ),
->>>>>>> main
         ],
       ),
     );

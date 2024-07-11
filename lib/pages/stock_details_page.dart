@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/candlestick_chart.dart';
+import 'package:robinbank_app/models/user.dart';
+import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
+import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
@@ -20,8 +24,10 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   int quantity = 0;
   Map<String, dynamic> stockMetrics = {};
   bool isLoading = true;
+  final UserPositionService userPositionService = new UserPositionService();
+  final AlpacaService alpacaService = new AlpacaService();
 
-   @override
+  @override
   void initState() {
     super.initState();
     _refreshStockMetrics();
@@ -36,7 +42,8 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
       isLoading = true;
     });
     try {
-      Map<String, dynamic> data = await AlpacaService().getStockMetrics(widget.symbol);
+      Map<String, dynamic> data =
+          await alpacaService.getStockMetrics(widget.symbol);
       setState(() {
         stockMetrics = data;
         isLoading = false;
@@ -77,30 +84,30 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
     return Scaffold(
       appBar: buildAppBar(context),
       body: isLoading
-            ? Center(child: CircularProgressIndicator())
-            : RefreshIndicator(
-                onRefresh: _refreshPage,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        buildPricePanel(context),
-                        const SizedBox(height: 8),
-                        buildMetricsPanel(context),
-                        CandlestickChart(symbol: widget.symbol),
-                        const SizedBox(height: 8),
-                        buildTradePanel(context),
-                      ],
-                    ),
+          ? Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: _refreshPage,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      buildPricePanel(context),
+                      const SizedBox(height: 8),
+                      buildMetricsPanel(context),
+                      CandlestickChart(symbol: widget.symbol),
+                      const SizedBox(height: 8),
+                      buildTradePanel(context),
+                    ],
                   ),
                 ),
               ),
-            );
+            ),
+    );
   }
 
   PreferredSizeWidget buildAppBar(BuildContext context) {
@@ -149,19 +156,25 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              stockMetrics['latestTradePrice'] != null ? '\$${stockMetrics['latestTradePrice'].toStringAsFixed(2)}' : 'N/A',
+              stockMetrics['latestTradePrice'] != null
+                  ? '\$${stockMetrics['latestTradePrice'].toStringAsFixed(2)}'
+                  : 'N/A',
               style: UIText.heading,
             ),
             Row(
               children: [
                 Text(
-                  stockMetrics['priceDifference'] != null ? '\$${stockMetrics['priceDifference'].toStringAsFixed(2)}' : 'N/A',
-                  style: UIText.small.copyWith(color:UIColours.red),
+                  stockMetrics['priceDifference'] != null
+                      ? '\$${stockMetrics['priceDifference'].toStringAsFixed(2)}'
+                      : 'N/A',
+                  style: UIText.small.copyWith(color: UIColours.red),
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  stockMetrics['percentageChange'] != null ? '(${stockMetrics['percentageChange'].toStringAsFixed(2)}%)' : 'N/A',
-                  style: UIText.small.copyWith(color:UIColours.red),
+                  stockMetrics['percentageChange'] != null
+                      ? '(${stockMetrics['percentageChange'].toStringAsFixed(2)}%)'
+                      : 'N/A',
+                  style: UIText.small.copyWith(color: UIColours.red),
                 ),
               ],
             ),
@@ -190,7 +203,9 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  stockMetrics['high'] != null ? '\$${stockMetrics['high']}' : 'N/A',
+                  stockMetrics['high'] != null
+                      ? '\$${stockMetrics['high']}'
+                      : 'N/A',
                   style: UIText.small,
                 ),
               ],
@@ -203,7 +218,9 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  stockMetrics['low'] != null ? '\$${stockMetrics['low']}' : 'N/A',
+                  stockMetrics['low'] != null
+                      ? '\$${stockMetrics['low']}'
+                      : 'N/A',
                   style: UIText.small,
                 ),
               ],
@@ -216,7 +233,9 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  stockMetrics['volume'] != null ? formatVolume(stockMetrics['volume']) : 'N/A',
+                  stockMetrics['volume'] != null
+                      ? formatVolume(stockMetrics['volume'])
+                      : 'N/A',
                   style: UIText.small,
                 ),
               ],
@@ -228,6 +247,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   }
 
   Widget buildTradePanel(BuildContext context) {
+    final User user = Provider.of<UserProvider>(context).user;
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
@@ -250,14 +270,24 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // TODO: Add buy functionality
+                        Map<String, dynamic> payload = {
+                          'symbol': stockMetrics['symbol'],
+                          'name': stockMetrics['name']
+                        };
+                        userPositionService.executeBuyTrade(
+                            context, user.id, payload);
+                      },
                       child: Text(
                         'Buy',
                         style: UIText.small,
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // TODO: Add sell functionality
+                      },
                       child: Text(
                         'Sell',
                         style: UIText.small,
