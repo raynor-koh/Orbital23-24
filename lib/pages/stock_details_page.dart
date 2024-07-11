@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/candlestick_chart.dart';
@@ -286,13 +288,15 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // TODO: Add buy functionality
                         Map<String, dynamic> payload = {
-                          'symbol': stockMetrics['symbol'],
-                          'name': stockMetrics['name']
+                          'symbol': widget.symbol,
+                          'name': widget.name,
+                          'quantity': quantity,
+                          'price': stockMetrics['latestTraderPrice'],
                         };
                         userPositionService.executeBuyTrade(
                             context, user.id, payload);
+                        log("Buy success");
                       },
                       child: Text(
                         'Buy',
@@ -301,7 +305,14 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        // TODO: Add sell functionality
+                        Map<String, dynamic> payload = {
+                          'symbol': widget.symbol,
+                          'name': widget.name,
+                          'quantity': quantity,
+                          'price': stockMetrics['latestTraderPrice'],
+                        };
+                        userPositionService.executeSellTrade(
+                            context, user.id, payload);
                       },
                       child: Text(
                         'Sell',
