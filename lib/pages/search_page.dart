@@ -52,7 +52,7 @@ class _SearchPageState extends State<SearchPage> {
               },
               child: Text(
                 'Cancel',
-                style: UIText.medium,
+                style: UIText.medium.copyWith(),
               ),
             ),
           ],
@@ -73,7 +73,7 @@ class _SearchPageState extends State<SearchPage> {
         return ListTile(
           title: Text(
             symbol,
-            style: UIText.medium,
+            style: UIText.large.copyWith(color: UIColours.blue),
           ),
           subtitle: Text(
             name,

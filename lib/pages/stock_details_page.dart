@@ -19,9 +19,11 @@ class StockDetailsPage extends StatefulWidget {
 }
 
 class _StockDetailsPageState extends State<StockDetailsPage> {
-  int quantity = 0;
   Map<String, dynamic> stockMetrics = {};
   bool isLoading = true;
+  int quantity = 1;
+  bool isBuy = true;
+  List<bool> selectedSide = [false, false];
 
    @override
   void initState() {
@@ -57,7 +59,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   }
 
   void decrementQuantity() {
-    if (quantity > 0) {
+    if (quantity > 1) {
       setState(() {
         quantity--;
       });
@@ -79,23 +81,31 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
     return Scaffold(
       appBar: buildAppBar(context),
       body: isLoading
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(
+                child: RefreshProgressIndicator(
+                  backgroundColor: UIColours.white,
+                  color: UIColours.blue,
+                ),
+              )
             : RefreshIndicator(
+              backgroundColor: UIColours.white,
+              color: UIColours.blue,
                 onRefresh: _refreshPage,
                 child: SingleChildScrollView(
                   physics: const AlwaysScrollableScrollPhysics(),
                   child: Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                    padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         buildPricePanel(context),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
                         buildMetricsPanel(context),
+                        const SizedBox(height: 4),
                         CandlestickChart(symbol: widget.symbol),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 4),
                         buildTradePanel(context),
                       ],
                     ),
@@ -149,7 +159,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
     final percentageChange = stockMetrics['percentageChange'];
 
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+      padding: const EdgeInsetsDirectional.fromSTEB(0, 8, 0, 0),
       child: Container(
         decoration: BoxDecoration(
           color: UIColours.white,
@@ -260,25 +270,55 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   'Side',
                   style: UIText.small,
                 ),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                // Row(
+                //   mainAxisSize: MainAxisSize.max,
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     ElevatedButton(
+                //       onPressed: () {},
+                //       child: Text(
+                //         'Buy',
+                //         style: UIText.small,
+                //       ),
+                //     ),
+                //     ElevatedButton(
+                //       onPressed: () {},
+                //       child: Text(
+                //         'Sell',
+                //         style: UIText.small,
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                ToggleButtons(
+                  isSelected: selectedSide,
+                  borderWidth: 1,
+                  borderRadius: BorderRadius.circular(4),
+                  selectedColor: Colors.white,
+                  selectedBorderColor: isBuy ? Colors.green[700] : Colors.red[700],
+                  fillColor: isBuy ? Colors.green[200] : Colors.red[200],
+                  constraints: const BoxConstraints(
+                    minHeight: 30.0,
+                    minWidth: 80.0,
+                  ),
                   children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Buy',
-                        style: UIText.small,
-                      ),
+                    Text(
+                      'Buy',
+                      style: UIText.small,
                     ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text(
-                        'Sell',
-                        style: UIText.small,
-                      ),
+                    Text(
+                      'Sell',
+                      style: UIText.small,
                     ),
                   ],
+                  onPressed: (int index) {
+                    setState(() {
+                      isBuy = index == 0;
+                      for (int i = 0; i < selectedSide.length; i++) {
+                        selectedSide[i] = i == index;
+                      }
+                    });
+                  },
                 ),
               ],
             ),

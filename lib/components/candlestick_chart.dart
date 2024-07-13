@@ -29,10 +29,16 @@ class _CandlestickChartState extends State<CandlestickChart> {
     _chartDataPointsFuture = AlpacaService().getChartDataPoints(widget.symbol);
     _trackballBehaviour = TrackballBehavior(
       enable: true,
+      lineType: TrackballLineType.vertical,
+      lineColor: UIColours.blue,
+      lineWidth: 2,
+      lineDashArray: [2, 1],
+      hideDelay: 3000,
       activationMode: ActivationMode.longPress,
       tooltipSettings: InteractiveTooltip(
         enable: true,
         color: UIColours.white,
+        borderRadius: 4,
         textStyle: UIText.xsmall,
         format: 'point.x\nOpen: point.open\nHigh: point.high\nLow: point.low\nClose: point.close',
       ),
@@ -51,7 +57,10 @@ class _CandlestickChartState extends State<CandlestickChart> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: RefreshProgressIndicator(
+              backgroundColor: UIColours.white,
+              color: UIColours.blue,
+            ),
           );
         } else if (snapshot.hasError) {
           return Center(
@@ -60,8 +69,12 @@ class _CandlestickChartState extends State<CandlestickChart> {
         } else {
           final chartDataPoints = snapshot.data!;
           return SizedBox(
-            height: 200,
+            height: 300,
             child: SfCartesianChart(
+              backgroundColor: UIColours.background1,
+              borderColor: UIColours.background2,
+              borderWidth: 1,
+              plotAreaBorderWidth: 0.0,
               trackballBehavior: _trackballBehaviour,
               zoomPanBehavior: _zoomPanBehaviour,
               series: <CandleSeries>[
@@ -72,11 +85,16 @@ class _CandlestickChartState extends State<CandlestickChart> {
                   highValueMapper: (ChartDataPoint point, _) => point.high,
                   lowValueMapper: (ChartDataPoint point, _) => point.low,
                   closeValueMapper: (ChartDataPoint point, _) => point.close,
+                  bearColor: Colors.red,
+                  bullColor: Colors.green,
+                  borderWidth: 2,
+                  animationDuration: 1000,
                 ),
               ],
               primaryXAxis: DateTimeAxis(
                 dateFormat: DateFormat('MM/dd HH.mm'),
-                autoScrollingDelta: 1,
+                autoScrollingDelta: 20,
+                autoScrollingDeltaType: DateTimeIntervalType.minutes,
                 autoScrollingMode: AutoScrollingMode.end,
                 majorGridLines: const MajorGridLines(width: 0),
                 isVisible: false,
