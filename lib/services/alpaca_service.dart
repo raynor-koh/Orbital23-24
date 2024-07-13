@@ -56,8 +56,8 @@ class AlpacaService {
   }
 
   Future<List<ChartDataPoint>> getChartDataPoints(String symbol) async {
-    final url = Uri.parse('${Constants.alpacaBaseUrl}/v2/stocks/$symbol/bars?timeframe=1Min&adjustment=raw&feed=iex&sort=asc');
-    // final url = Uri.parse('https://data.alpaca.markets/v2/stocks/AAPL/bars?timeframe=1Min&start=2024-07-11&limit=10000&adjustment=raw&feed=iex&sort=asc'); // for testing when market is closed
+    // final url = Uri.parse('${Constants.alpacaBaseUrl}/v2/stocks/$symbol/bars?timeframe=1Min&adjustment=raw&feed=iex&sort=asc');
+    final url = Uri.parse('https://data.alpaca.markets/v2/stocks/AAPL/bars?timeframe=1Min&start=2024-07-12&limit=10000&adjustment=raw&feed=iex&sort=asc'); // for testing when market is closed
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
@@ -74,6 +74,7 @@ class AlpacaService {
             high: bar['h'],
             low: bar['l'],
             close: bar['c'],
+            volume: bar['v'],
           );
         }).toList();
       } else {

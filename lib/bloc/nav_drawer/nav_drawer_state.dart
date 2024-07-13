@@ -5,7 +5,7 @@ enum NavDrawerDestination {
   testPage1,
   testPage3,
   testPage4,
-  logOut
+  signOut
 }
 
 class NavDrawerState extends Equatable {

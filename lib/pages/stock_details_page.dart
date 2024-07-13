@@ -23,7 +23,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   bool isLoading = true;
   int quantity = 1;
   bool isBuy = true;
-  List<bool> selectedSide = [false, false];
+  List<bool> selectedSide = [true, false];
 
    @override
   void initState() {
@@ -270,26 +270,6 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   'Side',
                   style: UIText.small,
                 ),
-                // Row(
-                //   mainAxisSize: MainAxisSize.max,
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     ElevatedButton(
-                //       onPressed: () {},
-                //       child: Text(
-                //         'Buy',
-                //         style: UIText.small,
-                //       ),
-                //     ),
-                //     ElevatedButton(
-                //       onPressed: () {},
-                //       child: Text(
-                //         'Sell',
-                //         style: UIText.small,
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 ToggleButtons(
                   isSelected: selectedSide,
                   borderWidth: 1,

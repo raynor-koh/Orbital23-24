@@ -4,6 +4,7 @@ class ChartDataPoint {
   final num? high;
   final num? low;
   final num? close;
+  final num? volume;
 
   ChartDataPoint({
     this.dateTime,
@@ -11,5 +12,6 @@ class ChartDataPoint {
     this.high,
     this.low,
     this.close,
+    this.volume,
   });
 }
