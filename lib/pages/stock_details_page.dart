@@ -367,7 +367,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                       'symbol': widget.symbol,
                       'name': widget.name,
                       'quantity': quantity,
-                      'price': stockMetrics['latestTraderPrice'],
+                      'price': stockMetrics['latestTradePrice'],
                       // 'price': 100,
                     };
                     if (isBuy) {
