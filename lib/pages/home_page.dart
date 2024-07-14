@@ -36,22 +36,22 @@ class _HomePageState extends State<HomePage> {
             .userPosition
             .accountPositions;
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+      padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(
-            height: 16,
+            height: 8,
           ),
           buildStatisticsPanel(context),
           const SizedBox(
-            height: 8,
+            height: 4,
           ),
           buildIconButtonsPanel(context),
           const SizedBox(
-            height: 8,
+            height: 4,
           ),
           Align(
             alignment: const AlignmentDirectional(-1, 0),
@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(8, 16, 8, 24),
+        padding: const EdgeInsetsDirectional.fromSTEB(8, 16, 8, 16),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
