@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
           ? const SignInPage()
           : const MainWrapper(),
       theme: ThemeData(
-        scaffoldBackgroundColor: UIColours.lightBackground,
+        scaffoldBackgroundColor: UIColours.background1,
       ),
       debugShowCheckedModeBanner: false,
       routes: {

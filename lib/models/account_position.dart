@@ -1,31 +1,31 @@
 class AccountPosition {
   final String name;
-  final String label;
-  final num quantity;
-  final num buyPrice;
+  final String symbol;
+  final int quantity;
+  final num price;
 
   AccountPosition({
     required this.name,
-    required this.label,
+    required this.symbol,
     required this.quantity,
-    required this.buyPrice,
+    required this.price,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'name': name,
-      'label': label,
+      'symbol': symbol,
       'quantity': quantity,
-      'buyPrice': buyPrice,
+      'price': price,
     };
   }
 
   factory AccountPosition.fromMap(Map<String, dynamic> map) {
     return AccountPosition(
       name: map['name'] ?? '',
-      label: map['label'] ?? '',
+      symbol: map['symbol'] ?? '',
       quantity: map['quantity'] ?? 0,
-      buyPrice: map['buyPrice'] ?? 0,
+      price: map['price'] ?? 0,
     );
   }
 }

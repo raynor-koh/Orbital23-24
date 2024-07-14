@@ -1,4 +1,4 @@
-import { userPositionHandler } from "../../../handlers/userdata/userPositionHandler";
+import { getUserPositionHandler } from "../../../handlers/userdata/getUserPositionHandler";
 import User from "../../../models/user";
 import UserPosition from "../../../models/userPosition";
 
@@ -29,7 +29,7 @@ describe("Retrieve user position Test", () => {
     };
 
     (User.findById as jest.Mock).mockResolvedValue(null);
-    await userPositionHandler(invalidUserIdRequest, mockResponse);
+    await getUserPositionHandler(invalidUserIdRequest, mockResponse);
     expect(mockResponse.status).not.toHaveBeenCalledWith(200);
     expect(mockResponse.status).toHaveBeenCalledWith(404);
     expect(mockResponse.json).toHaveBeenCalledWith({ error: "User not found" });
@@ -40,7 +40,7 @@ describe("Retrieve user position Test", () => {
       new User({ id: validUserId })
     );
     (UserPosition.find as jest.Mock).mockResolvedValue(null);
-    await userPositionHandler(mockRequest, mockResponse);
+    await getUserPositionHandler(mockRequest, mockResponse);
     expect(mockResponse.status).not.toHaveBeenCalledWith(200);
     expect(mockResponse.status).toHaveBeenCalledWith(404);
     expect(mockResponse.json).toHaveBeenCalledWith({
@@ -59,7 +59,7 @@ describe("Retrieve user position Test", () => {
       new User({ id: validUserId })
     );
     (UserPosition.find as jest.Mock).mockResolvedValue([userPosition]);
-    await userPositionHandler(mockRequest, mockResponse);
+    await getUserPositionHandler(mockRequest, mockResponse);
     expect(mockResponse.status).toHaveBeenCalledWith(200);
     expect(mockResponse.json).toHaveBeenCalledWith({
       userPosition: userPosition,

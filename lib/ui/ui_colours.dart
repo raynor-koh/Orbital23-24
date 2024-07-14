@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 class UIColours {
-  // private constructor
   UIColours._();
 
   // colours
   static const Color white = Color.fromRGBO(255, 255, 255, 1.0);
 
-  static const Color lightBackground = Color.fromRGBO(242, 242, 242, 1.0);
-  static const Color darkBackground = Color.fromRGBO(215, 217, 228, 1.0);
+  static const Color background1 = Color.fromRGBO(242, 242, 242, 1.0);
+  static const Color background2 = Color.fromRGBO(215, 217, 228, 1.0);
 
   static const Color primaryText = Color.fromRGBO(0, 0, 0, 1.0);
   static const Color secondaryText = Color.fromRGBO(149, 161, 172, 1.0);

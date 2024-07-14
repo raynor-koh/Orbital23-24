@@ -29,10 +29,19 @@ class _CandlestickChartState extends State<CandlestickChart> {
     _chartDataPointsFuture = AlpacaService().getChartDataPoints(widget.symbol);
     _trackballBehaviour = TrackballBehavior(
       enable: true,
+      lineType: TrackballLineType.vertical,
+      lineColor: UIColours.blue,
+      lineWidth: 1,
+      lineDashArray: [2, 1],
+      hideDelay: 3000,
       activationMode: ActivationMode.longPress,
       tooltipSettings: InteractiveTooltip(
         enable: true,
+        canShowMarker: false,
         color: UIColours.white,
+        borderWidth: 0.0,
+        borderRadius: 4,
+        borderColor: Colors.transparent,
         textStyle: UIText.xsmall,
         format: 'point.x\nOpen: point.open\nHigh: point.high\nLow: point.low\nClose: point.close',
       ),
@@ -51,7 +60,10 @@ class _CandlestickChartState extends State<CandlestickChart> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: RefreshProgressIndicator(
+              backgroundColor: UIColours.white,
+              color: UIColours.blue,
+            ),
           );
         } else if (snapshot.hasError) {
           return Center(
@@ -59,32 +71,82 @@ class _CandlestickChartState extends State<CandlestickChart> {
           );
         } else {
           final chartDataPoints = snapshot.data!;
-          return SizedBox(
-            height: 200,
-            child: SfCartesianChart(
-              trackballBehavior: _trackballBehaviour,
-              zoomPanBehavior: _zoomPanBehaviour,
-              series: <CandleSeries>[
-                CandleSeries<ChartDataPoint, DateTime>(
-                  dataSource: chartDataPoints,
-                  xValueMapper: (ChartDataPoint point, _) => point.dateTime,
-                  openValueMapper: (ChartDataPoint point, _) => point.open,
-                  highValueMapper: (ChartDataPoint point, _) => point.high,
-                  lowValueMapper: (ChartDataPoint point, _) => point.low,
-                  closeValueMapper: (ChartDataPoint point, _) => point.close,
+          return Column(
+            children: [
+              SizedBox(
+                height: 300,
+                child: SfCartesianChart(
+                  backgroundColor: UIColours.background1,
+                  borderColor: UIColours.background2,
+                  borderWidth: 1,
+                  plotAreaBorderWidth: 0.0,
+                  trackballBehavior: _trackballBehaviour,
+                  zoomPanBehavior: _zoomPanBehaviour,
+                  series: [
+                    CandleSeries<ChartDataPoint, DateTime>(
+                      dataSource: chartDataPoints,
+                      xValueMapper: (ChartDataPoint point, _) => point.dateTime,
+                      openValueMapper: (ChartDataPoint point, _) => point.open,
+                      highValueMapper: (ChartDataPoint point, _) => point.high,
+                      lowValueMapper: (ChartDataPoint point, _) => point.low,
+                      closeValueMapper: (ChartDataPoint point, _) => point.close,
+                      enableSolidCandles: false,
+                      bearColor: Colors.red,
+                      bullColor: Colors.green,
+                      borderWidth: 1,
+                      animationDuration: 1000,
+                      trendlines: chartDataPoints.isNotEmpty ? [
+                      Trendline(
+                        type: TrendlineType.movingAverage,
+                        width: 1,
+                        color: UIColours.blue,
+                      ),
+                    ] : [],
+                    ),
+                  ],
+                  primaryXAxis: DateTimeAxis(
+                    dateFormat: DateFormat('MM/dd HH.mm'),
+                    autoScrollingDelta: 30,
+                    autoScrollingDeltaType: DateTimeIntervalType.minutes,
+                    autoScrollingMode: AutoScrollingMode.end,
+                    majorGridLines: const MajorGridLines(width: 0),
+                    isVisible: false,
+                  ),
+                  primaryYAxis: const NumericAxis(
+                    isVisible: false,
+                  ),
                 ),
-              ],
-              primaryXAxis: DateTimeAxis(
-                dateFormat: DateFormat('MM/dd HH.mm'),
-                autoScrollingDelta: 1,
-                autoScrollingMode: AutoScrollingMode.end,
-                majorGridLines: const MajorGridLines(width: 0),
-                isVisible: false,
               ),
-              primaryYAxis: const NumericAxis(
-                isVisible: false,
+              SizedBox(
+                height: 100,
+                child: SfCartesianChart(
+                  backgroundColor: UIColours.background1,
+                  borderColor: UIColours.background2,
+                  borderWidth: 1,
+                  plotAreaBorderWidth: 0.0,
+                  series: [
+                    ColumnSeries<ChartDataPoint, DateTime>(
+                      dataSource: chartDataPoints,
+                      xValueMapper: (ChartDataPoint point, _) => point.dateTime,
+                      yValueMapper: (ChartDataPoint point, _) => point.volume,
+                      color: UIColours.blue,
+                      borderWidth: 1,
+                    ),
+                  ],
+                  primaryXAxis: DateTimeAxis(
+                    dateFormat: DateFormat('MM/dd HH.mm'),
+                    autoScrollingDelta: 30,
+                    autoScrollingDeltaType: DateTimeIntervalType.minutes,
+                    autoScrollingMode: AutoScrollingMode.end,
+                    majorGridLines: const MajorGridLines(width: 0),
+                    isVisible: false,
+                  ),
+                  primaryYAxis: const NumericAxis(
+                    isVisible: false,
+                  ),
+                ),
               ),
-            ),
+            ],
           );
         }
       },

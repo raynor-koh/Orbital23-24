@@ -27,7 +27,6 @@ class User {
   }
 
   factory User.fromMap(Map<String, dynamic> map) {
-    log(map.toString());
     return User(
       id: map['user']['_id'] ?? '',
       name: map['user']['name'] ?? '',

@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 
 class UIText {
-  // private constructor
   UIText._();
 
   // text

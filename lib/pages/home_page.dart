@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/stock_card.dart';
+import 'package:robinbank_app/models/account_position.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
+import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -18,6 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final UserPositionService userPositionService = UserPositionService();
+  final AlpacaService alpacaService = AlpacaService();
 
   @override
   void initState() {
@@ -28,23 +31,27 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<AccountPosition> userAccountPosition =
+        Provider.of<UserPositionProvider>(context)
+            .userPosition
+            .accountPositions;
     return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+      padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(
-            height: 16,
+            height: 8,
           ),
           buildStatisticsPanel(context),
           const SizedBox(
-            height: 8,
+            height: 4,
           ),
           buildIconButtonsPanel(context),
           const SizedBox(
-            height: 8,
+            height: 4,
           ),
           Align(
             alignment: const AlignmentDirectional(-1, 0),
@@ -54,19 +61,45 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              scrollDirection: Axis.vertical,
-              children: [
-                StockCard(),
-                StockCard(),
-                StockCard(),
-                StockCard(),
-                StockCard(),
-                StockCard(),
-              ],
-            ),
-          ),
+            child: FutureBuilder(
+                future: Future.wait(userAccountPosition.map((position) async {
+              Map<String, dynamic> stockMetrics =
+                  await alpacaService.getStockMetrics(position.symbol);
+              double marketValue =
+                  stockMetrics['latestTradePrice'] * position.quantity;
+              num initialInvestment =
+                  position.price * (position.quantity.toDouble());
+              double pnl = marketValue - initialInvestment;
+              double pnlPercentage = pnl / initialInvestment * 100;
+              return StockCard(
+                symbol: position.symbol,
+                name: position.name,
+                marketValue: marketValue,
+                quantity: position.quantity,
+                pnl: pnl,
+                pnlPercentage: pnlPercentage,
+              );
+            })), builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data!.isNotEmpty) {
+                  return ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    scrollDirection: Axis.vertical,
+                    children:
+                        snapshot.data!.map((stockCard) => stockCard).toList(),
+                  );
+                } else {
+                  return const Center(child: Text('No positions available'));
+                }
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error: ${snapshot.error}'),
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            }),
+          )
         ],
       ),
     );
@@ -74,14 +107,15 @@ class _HomePageState extends State<HomePage> {
 
   Widget buildStatisticsPanel(BuildContext context) {
     User user = Provider.of<UserProvider>(context).user;
-    UserPosition userPosition = Provider.of<UserPositionProvider>(context).userPosition;
+    UserPosition userPosition =
+        Provider.of<UserPositionProvider>(context).userPosition;
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(8, 24, 8, 24),
+        padding: const EdgeInsetsDirectional.fromSTEB(8, 16, 8, 16),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -114,7 +148,7 @@ class _HomePageState extends State<HomePage> {
                           UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
-                      '\$8,794.40',
+                      '8,794.40',
                       style: UIText.medium,
                     ),
                   ],
@@ -331,15 +365,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _resetAccountBalance(BuildContext context, double newBalance) {
-    UserPositionProvider userPositionProvider = Provider.of<UserPositionProvider>(context, listen: false);
-
+    String userId = Provider.of<UserProvider>(context, listen: false).user.id;
     // Update the user account balance in the provider
-    userPositionProvider.updateAccountBalance(newBalance);
+    userPositionService.resetUserPosition(context, userId, newBalance);
+    userPositionService.getUserPosition(context, userId);
 
     // Display a success message
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Account balance reset to \$${newBalance.toStringAsFixed(2)}'),
+        content:
+            Text('Account balance reset to \$${newBalance.toStringAsFixed(2)}'),
       ),
     );
 
