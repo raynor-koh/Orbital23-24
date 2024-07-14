@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/candlestick_chart.dart';
 import 'package:robinbank_app/components/news_article.dart';
+import 'package:robinbank_app/models/user.dart';
+import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
+import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:robinbank_app/utils/utils.dart';
 
 class StockDetailsPage extends StatefulWidget {
   final String symbol;
@@ -22,12 +27,16 @@ class StockDetailsPage extends StatefulWidget {
 
 class _StockDetailsPageState extends State<StockDetailsPage> {
   bool isPageLoading = true;
+
+  final UserPositionService userPositionService = UserPositionService();
+  final AlpacaService alpacaService = AlpacaService();
   
   Map<String, dynamic> stockMetrics = {};
   List<NewsArticle> newsArticles = [];
 
   int quantity = 1;
   bool isBuy = true;
+  bool marketOpen = false;
   List<bool> selectedSide = [true, false];
 
   @override
@@ -48,7 +57,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
       isPageLoading = true;
     });
     try {
-      Map<String, dynamic> data = await AlpacaService().getStockMetrics(widget.symbol);
+      Map<String, dynamic> data = await alpacaService.getStockMetrics(widget.symbol);
       setState(() {
         stockMetrics = data;
         isPageLoading = false;
@@ -65,7 +74,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
       isPageLoading = true;
     });
     try {
-      List<NewsArticle> data = await AlpacaService().getNewsArticles(widget.symbol);
+      List<NewsArticle> data = await alpacaService.getNewsArticles(widget.symbol);
       setState(() {
         newsArticles = data;
         isPageLoading = false;
@@ -165,10 +174,8 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.symbol, 
-                style: UIText.large.copyWith(color: UIColours.white)
-              ),
+              Text(widget.symbol,
+                  style: UIText.large.copyWith(color: UIColours.white)),
               Text(
                 widget.name,
                 style: UIText.small.copyWith(color: UIColours.white),
@@ -200,19 +207,27 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                latestTradePrice != null ? latestTradePrice.toStringAsFixed(2) : 'N/A',
-                style: UIText.heading.copyWith(color: priceDifference >= 0 ? UIColours.green : UIColours.red),
+                latestTradePrice.toStringAsFixed(2) ?? 'N/A',
+                style: UIText.heading.copyWith(
+                    color:
+                        priceDifference >= 0 ? UIColours.green : UIColours.red),
               ),
               Row(
                 children: [
                   Text(
-                    '${priceDifference >= 0 ? '+' : ''}${priceDifference != null ? priceDifference.toStringAsFixed(2) : 'N/A'}',
-                    style: UIText.medium.copyWith(color: priceDifference >= 0 ? UIColours.green : UIColours.red),
+                    '${priceDifference >= 0 ? '+' : ''}${priceDifference.toStringAsFixed(2) ?? 'N/A'}',
+                    style: UIText.medium.copyWith(
+                        color: priceDifference >= 0
+                            ? UIColours.green
+                            : UIColours.red),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '${percentageChange >= 0 ? '+' : ''}${percentageChange != null ? percentageChange.toStringAsFixed(2) : 'N/A'}%',
-                    style: UIText.medium.copyWith(color: priceDifference >= 0 ? UIColours.green : UIColours.red),
+                    '${percentageChange >= 0 ? '+' : ''}${percentageChange.toStringAsFixed(2)}%',
+                    style: UIText.medium.copyWith(
+                        color: priceDifference >= 0
+                            ? UIColours.green
+                            : UIColours.red),
                   ),
                 ],
               ),
@@ -242,7 +257,9 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  stockMetrics['high'] != null ? '${stockMetrics['high']}' : 'N/A',
+                  stockMetrics['high'] != null
+                      ? '${stockMetrics['high']}'
+                      : 'N/A',
                   style: UIText.small,
                 ),
               ],
@@ -255,7 +272,9 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  stockMetrics['low'] != null ? '${stockMetrics['low']}' : 'N/A',
+                  stockMetrics['low'] != null
+                      ? '${stockMetrics['low']}'
+                      : 'N/A',
                   style: UIText.small,
                 ),
               ],
@@ -268,7 +287,9 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   style: UIText.small,
                 ),
                 Text(
-                  stockMetrics['volume'] != null ? formatVolume(stockMetrics['volume']) : 'N/A',
+                  stockMetrics['volume'] != null
+                      ? formatVolume(stockMetrics['volume'])
+                      : 'N/A',
                   style: UIText.small,
                 ),
               ],
@@ -364,6 +385,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   }
 
   Widget buildTradePanel(BuildContext context) {
+    final User user = Provider.of<UserProvider>(context).user;
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
@@ -386,7 +408,8 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   borderWidth: 1,
                   borderRadius: BorderRadius.circular(4),
                   selectedColor: Colors.white,
-                  selectedBorderColor: isBuy ? Colors.green[700] : Colors.red[700],
+                  selectedBorderColor:
+                      isBuy ? Colors.green[700] : Colors.red[700],
                   fillColor: isBuy ? Colors.green[200] : Colors.red[200],
                   constraints: const BoxConstraints(
                     minHeight: 30.0,
@@ -440,12 +463,50 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                 ),
               ],
             ),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text(
-                'Confirm Trade',
-                style: UIText.small,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    if (!marketOpen) {
+                      showSnackBar(context, "Market is not open currently.");
+                      return;
+                    }
+                    Map<String, dynamic> payload = {
+                      'symbol': widget.symbol,
+                      'name': widget.name,
+                      'quantity': quantity,
+                      'price': stockMetrics['latestTraderPrice'],
+                      // 'price': 100,
+                    };
+                    if (isBuy) {
+                      await userPositionService.executeBuyTrade(
+                          context, user.id, payload);
+                    } else {
+                      await userPositionService.executeSellTrade(
+                          context, user.id, payload);
+                    }
+                    Navigator.of(context).pushNamed("/mainwrapper");
+                  },
+                  child: Text(
+                    'Confirm Trade',
+                    style: UIText.small,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/mainwrapper");
+                  },
+                  child: Text(
+                    "Return Home",
+                    style: UIText.small,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -1,7 +1,7 @@
 import User from "../../models/user";
 import UserPosition from "../../models/userPosition";
 
-export const userPositionHandler = async (request: any, response: any) => {
+export const getUserPositionHandler = async (request: any, response: any) => {
   const userId = request.params.id;
   const user = await User.findById(userId);
   if (!user) {
