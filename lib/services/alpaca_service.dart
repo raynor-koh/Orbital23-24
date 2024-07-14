@@ -57,7 +57,7 @@ class AlpacaService {
   }
 
   Future<List<NewsArticle>> getNewsArticles(String symbol) async {
-    final url = Uri.parse('https://data.alpaca.markets/v1beta1/news?sort=desc&symbols=AAPL&limit=3');
+    final url = Uri.parse('https://data.alpaca.markets/v1beta1/news?sort=desc&symbols=$symbol&limit=5');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
