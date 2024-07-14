@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/candlestick_chart.dart';
+import 'package:robinbank_app/components/news_article.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:robinbank_app/utils/utils.dart';
 
 class StockDetailsPage extends StatefulWidget {
@@ -24,10 +26,14 @@ class StockDetailsPage extends StatefulWidget {
 }
 
 class _StockDetailsPageState extends State<StockDetailsPage> {
-  Map<String, dynamic> stockMetrics = {};
-  bool isLoading = true;
+  bool isPageLoading = true;
+
   final UserPositionService userPositionService = UserPositionService();
   final AlpacaService alpacaService = AlpacaService();
+  
+  Map<String, dynamic> stockMetrics = {};
+  List<NewsArticle> newsArticles = [];
+
   int quantity = 1;
   bool isBuy = true;
   bool marketOpen = false;
@@ -36,28 +42,46 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   @override
   void initState() {
     super.initState();
-    _refreshStockMetrics();
+    _refreshPage();
   }
 
   Future<void> _refreshPage() async {
-    await _refreshStockMetrics();
+    await Future.wait([
+      _refreshStockMetrics(),
+      _refreshNewsArticles(),
+    ]);
   }
 
   Future<void> _refreshStockMetrics() async {
     setState(() {
-      isLoading = true;
+      isPageLoading = true;
     });
     try {
-      Map<String, dynamic> data =
-          await alpacaService.getStockMetrics(widget.symbol);
+      Map<String, dynamic> data = await alpacaService.getStockMetrics(widget.symbol);
       setState(() {
         stockMetrics = data;
-        marketOpen = data['latestTraderPrice'] != null;
-        isLoading = false;
+        isPageLoading = false;
       });
     } catch (e) {
       setState(() {
-        isLoading = false;
+        isPageLoading = false;
+      });
+    }
+  }
+
+  Future<void> _refreshNewsArticles() async {
+    setState(() {
+      isPageLoading = true;
+    });
+    try {
+      List<NewsArticle> data = await alpacaService.getNewsArticles(widget.symbol);
+      setState(() {
+        newsArticles = data;
+        isPageLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        isPageLoading = false;
       });
     }
   }
@@ -90,7 +114,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(context),
-      body: isLoading
+      body: isPageLoading
           ? const Center(
               child: RefreshProgressIndicator(
                 backgroundColor: UIColours.white,
@@ -113,6 +137,8 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                       buildPricePanel(context),
                       const SizedBox(height: 4),
                       buildMetricsPanel(context),
+                      const SizedBox(height: 4),
+                      buildLatestStoriesPanel(context),
                       const SizedBox(height: 4),
                       CandlestickChart(symbol: widget.symbol),
                       const SizedBox(height: 4),
@@ -272,6 +298,90 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
         ),
       ),
     );
+  }
+
+  void _showNewsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Latest Stories'),
+          content: Container(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: newsArticles.length,
+              itemBuilder: (BuildContext context, int index) {
+                return buildNewsArticle(newsArticles[index]);
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget buildLatestStoriesPanel(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _showNewsDialog(context),
+      child: Container(
+        decoration: BoxDecoration(
+          color: UIColours.white,
+          borderRadius: BorderRadius.circular(4),
+        ),
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(4, 0, 4, 0),
+          child: Column(
+            children: [
+              Text(
+                'Latest Stories',
+                style: UIText.medium,
+              ),
+              const SizedBox(height: 8),
+              if (newsArticles.isEmpty)
+                Text(
+                  'No news articles available',
+                  style: UIText.small,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildNewsArticle(NewsArticle article) {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(2, 2, 2, 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(article.headline, style: UIText.xsmall),
+          const SizedBox(height: 2),
+          Text('By ${article.author} on ${article.updatedAt}', style: UIText.xsmall),
+          const SizedBox(height: 2),
+          GestureDetector(
+            onTap: () => _launchURL(article.url),
+            child: Text('Read more', style: UIText.xsmall.copyWith(color: UIColours.blue)),
+          ),
+          const Divider(),
+        ],
+      ),
+    );
+  }
+
+  void _launchURL(String url) async {
+   if (!await launchUrl(Uri.parse(url))) {
+        throw Exception('Could not launch url');
+    }
   }
 
   Widget buildTradePanel(BuildContext context) {
