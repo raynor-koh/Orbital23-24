@@ -26,7 +26,7 @@ export const sellStockHandler = async (request: any, response: any) => {
 
     // Check if stock exists
     const stockExists = accountPosition.find((position) => {
-      position.name === name && position.symbol === symbol;
+      return position.name == name || position.symbol == symbol;
     });
 
     if (!stockExists) {

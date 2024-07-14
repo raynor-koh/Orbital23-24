@@ -19,7 +19,6 @@ export const buyStockHandler = async (request: any, response: any) => {
     }
     // Parse DB data
     let accountBalance = userPositionData.accountBalance;
-    console.log(userPositionData.buyingPower);
     let buyingPower = userPositionData.buyingPower;
     let accountPosition = userPositionData.accountPosition;
 

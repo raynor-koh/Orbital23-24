@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/candlestick_chart.dart';
@@ -9,6 +7,7 @@ import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
+import 'package:robinbank_app/utils/utils.dart';
 
 class StockDetailsPage extends StatefulWidget {
   final String symbol;
@@ -27,10 +26,11 @@ class StockDetailsPage extends StatefulWidget {
 class _StockDetailsPageState extends State<StockDetailsPage> {
   Map<String, dynamic> stockMetrics = {};
   bool isLoading = true;
-  final UserPositionService userPositionService = new UserPositionService();
-  final AlpacaService alpacaService = new AlpacaService();
+  final UserPositionService userPositionService = UserPositionService();
+  final AlpacaService alpacaService = AlpacaService();
   int quantity = 1;
   bool isBuy = true;
+  bool marketOpen = false;
   List<bool> selectedSide = [true, false];
 
   @override
@@ -52,6 +52,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
           await alpacaService.getStockMetrics(widget.symbol);
       setState(() {
         stockMetrics = data;
+        marketOpen = data['latestTraderPrice'] != null;
         isLoading = false;
       });
     } catch (e) {
@@ -305,40 +306,23 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                     minWidth: 80.0,
                   ),
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Map<String, dynamic> payload = {
-                          'symbol': widget.symbol,
-                          'name': widget.name,
-                          'quantity': quantity,
-                          'price': stockMetrics['latestTraderPrice'],
-                        };
-                        userPositionService.executeBuyTrade(
-                            context, user.id, payload);
-                        log("Buy success");
-                      },
-                      child: Text(
-                        'Buy',
-                        style: UIText.small,
-                      ),
+                    Text(
+                      'Buy',
+                      style: UIText.small,
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Map<String, dynamic> payload = {
-                          'symbol': widget.symbol,
-                          'name': widget.name,
-                          'quantity': quantity,
-                          'price': stockMetrics['latestTraderPrice'],
-                        };
-                        userPositionService.executeSellTrade(
-                            context, user.id, payload);
-                      },
-                      child: Text(
-                        'Sell',
-                        style: UIText.small,
-                      ),
+                    Text(
+                      'Sell',
+                      style: UIText.small,
                     ),
                   ],
+                  onPressed: (int index) {
+                    setState(() {
+                      isBuy = index == 0;
+                      for (int i = 0; i < selectedSide.length; i++) {
+                        selectedSide[i] = i == index;
+                      }
+                    });
+                  },
                 ),
               ],
             ),
@@ -369,12 +353,50 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                 ),
               ],
             ),
-            ElevatedButton(
-              onPressed: () {},
-              child: Text(
-                'Confirm Trade',
-                style: UIText.small,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    if (!marketOpen) {
+                      showSnackBar(context, "Market is not open currently.");
+                      return;
+                    }
+                    Map<String, dynamic> payload = {
+                      'symbol': widget.symbol,
+                      'name': widget.name,
+                      'quantity': quantity,
+                      'price': stockMetrics['latestTraderPrice'],
+                      // 'price': 100,
+                    };
+                    if (isBuy) {
+                      await userPositionService.executeBuyTrade(
+                          context, user.id, payload);
+                    } else {
+                      await userPositionService.executeSellTrade(
+                          context, user.id, payload);
+                    }
+                    Navigator.of(context).pushNamed("/mainwrapper");
+                  },
+                  child: Text(
+                    'Confirm Trade',
+                    style: UIText.small,
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed("/mainwrapper");
+                  },
+                  child: Text(
+                    "Return Home",
+                    style: UIText.small,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
