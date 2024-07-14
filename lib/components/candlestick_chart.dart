@@ -74,7 +74,7 @@ class _CandlestickChartState extends State<CandlestickChart> {
           return Column(
             children: [
               SizedBox(
-                height: 300,
+                height: 270,
                 child: SfCartesianChart(
                   backgroundColor: UIColours.background1,
                   borderColor: UIColours.background2,
@@ -118,7 +118,7 @@ class _CandlestickChartState extends State<CandlestickChart> {
                 ),
               ),
               SizedBox(
-                height: 100,
+                height: 80,
                 child: SfCartesianChart(
                   backgroundColor: UIColours.background1,
                   borderColor: UIColours.background2,

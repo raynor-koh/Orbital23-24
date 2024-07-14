@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:robinbank_app/components/chart_data_point.dart';
+import 'package:robinbank_app/components/news_article.dart';
 import 'package:robinbank_app/env.dart';
 import 'package:robinbank_app/utils/constants.dart';
 
@@ -52,6 +53,26 @@ class AlpacaService {
       };
     } else {
       throw Exception('Failed to load stock metrics');
+    }
+  }
+
+  Future<List<NewsArticle>> getNewsArticles(String symbol) async {
+    final url = Uri.parse('https://data.alpaca.markets/v1beta1/news?sort=desc&symbols=AAPL&limit=3');
+    final response = await http.get(url, headers: {
+      'APCA-API-KEY-ID': _apiKey,
+      'APCA-API-SECRET-KEY': _apiSecret,
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final news = data['news'];
+      if (news != null) {
+        return List<NewsArticle>.from(news.map((article) => NewsArticle.fromJson(article)));
+      } else {
+        return [];
+      }
+    } else {
+      throw Exception('Failed to load news articles');
     }
   }
 
