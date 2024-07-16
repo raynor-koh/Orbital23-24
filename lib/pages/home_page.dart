@@ -4,6 +4,7 @@ import 'package:robinbank_app/components/stock_card.dart';
 import 'package:robinbank_app/models/account_position.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/models/user_position.dart';
+import 'package:robinbank_app/pages/transaction_history_page.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
@@ -61,25 +62,28 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: FutureBuilder(
-                future: Future.wait(userAccountPosition.map((position) async {
-              Map<String, dynamic> stockMetrics =
-                  await alpacaService.getStockMetrics(position.symbol);
-              double marketValue =
-                  stockMetrics['latestTradePrice'] * position.quantity;
-              num initialInvestment =
-                  position.price * (position.quantity.toDouble());
-              double pnl = marketValue - initialInvestment;
-              double pnlPercentage = pnl / initialInvestment * 100;
-              return StockCard(
-                symbol: position.symbol,
-                name: position.name,
-                marketValue: marketValue,
-                quantity: position.quantity,
-                pnl: pnl,
-                pnlPercentage: pnlPercentage,
-              );
-            })), builder: (context, snapshot) {
+            child: FutureBuilder(future: Future.wait(
+              userAccountPosition.map(
+                (position) async {
+                  Map<String, dynamic> stockMetrics =
+                      await alpacaService.getStockMetrics(position.symbol);
+                  double marketValue =
+                      stockMetrics['latestTradePrice'] * position.quantity;
+                  num initialInvestment =
+                      position.price * (position.quantity.toDouble());
+                  double pnl = marketValue - initialInvestment;
+                  double pnlPercentage = pnl / initialInvestment * 100;
+                  return StockCard(
+                    symbol: position.symbol,
+                    name: position.name,
+                    marketValue: marketValue,
+                    quantity: position.quantity,
+                    pnl: pnl,
+                    pnlPercentage: pnlPercentage,
+                  );
+                },
+              ),
+            ), builder: (context, snapshot) {
               if (snapshot.hasData) {
                 if (snapshot.data!.isNotEmpty) {
                   return ListView(
@@ -235,7 +239,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {},
                 ),
                 Text(
-                  'Orders',
+                  'Transactions',
                   style: UIText.small,
                 ),
               ],
@@ -253,6 +257,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   'Performance',
                   style: UIText.small,
+                  softWrap: true,
                 ),
               ],
             ),

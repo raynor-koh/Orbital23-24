@@ -1,6 +1,5 @@
 import * as bcryptjs from "bcryptjs";
-import User from "../../models/user";
-import UserPosition from "../../models/userPosition";
+import { User, UserPosition } from "../../models";
 import * as jwt from "jsonwebtoken";
 
 export const authSignUpHandler = async (request: any, response: any) => {

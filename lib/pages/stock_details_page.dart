@@ -52,7 +52,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
           await alpacaService.getStockMetrics(widget.symbol);
       setState(() {
         stockMetrics = data;
-        marketOpen = data['latestTraderPrice'] != null;
+        marketOpen = data['latestTradePrice'] != null;
         isLoading = false;
       });
     } catch (e) {

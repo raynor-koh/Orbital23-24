@@ -3,9 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:robinbank_app/bloc/nav_drawer/nav_drawer_bloc.dart';
 import 'package:robinbank_app/components/nav_drawer.dart';
 import 'package:robinbank_app/pages/home_page.dart';
-import 'package:robinbank_app/pages/test_page1.dart';
-import 'package:robinbank_app/pages/test_page3.dart';
-import 'package:robinbank_app/pages/test_page4.dart';
+import 'package:robinbank_app/pages/transaction_history_page.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
@@ -75,12 +73,8 @@ class _MainWrapperState extends State<MainWrapper> {
     switch (selectedDestination) {
       case NavDrawerDestination.homePage:
         return "HomePage";
-      case NavDrawerDestination.testPage1:
-        return "TestPage1";
-      case NavDrawerDestination.testPage3:
-        return "TestPage3";
-      case NavDrawerDestination.testPage4:
-        return "TestPage4";
+      case NavDrawerDestination.transactionHistory:
+        return "TransactionHistory";
       default:
         return "AppBarTitle";
     }
@@ -90,12 +84,8 @@ class _MainWrapperState extends State<MainWrapper> {
     switch (selectedDestination) {
       case NavDrawerDestination.homePage:
         return const HomePage();
-      case NavDrawerDestination.testPage1:
-        return const UserDataPage();
-      case NavDrawerDestination.testPage3:
-        return const TestPage3();
-      case NavDrawerDestination.testPage4:
-        return const TestPage4();
+      case NavDrawerDestination.transactionHistory:
+        return TransactionHistoryPage();
       default:
         return Container();
     }
