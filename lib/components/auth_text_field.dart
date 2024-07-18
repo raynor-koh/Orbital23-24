@@ -44,22 +44,6 @@ class AuthTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
 
-          errorBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: UIColours.red,
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-
-          focusedErrorBorder: OutlineInputBorder(
-            borderSide: const BorderSide(
-              color: UIColours.red,
-              width: 2,
-            ),
-            borderRadius: BorderRadius.circular(12),
-          ),
-
           filled: true,
           fillColor: UIColours.white
         ),

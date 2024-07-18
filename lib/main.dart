@@ -43,6 +43,9 @@ class _MyAppState extends State<MyApp> {
           : const MainWrapper(),
       theme: ThemeData(
         scaffoldBackgroundColor: UIColours.background1,
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: UIColours.blue,
+        ),
       ),
       debugShowCheckedModeBanner: false,
       routes: {

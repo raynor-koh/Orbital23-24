@@ -40,7 +40,8 @@ class _SearchPageState extends State<SearchPage> {
           children: [
             Expanded(
               child: CupertinoSearchTextField(
-                prefixIcon: Icon(IconlyLight.search),
+                prefixIcon: const Icon(IconlyLight.search),
+                suffixIcon: const Icon(Icons.close),
                 placeholder: 'Symbol',
                 controller: _searchController,
                 onSubmitted: _performSearch,
@@ -59,7 +60,12 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(
+              child: RefreshProgressIndicator(
+                backgroundColor: UIColours.white,
+                color: UIColours.blue,
+              ),
+            )
           : _buildSearchResults(),
     );
   }

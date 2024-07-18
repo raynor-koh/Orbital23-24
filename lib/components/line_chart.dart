@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:robinbank_app/components/chart_data_point.dart';
@@ -6,19 +8,21 @@ import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class CandlestickChart extends StatefulWidget {
+class LineChart extends StatefulWidget {
   final String symbol;
+  final isArea;
 
-  const CandlestickChart({
+  const LineChart({
     super.key,
     required this.symbol,
+    required this.isArea,
   });
 
   @override
-  State<CandlestickChart> createState() => _CandlestickChartState();
+  State<LineChart> createState() => _LineChartState();
 }
 
-class _CandlestickChartState extends State<CandlestickChart> {
+class _LineChartState extends State<LineChart> {
   late Future<List<ChartDataPoint>> _chartDataPointsFuture;
   late TrackballBehavior _trackballBehaviour;
   late ZoomPanBehavior _zoomPanBehaviour;
@@ -35,6 +39,7 @@ class _CandlestickChartState extends State<CandlestickChart> {
       lineDashArray: [2, 1],
       hideDelay: 3000,
       activationMode: ActivationMode.longPress,
+      tooltipDisplayMode: TrackballDisplayMode.nearestPoint,
       tooltipSettings: InteractiveTooltip(
         enable: true,
         canShowMarker: false,
@@ -43,7 +48,15 @@ class _CandlestickChartState extends State<CandlestickChart> {
         borderRadius: 4,
         borderColor: Colors.transparent,
         textStyle: UIText.xsmall,
-        format: 'point.x\nOpen: point.open\nHigh: point.high\nLow: point.low\nClose: point.close',
+        format: 'point.x\nClose: point.y',
+      ),
+      markerSettings: const TrackballMarkerSettings(
+        markerVisibility: TrackballVisibilityMode.visible,
+        height: 8,
+        width: 8,
+        borderWidth: 0,
+        borderColor: Colors.transparent,
+        color: UIColours.blue
       ),
     );
     _zoomPanBehaviour = ZoomPanBehavior(
@@ -71,6 +84,12 @@ class _CandlestickChartState extends State<CandlestickChart> {
           );
         } else {
           final chartDataPoints = snapshot.data!;
+          final isArea = widget.isArea;
+          final isPositiveTrend = (chartDataPoints.first.close ?? 0) < (chartDataPoints.last.close ?? 0);
+          final lineColor = isPositiveTrend ? Colors.green : Colors.red;
+          final gradientColours = isPositiveTrend
+              ? [Colors.green.withOpacity(0.5), Colors.green.withOpacity(0.01)]
+              : [Colors.red.withOpacity(0.5), Colors.red.withOpacity(0.01)];
           return Column(
             children: [
               SizedBox(
@@ -79,69 +98,65 @@ class _CandlestickChartState extends State<CandlestickChart> {
                   backgroundColor: UIColours.background1,
                   borderColor: UIColours.background2,
                   borderWidth: 1,
+                  margin: const EdgeInsets.fromLTRB(0, 0, 0, 20),
                   plotAreaBorderWidth: 0.0,
                   trackballBehavior: _trackballBehaviour,
                   zoomPanBehavior: _zoomPanBehaviour,
-                  series: [
-                    CandleSeries<ChartDataPoint, DateTime>(
+                  series: isArea
+                  ? [
+                    LineSeries<ChartDataPoint, DateTime>(
                       dataSource: chartDataPoints,
                       xValueMapper: (ChartDataPoint point, _) => point.dateTime,
-                      openValueMapper: (ChartDataPoint point, _) => point.open,
-                      highValueMapper: (ChartDataPoint point, _) => point.high,
-                      lowValueMapper: (ChartDataPoint point, _) => point.low,
-                      closeValueMapper: (ChartDataPoint point, _) => point.close,
-                      enableSolidCandles: false,
-                      bearColor: Colors.red,
-                      bullColor: Colors.green,
-                      borderWidth: 1,
-                      animationDuration: 1000,
-                      trendlines: chartDataPoints.isNotEmpty ? [
-                      Trendline(
-                        type: TrendlineType.movingAverage,
-                        width: 1,
-                        color: UIColours.blue,
-                      ),
-                    ] : [],
+                      yValueMapper: (ChartDataPoint point, _) => point.close,
+                      enableTooltip: true,
+                      color: lineColor,
+                      width: 2,
+                      animationDuration: 500,
+                    ),
+                    AreaSeries<ChartDataPoint, DateTime>(
+                      dataSource: chartDataPoints,
+                      xValueMapper: (ChartDataPoint point, _) => point.dateTime,
+                      yValueMapper: (ChartDataPoint point, _) => point.close,
+                      enableTooltip: false,
+                      onCreateShader: (ShaderDetails details) {
+                        return ui.Gradient.linear(
+                          details.rect.topCenter,
+                          details.rect.bottomCenter,
+                          gradientColours);
+                      },
+                      animationDuration: 500,
+                    ),
+                  ]
+                  : [
+                    LineSeries<ChartDataPoint, DateTime>(
+                      dataSource: chartDataPoints,
+                      xValueMapper: (ChartDataPoint point, _) => point.dateTime,
+                      yValueMapper: (ChartDataPoint point, _) => point.close,
+                      enableTooltip: true,
+                      color: lineColor,
+                      width: 2,
+                      animationDuration: 500,
                     ),
                   ],
                   primaryXAxis: DateTimeAxis(
-                    dateFormat: DateFormat('MM/dd HH.mm'),
-                    autoScrollingDelta: 30,
+                    dateFormat: DateFormat('HH.mm'),
+                    autoScrollingDelta: 70,
                     autoScrollingDeltaType: DateTimeIntervalType.minutes,
                     autoScrollingMode: AutoScrollingMode.end,
-                    majorGridLines: const MajorGridLines(width: 0),
-                    isVisible: false,
-                  ),
-                  primaryYAxis: const NumericAxis(
-                    isVisible: false,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 80,
-                child: SfCartesianChart(
-                  backgroundColor: UIColours.background1,
-                  borderColor: UIColours.background2,
-                  borderWidth: 1,
-                  plotAreaBorderWidth: 0.0,
-                  series: [
-                    ColumnSeries<ChartDataPoint, DateTime>(
-                      dataSource: chartDataPoints,
-                      xValueMapper: (ChartDataPoint point, _) => point.dateTime,
-                      yValueMapper: (ChartDataPoint point, _) => point.volume,
-                      color: UIColours.blue,
-                      borderWidth: 1,
+                    isVisible: true,
+                    labelStyle: UIText.xsmall,
+                    majorGridLines: const MajorGridLines(
+                      width: 1,
+                      color: UIColours.background2,
                     ),
-                  ],
-                  primaryXAxis: DateTimeAxis(
-                    dateFormat: DateFormat('MM/dd HH.mm'),
-                    autoScrollingDelta: 30,
-                    autoScrollingDeltaType: DateTimeIntervalType.minutes,
-                    autoScrollingMode: AutoScrollingMode.end,
-                    majorGridLines: const MajorGridLines(width: 0),
-                    isVisible: false,
+                    plotOffset: 0,
+                    labelPosition: ChartDataLabelPosition.inside,
+                    labelAlignment: LabelAlignment.center,
+                    edgeLabelPlacement: EdgeLabelPlacement.shift,
+                    crossesAt: 0,
                   ),
                   primaryYAxis: const NumericAxis(
+                    anchorRangeToVisiblePoints: true,
                     isVisible: false,
                   ),
                 ),
