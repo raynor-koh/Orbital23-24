@@ -47,6 +47,8 @@ class AlpacaService {
         'high': data[symbol]['dailyBar']['h'],
         'low': data[symbol]['dailyBar']['l'],
         'volume': data[symbol]['dailyBar']['v'],
+        'numOfTrades': data[symbol]['dailyBar']['n'],
+        'volumeWeightedAveragePrice': data[symbol]['dailyBar']['vw'],
         'previousClosePrice': previousClosePrice,
         'priceDifference': priceDifference,
         'percentageChange': percentageChange,
@@ -77,8 +79,8 @@ class AlpacaService {
   }
 
   Future<List<ChartDataPoint>> getChartDataPoints(String symbol) async {
-    // final url = Uri.parse('${Constants.alpacaBaseUrl}/v2/stocks/$symbol/bars?timeframe=1Min&adjustment=raw&feed=iex&sort=asc');
-    final url = Uri.parse('https://data.alpaca.markets/v2/stocks/AAPL/bars?timeframe=1Min&start=2024-07-12&limit=10000&adjustment=raw&feed=iex&sort=asc'); // for testing when market is closed
+    final url = Uri.parse('${Constants.alpacaBaseUrl}/v2/stocks/$symbol/bars?timeframe=1Min&adjustment=raw&feed=iex&sort=asc');
+    // final url = Uri.parse('https://data.alpaca.markets/v2/stocks/AAPL/bars?timeframe=1Min&start=2024-07-12&limit=10000&adjustment=raw&feed=iex&sort=asc'); // for testing when market is closed
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
@@ -102,7 +104,7 @@ class AlpacaService {
         return [];
       }
     } else {
-      throw Exception('Failed to load candlestick data');
+      throw Exception('Failed to load chart data points');
     }
   }
 }
