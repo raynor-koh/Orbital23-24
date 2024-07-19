@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:robinbank_app/components/auth_button.dart';
-import 'package:robinbank_app/components/auth_text_field.dart';
+import 'package:robinbank_app/core/authentication/components/auth_button.dart';
+import 'package:robinbank_app/core/authentication/components/auth_text_field.dart';
 import 'package:robinbank_app/services/auth_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -86,17 +86,17 @@ class SignUpPageState extends State<SignUpPage> {
                       AuthTextField(
                         controller: nameController,
                         hintText: 'Name',
-                        obscureText: false,
+                        isObscureText: false,
                       ),
                       AuthTextField(
                         controller: emailController,
                         hintText: 'Email',
-                        obscureText: false,
+                        isObscureText: false,
                       ),
                       AuthTextField(
                         controller: passwordController,
                         hintText: 'Password',
-                        obscureText: true,
+                        isObscureText: true,
                       ),
                       AuthButton(
                         text: 'Sign Up',
@@ -134,8 +134,7 @@ class SignUpPageState extends State<SignUpPage> {
                               },
                               child: Text(
                                 'Sign in here',
-                                style: UIText.xsmall
-                                    .copyWith(color: UIColours.blue),
+                                style: UIText.xsmall.copyWith(color: UIColours.blue),
                               ),
                             ),
                           ],

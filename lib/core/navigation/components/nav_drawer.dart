@@ -1,10 +1,9 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
-import 'package:robinbank_app/bloc/nav_drawer/nav_drawer_bloc.dart';
+import 'package:robinbank_app/core/navigation/bloc/nav_drawer_bloc.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/auth_service.dart';
@@ -36,13 +35,8 @@ class NavDrawer extends StatelessWidget {
       IconlyBold.profile,
     ),
     NavDrawerItem(
-      NavDrawerDestination.testPage3,
-      "TestPage3",
-      IconlyBold.home,
-    ),
-    NavDrawerItem(
-      NavDrawerDestination.testPage4,
-      "TestPage4",
+      NavDrawerDestination.testPage2,
+      "TestPage2",
       IconlyBold.home,
     ),
     NavDrawerItem(null, "Sign Out", null),
@@ -57,18 +51,18 @@ class NavDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    User userData = Provider.of<UserProvider>(context).user;
+    User user = Provider.of<UserProvider>(context).user;
     return Drawer(
       backgroundColor: UIColours.white,
       child: Column(
         children: [
           UserAccountsDrawerHeader(
             accountName: Text(
-              userData.name,
+              user.name,
               style: UIText.medium.copyWith(color: UIColours.white),
             ),
             accountEmail: Text(
-              userData.email,
+              user.email,
               style: UIText.small.copyWith(color: UIColours.white),
             ),
             decoration: const BoxDecoration(
@@ -83,10 +77,8 @@ class NavDrawer extends StatelessWidget {
           ListView.builder(
             itemCount: navDrawerItems.length,
             shrinkWrap: true,
-            itemBuilder: (BuildContext context, int index) =>
-                BlocBuilder<NavDrawerBloc, NavDrawerState>(
-              builder: (BuildContext context, NavDrawerState state) =>
-                  buildNavDrawerItem(navDrawerItems[index], state, context),
+            itemBuilder: (context, index) => BlocBuilder<NavDrawerBloc, NavDrawerState>(
+                  builder: (context, state) => buildNavDrawerItem(navDrawerItems[index], state, context),
             ),
           ),
         ],
@@ -94,14 +86,13 @@ class NavDrawer extends StatelessWidget {
     );
   }
 
-  Widget buildNavDrawerItem(
-      NavDrawerItem data, NavDrawerState state, BuildContext context) {
+  Widget buildNavDrawerItem(NavDrawerItem data, NavDrawerState state, BuildContext context) {
     if (data.destination == null) {
       return ElevatedButton(
         onPressed: () => signOutUser(context),
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
+            borderRadius: BorderRadius.circular(12),
           ),
           backgroundColor: UIColours.orange,
         ),
@@ -129,7 +120,10 @@ class NavDrawer extends StatelessWidget {
                     ? UIColours.blue
                     : UIColours.secondaryText,
               ),
-              onTap: () => tapNavDrawerItem(context, data.destination!),
+              onTap: () {
+                Navigator.of(context).pop();
+                tapNavDrawerItem(context, data.destination!);
+              },
             );
           },
         ),
@@ -137,9 +131,7 @@ class NavDrawer extends StatelessWidget {
     }
   }
 
-  void tapNavDrawerItem(
-      BuildContext context, NavDrawerDestination destination) {
+  void tapNavDrawerItem(BuildContext context, NavDrawerDestination destination) {
     BlocProvider.of<NavDrawerBloc>(context).add(NavigateTo(destination));
-    Navigator.pop(context);
   }
 }

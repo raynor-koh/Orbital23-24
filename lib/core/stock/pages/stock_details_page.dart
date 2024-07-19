@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robinbank_app/components/candle_chart.dart';
-import 'package:robinbank_app/components/chart_type.dart';
-import 'package:robinbank_app/components/line_chart.dart';
-import 'package:robinbank_app/components/news_article.dart';
+import 'package:robinbank_app/core/stock/components/candle_chart.dart';
+import 'package:robinbank_app/core/stock/charts/chart_type.dart';
+import 'package:robinbank_app/core/stock/components/line_chart.dart';
+import 'package:robinbank_app/core/stock/components/news_article.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
@@ -91,13 +91,13 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
     }
   }
 
-  void incrementQuantity() {
+  void _incrementQuantity() {
     setState(() {
       quantity++;
     });
   }
 
-  void decrementQuantity() {
+  void _decrementQuantity() {
     if (quantity > 1) {
       setState(() {
         quantity--;
@@ -139,8 +139,6 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                     children: [
                       buildMetricsPanel(context),
                       const SizedBox(height: 4),
-                      buildNewsPanel(context),
-                      const SizedBox(height: 4),
                       buildChartTypeToggle(),
                       const SizedBox(height: 4),
                       buildSelectedChartType(),
@@ -173,12 +171,12 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
             },
           ),
           Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(widget.symbol,
-                  style: UIText.large.copyWith(color: UIColours.white)),
+              Text(
+                widget.symbol,
+                style: UIText.large.copyWith(color: UIColours.white)
+              ),
               Text(
                 widget.name,
                 style: UIText.small.copyWith(color: UIColours.white),
@@ -187,6 +185,16 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
           ),
         ],
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.newspaper,
+            color: UIColours.white,
+            size: 28,
+          ),
+          onPressed: () => _showLatestStoriesDialogue(context),
+        ),
+      ],
     );
   }
 
@@ -304,29 +312,6 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
     );
   }
 
-  Widget buildNewsPanel(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _showLatestStoriesDialogue(context),
-      child: Container(
-        decoration: BoxDecoration(
-          color: UIColours.white,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(4, 0, 4, 0),
-          child: Column(
-            children: [
-              Text(
-                'News',
-                style: UIText.small,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   void _showLatestStoriesDialogue(BuildContext context) {
     showDialog(
       context: context,
@@ -334,15 +319,15 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
         return AlertDialog(
           backgroundColor: UIColours.background1,
           shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           title: Text(
             'Latest Stories',
-            style: UIText.large,
+            style: UIText.heading,
           ),
           content: SizedBox(
             width: double.maxFinite,
-            height: 300,
+            height: 500,
             child: ListView.builder(
               shrinkWrap: true,
               itemCount: newsArticles.length,
@@ -351,26 +336,43 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
               },
             ),
           ),
+          titlePadding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+          contentPadding: const EdgeInsets.fromLTRB(8, 0, 8, 8),
         );
       },
     );
   }
 
   Widget buildNewsArticle(NewsArticle article) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+    return Container(
+      color: UIColours.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(article.headline, style: UIText.small),
-          const SizedBox(height: 2),
-          Text('By ${article.author} on ${article.updatedAt}', style: UIText.xsmall),
-          const SizedBox(height: 2),
-          GestureDetector(
-            onTap: () => _launchURL(article.url),
-            child: Text('Read more', style: UIText.xsmall.copyWith(color: UIColours.blue)),
+           Container(
+          constraints: BoxConstraints(maxWidth: 300), // Adjust width as needed
+          child: Text(
+            article.headline,
+            style: UIText.small,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2, // Limit number of lines
           ),
-          const Divider(),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          'By ${article.author} on ${article.updatedAt}',
+          style: UIText.xsmall,
+          overflow: TextOverflow.ellipsis, // Handle overflow for the author/date
+        ),
+        const SizedBox(height: 2),
+        GestureDetector(
+          onTap: () => _launchURL(article.url),
+          child: Text(
+            'Read more',
+            style: UIText.xsmall.copyWith(color: UIColours.blue),
+          ),
+        ),
+        const Divider(),
         ],
       ),
     );
@@ -444,9 +446,9 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   Widget buildSelectedChartType() {
     switch (selectedChartType) {
       case ChartType.line:
-        return LineChart(symbol: widget.symbol, isArea: false);
+        return LineChart(symbol: widget.symbol, isGradient: true);
       case ChartType.area:
-        return LineChart(symbol: widget.symbol, isArea: true);
+        return LineChart(symbol: widget.symbol, isGradient: false);
       case ChartType.candle:
         return CandleChart(symbol: widget.symbol, isHollowCandle: false);
       case ChartType.hollowCandle:
@@ -520,7 +522,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.remove),
-                      onPressed: decrementQuantity,
+                      onPressed: _incrementQuantity,
                     ),
                     Text(
                       '$quantity',
@@ -528,7 +530,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.add),
-                      onPressed: incrementQuantity,
+                      onPressed: _decrementQuantity,
                     ),
                   ],
                 ),

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robinbank_app/components/stock_card.dart';
+import 'package:robinbank_app/core/home/stock_card.dart';
 import 'package:robinbank_app/models/account_position.dart';
-import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
@@ -119,9 +118,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildStatisticsPanel(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).user;
-    UserPosition userPosition =
-        Provider.of<UserPositionProvider>(context).userPosition;
+    UserPosition userPosition = Provider.of<UserPositionProvider>(context).userPosition;
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
@@ -261,10 +258,12 @@ class _HomePageState extends State<HomePage> {
                     size: 32,
                     color: UIColours.blue,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/marketmoverspage');
+                  },
                 ),
                 Text(
-                  'Performance',
+                  'Trending',
                   style: UIText.small,
                 ),
               ],
@@ -302,7 +301,7 @@ class _HomePageState extends State<HomePage> {
         return AlertDialog(
           backgroundColor: UIColours.background1,
           shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           content: SingleChildScrollView(
             child: ListBody(
@@ -325,12 +324,6 @@ class _HomePageState extends State<HomePage> {
                     focusedBorder: const UnderlineInputBorder(
                       borderSide: BorderSide(
                         color: UIColours.blue,
-                        width: 1.5,
-                      ),
-                    ),
-                    errorBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: UIColours.red,
                         width: 1.5,
                       ),
                     ),
@@ -384,7 +377,7 @@ class _HomePageState extends State<HomePage> {
         return AlertDialog(
           backgroundColor: UIColours.white,
           shape: ContinuousRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
           title: Text(
             'Reset',
@@ -423,8 +416,8 @@ class _HomePageState extends State<HomePage> {
                 style: UIText.small.copyWith(color: UIColours.blue),
               ),
               onPressed: () {
-                _resetBalance(context, newBalance);
                 Navigator.of(context).pushNamed("/mainwrapper");
+                _resetBalance(context, newBalance);
               },
             ),
           ],

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:robinbank_app/components/chart_data_point.dart';
-import 'package:robinbank_app/components/news_article.dart';
+import 'package:robinbank_app/core/stock/charts/chart_data_point.dart';
+import 'package:robinbank_app/core/stock/components/news_article.dart';
 import 'package:robinbank_app/env.dart';
 import 'package:robinbank_app/utils/constants.dart';
 
@@ -59,7 +59,7 @@ class AlpacaService {
   }
 
   Future<List<NewsArticle>> getNewsArticles(String symbol) async {
-    final url = Uri.parse('https://data.alpaca.markets/v1beta1/news?sort=desc&symbols=$symbol&limit=5');
+    final url = Uri.parse('https://data.alpaca.markets/v1beta1/news?sort=desc&symbols=$symbol&limit=8');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
