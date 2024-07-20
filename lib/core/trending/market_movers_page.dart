@@ -101,15 +101,30 @@ class _MarketMoversPage extends State<MarketMoversPage> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                'Symbol',
-                                style: UIText.small.copyWith(color: UIColours.secondaryText),
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  'Symbol',
+                                  style: UIText.small.copyWith(color: UIColours.secondaryText),
+                                ),
                               ),
-                              Text(
-                                _selectedCategory == 'Most Active' ? 'Volume' : 'Change (%)',
-                                style: UIText.small.copyWith(color: UIColours.secondaryText),
+                              Expanded(
+                                flex: 4,
+                                child: Center(
+                                  child: Text(
+                                    'Spark Chart',
+                                    style: UIText.small.copyWith(color: UIColours.secondaryText),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  _selectedCategory == 'Most Active' ? 'Volume' : 'Change (%)',
+                                  style: UIText.small.copyWith(color: UIColours.secondaryText),
+                                  textAlign: TextAlign.right,
+                                ),
                               ),
                             ],
                           ),
@@ -119,7 +134,6 @@ class _MarketMoversPage extends State<MarketMoversPage> {
                           endIndent: 8,
                           color: UIColours.background2,
                         ),
-
                         ..._stocks.map((stock) => MoverCard(stock: stock, category: _selectedCategory)),
                       ],
                     ),

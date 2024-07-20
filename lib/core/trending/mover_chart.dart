@@ -6,12 +6,10 @@ import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class MoverChart extends StatefulWidget {
   final String symbol;
-  final bool isGradient;
 
   const MoverChart({
     super.key,
     required this.symbol,
-    required this.isGradient,
   });
 
   @override
@@ -35,25 +33,28 @@ class _MoverChart extends State<MoverChart> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(
-              backgroundColor: UIColours.white,
-              color: UIColours.blue,
+            child: SizedBox(
+              width: 60,
+              height: 2,
+              child: LinearProgressIndicator (
+                backgroundColor: UIColours.white,
+                color: UIColours.blue,
+              ),
             ),
           );
         } else {
           final chartDataPoints = snapshot.data!;
-          final isGradient = widget.isGradient;
-          final isPositiveTrend = chartDataPoints.isNotEmpty && (chartDataPoints.first.close ?? 0) < (chartDataPoints.last.close ?? 0);
+          final closeValues = chartDataPoints.map((point) => point.close ?? 0.0).toList();
+          final isPositiveTrend = closeValues.isNotEmpty && closeValues.first < closeValues.last;
           final lineColor = isPositiveTrend ? UIColours.green : UIColours.red;
-          final gradientColours = isPositiveTrend
-              ? [Colors.green.withOpacity(0.5), Colors.green.withOpacity(0.01)]
-              : [Colors.red.withOpacity(0.5), Colors.red.withOpacity(0.01)];
           return SizedBox(
-            width: 80,
+            width: 60,
             height: 40,
             child: SfSparkLineChart(
+              data: closeValues,
               color: lineColor,
-              data: const [5, 6, 5, 7, 4, 3, 9, 5, 6, 5, 7, 8, 4, 5, 3, 4, 11, 10, 2, 12, 4, 7, 6, 8],
+              axisLineColor: Colors.transparent,
+              axisLineWidth: 0,
             ),
           );
         }

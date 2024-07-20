@@ -12,15 +12,16 @@ class MoverCard extends StatelessWidget {
     required this.stock,
     required this.category,
   });
-
+  
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
+            flex: 3,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -36,9 +37,19 @@ class MoverCard extends StatelessWidget {
               ],
             ),
           ),
-          MoverChart(symbol: stock['symbol'], isGradient: false),
-          SizedBox(width: 40),
-          _buildMetricDisplay(),
+          Expanded(
+            flex: 4,
+            child: Center(
+              child: MoverChart(symbol: stock['symbol']),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _buildMetricDisplay(),
+            ),
+          ),
         ],
       ),
     );
