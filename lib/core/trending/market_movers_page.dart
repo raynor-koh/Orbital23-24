@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:robinbank_app/core/trending/mover_card.dart';
+import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
@@ -9,93 +11,131 @@ class MarketMoversPage extends StatefulWidget {
   State<MarketMoversPage> createState() => _MarketMoversPage();
 }
 
-class _MarketMoversPage extends State<MarketMoversPage> with TickerProviderStateMixin {
-  bool isPageLoading = false;
-  late TabController _tabController;
-  List<String> tabs = ['Most Active', 'Top Gainers', 'Top Losers'];
-
-  List<Map<String, dynamic>> stockData = [
-    {'symbol': 'DNA', 'name': 'Gingko Bioworks Hold...', 'volume': '34.5'},
-    {'symbol': 'TELL', 'name': 'Tellurian', 'volume': '29.3'},
-    {'symbol': 'LESL', 'name': 'Leslie\'s, Inc.', 'volume': '28.8'},
-    {'symbol': 'NCPL', 'name': 'Netcapital Inc', 'volume': '25.7'},
-    {'symbol': 'ABEV', 'name': 'Ambev', 'volume': '24.4'},
-    {'symbol': 'ET', 'name': 'Energy Transfer L.P', 'volume': '21.9'},
-    {'symbol': 'HBAN', 'name': 'Huntington Bancshar...', 'volume': '21.2'},
-    {'symbol': 'RUN', 'name': 'Sunrun Inc', 'volume': '21.1'},
-    {'symbol': 'SWN', 'name': 'Southwestern Energy...', 'volume': '21.0'},
-  ];
-
+class _MarketMoversPage extends State<MarketMoversPage> {
+  final AlpacaService alpacaService = AlpacaService();
   
+  bool _isLoading = false;
+  final List<String> _categories = ['Most Active', 'Top Gainers', 'Top Losers',];
+  String _selectedCategory = 'Most Active';
+  List<Map<String, dynamic>> _stocks = [];
+
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: tabs.length, vsync: this);
+    _loadStates(_selectedCategory);
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _refreshPage() async {
-    await Future.wait([
-      
-    ]);
+  Future<void> _loadStates(String category) async {
+    setState(() {
+      _isLoading = true;
+      _selectedCategory = category;
+    });
+    try {
+      switch (category) {
+        case 'Most Active':
+          _stocks = await alpacaService.getMostActiveStocks();
+          break;
+        case 'Top Gainers':
+          _stocks = await alpacaService.getTopGainers();
+          break;
+        case 'Top Losers':
+          _stocks = await alpacaService.getTopLosers();
+          break;
+      }
+    } catch (e) {
+      _isLoading = false;
+    }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: buildAppBar(context),
-      body: isPageLoading
-          ? const Center(
-              child: RefreshProgressIndicator(
-                backgroundColor: UIColours.white,
-                color: UIColours.blue,
-              ),
-            )
-          : Column(
-              children: [
-                TabBar(
-                  controller: _tabController,
-                  tabs: tabs.map((String name) => Tab(text: name)).toList(),
-                  labelColor: UIColours.blue,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: UIColours.blue,
-                ),
-                Expanded(
-                  child: RefreshIndicator(
-                    backgroundColor: UIColours.white,
-                    color: UIColours.blue,
-                    onRefresh: _refreshPage,
-                    child: TabBarView(
-                      controller: _tabController,
-                      children: tabs.map((String name) {
-                        return ListView.builder(
-                          itemCount: stockData.length,
-                          itemBuilder: (context, index) {
-                            return StockListItem(stock: stockData[index]);
-                          },
-                        );
-                      }).toList(),
+      appBar: _buildAppBar(context),
+      body: Column(
+        children: [
+          Container(
+            color: UIColours.white,
+            height: 48,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: _categories.map((category) {
+                return Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 10, 4, 10),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                      backgroundColor: _selectedCategory == category ? UIColours.blue : UIColours.background2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    onPressed: () {
+                      _loadStates(category);
+                    },
+                    child: Text(
+                      category,
+                      style: UIText.small,
                     ),
                   ),
-                ),
-              ],
+                );
+              }).toList(),
             ),
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(
+                    child: RefreshProgressIndicator(
+                      backgroundColor: UIColours.white,
+                      color: UIColours.blue,
+                    ),
+                  )
+                : RefreshIndicator(
+                  backgroundColor: UIColours.white,
+                  color: UIColours.blue,
+                    onRefresh: () => _loadStates(_selectedCategory),
+                    child: ListView(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Symbol',
+                                style: UIText.small.copyWith(color: UIColours.secondaryText),
+                              ),
+                              Text(
+                                _selectedCategory == 'Most Active' ? 'Volume' : 'Change (%)',
+                                style: UIText.small.copyWith(color: UIColours.secondaryText),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(
+                          indent: 8,
+                          endIndent: 8,
+                          color: UIColours.background2,
+                        ),
+
+                        ..._stocks.map((stock) => MoverCard(stock: stock, category: _selectedCategory)),
+                      ],
+                    ),
+                  ),
+          ),
+        ],
+      ),
     );
   }
 
-  PreferredSizeWidget buildAppBar(BuildContext context) {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
+      titleSpacing: 8,
       backgroundColor: UIColours.blue,
       title: Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           IconButton(
             icon: const Icon(
@@ -106,40 +146,15 @@ class _MarketMoversPage extends State<MarketMoversPage> with TickerProviderState
               Navigator.of(context).pop();
             },
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Market Movers',
-                style: UIText.large.copyWith(color: UIColours.white)
-              ),
-            ],
+          Text(
+            'Market Movers',
+            style: UIText.large.copyWith(
+              color: UIColours.white,
+              fontWeight: FontWeight.bold
+            ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class StockListItem extends StatelessWidget {
-  final Map<String, dynamic> stock;
-
-  const StockListItem({Key? key, required this.stock}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(stock['symbol'], style: UIText.medium.copyWith(fontWeight: FontWeight.bold)),
-      subtitle: Text(stock['name'], style: UIText.small),
-      trailing: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text('Volume', style: UIText.small.copyWith(color: Colors.grey)),
-          Text('${stock['volume']}', style: UIText.medium.copyWith(fontWeight: FontWeight.bold)),
-        ],
-      ),
-      // You can add the spark chart here
     );
   }
 }

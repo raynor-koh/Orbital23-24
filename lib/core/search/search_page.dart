@@ -15,9 +15,9 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final AlpacaService alpacaService = AlpacaService();
-
-  bool _isLoading = false;
+  
   late TextEditingController _searchController;
+  bool _isLoading = false;
   bool _isNoMatchesFound = false;
   List<Map<String, String>> _searchResults = [];
   
