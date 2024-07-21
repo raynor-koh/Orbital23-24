@@ -13,6 +13,7 @@ export const addTransactionHandler = async (request: any, response: any) => {
     const quantity = request.body.quantity;
     const price = request.body.price;
     const timeStamp = request.body.timeStamp;
+    const isBuy = request.body.isBuy;
 
     // Create Transaction Object
     let transaction = new Transaction({
@@ -22,6 +23,7 @@ export const addTransactionHandler = async (request: any, response: any) => {
       quantity: quantity,
       price: price,
       timeStamp: timeStamp,
+      isBuy: isBuy,
     });
 
     // Save user and retrieve documentId

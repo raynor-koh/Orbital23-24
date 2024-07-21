@@ -4,10 +4,10 @@ import 'package:robinbank_app/components/stock_card.dart';
 import 'package:robinbank_app/models/account_position.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/models/user_position.dart';
-import 'package:robinbank_app/pages/transaction_history_page.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
+import 'package:robinbank_app/services/transaction_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -22,6 +22,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final UserPositionService userPositionService = UserPositionService();
   final AlpacaService alpacaService = AlpacaService();
+  final TransactionService transactionService = TransactionService();
 
   @override
   void initState() {
@@ -374,6 +375,7 @@ class _HomePageState extends State<HomePage> {
     // Update the user account balance in the provider
     userPositionService.resetUserPosition(context, userId, newBalance);
     userPositionService.getUserPosition(context, userId);
+    transactionService.resetTransactions(context, userId);
 
     // Display a success message
     ScaffoldMessenger.of(context).showSnackBar(

@@ -1,11 +1,10 @@
-import 'package:robinbank_app/models/account_position.dart';
-
 class Transaction {
   final String name;
   final String symbol;
   final int quantity;
   final double price;
   final DateTime timeStamp;
+  final bool isBuy;
 
   Transaction({
     required this.name,
@@ -13,6 +12,7 @@ class Transaction {
     required this.quantity,
     required this.price,
     required this.timeStamp,
+    required this.isBuy,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,13 +25,14 @@ class Transaction {
     };
   }
 
-  factory Transaction.fromMapp(Map<String, dynamic> map) {
+  factory Transaction.fromMap(Map<String, dynamic> map) {
     return Transaction(
       name: map['name'] ?? '',
       symbol: map['symbol'] ?? '',
       quantity: map['quantity'] ?? 0,
-      price: map['price'] ?? 0,
-      timeStamp: map['timeStamp'] ?? DateTime.now(),
+      price: map['price'].toDouble() ?? 0.0,
+      timeStamp: DateTime.parse(map['timeStamp']).toLocal() ?? DateTime.now(),
+      isBuy: map['isBuy'] ?? false,
     );
   }
 }

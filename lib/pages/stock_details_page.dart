@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/components/candlestick_chart.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
+import 'package:robinbank_app/services/transaction_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -28,6 +31,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   bool isLoading = true;
   final UserPositionService userPositionService = UserPositionService();
   final AlpacaService alpacaService = AlpacaService();
+  final TransactionService transactionService = TransactionService();
   int quantity = 1;
   bool isBuy = true;
   bool marketOpen = false;
@@ -368,14 +372,23 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                       'name': widget.name,
                       'quantity': quantity,
                       'price': stockMetrics['latestTradePrice'],
-                      // 'price': 100,
                     };
+                    Map<String, dynamic> transactionPayload = {
+                      ...payload,
+                      'isBuy': isBuy,
+                      'timeStamp': DateTime.now().toUtc().toIso8601String(),
+                    };
+                    log(DateTime.now().toIso8601String());
                     if (isBuy) {
                       await userPositionService.executeBuyTrade(
                           context, user.id, payload);
+                      await transactionService.addTransaction(
+                          context, user.id, transactionPayload);
                     } else {
                       await userPositionService.executeSellTrade(
                           context, user.id, payload);
+                      await transactionService.addTransaction(
+                          context, user.id, transactionPayload);
                     }
                     Navigator.of(context).pushNamed("/mainwrapper");
                   },

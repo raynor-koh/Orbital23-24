@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:robinbank_app/models/transaction.dart';
 
 class StockTransactionCard extends StatelessWidget {
-  final String symbol;
-  final String name;
-  final int quantity;
-  final double price;
-  final DateTime timeStamp;
+  final Transaction transaction;
 
   const StockTransactionCard({
     super.key,
-    required this.symbol,
-    required this.name,
-    required this.quantity,
-    required this.price,
-    required this.timeStamp,
+    required this.transaction,
   });
 
   @override
@@ -35,7 +28,7 @@ class StockTransactionCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  symbol,
+                  transaction.symbol,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -43,30 +36,40 @@ class StockTransactionCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.green[100],
+                    color:
+                        transaction.isBuy ? Colors.green[100] : Colors.red[100],
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Text(
-                    'BUY',
-                    style: TextStyle(
-                      color: Colors.green[800],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  child: transaction.isBuy
+                      ? Text(
+                          'BUY',
+                          style: TextStyle(
+                            color: Colors.green[800],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                      : Text(
+                          'SELL',
+                          style: TextStyle(
+                            color: Colors.red[800],
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              name,
+              transaction.name,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -75,9 +78,9 @@ class StockTransactionCard extends StatelessWidget {
                   children: [
                     Text('Quantity', style: TextStyle(color: Colors.grey[600])),
                     Text(
-                      quantity.toString(),
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      transaction.quantity.toString(),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -86,24 +89,24 @@ class StockTransactionCard extends StatelessWidget {
                   children: [
                     Text('Price', style: TextStyle(color: Colors.grey[600])),
                     Text(
-                      currencyFormat.format(price),
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      currencyFormat.format(transaction.price),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
               ],
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  dateFormat.format(timeStamp),
+                  dateFormat.format(transaction.timeStamp),
                   style: TextStyle(color: Colors.grey[600]),
                 ),
                 Text(
-                  timeFormat.format(timeStamp),
+                  timeFormat.format(transaction.timeStamp),
                   style: TextStyle(color: Colors.grey[600]),
                 ),
               ],

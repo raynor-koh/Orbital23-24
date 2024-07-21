@@ -8,6 +8,7 @@ const transactionSchema = new mongoose.Schema({
   quantity: { required: true, type: Number },
   price: { required: true, type: Number },
   timeStamp: { required: true, type: Date },
+  isBuy: { required: true, type: Boolean },
 });
 
 // Convert schema into a model
