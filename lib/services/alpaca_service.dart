@@ -49,8 +49,8 @@ class AlpacaService {
     }
   }
 
-  Future<bool> getIsMarketOpen() async {
-    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v2/stocks/AAPL/bars?timeframe=1Min&feed=iex&sort=asc');
+  Future<bool> getIsMarketOpenNow() async {
+    final url = Uri.parse('${Constants.alpacaTradingAPIBaseURL}/v2/clock');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
@@ -58,10 +58,30 @@ class AlpacaService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final bars = data['bars'];
-      return bars != null;
+      return data['is_open'];
     } else {
-      throw Exception('Failed to get market is open');
+      throw Exception('Failed to get market is open now');
+    }
+  }
+
+  Future<String> getLastMarketOpenDate() async {
+    final url = Uri.parse('${Constants.alpacaTradingAPIBaseURL}/v2/calendar');
+    final response = await http.get(url, headers: {
+      'APCA-API-KEY-ID': _apiKey,
+      'APCA-API-SECRET-KEY': _apiSecret,
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      for (int i = data.length - 1; i >= 0; i--) {
+        final date = DateTime.parse(data[i]['date']);
+        if (date.isBefore(DateTime.now()) || date.isAtSameMomentAs(DateTime.now())) {
+          return data[i]['date'];
+        }
+      }
+      return data.first['date'];
+    } else {
+      throw Exception('Failed to get last market open date');
     }
   }
 
@@ -97,12 +117,15 @@ class AlpacaService {
   }
 
   Future<List<ChartDataPoint>> getChartDataPoints(String symbol) async {
-    // final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v2/stocks/$symbol/bars?timeframe=1Min&feed=iex&sort=asc');
-    final url = Uri.parse('https://data.alpaca.markets/v2/stocks/AAPL/bars?timeframe=1Min&start=2024-07-18&feed=iex&sort=asc'); // for testing when market is closed
+    final date = await getLastMarketOpenDate();
+
+    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v2/stocks/$symbol/bars?timeframe=1Min&start=$date&end=$date&feed=iex&sort=asc');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
     });
+
+    // print('HELLLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO $date');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);

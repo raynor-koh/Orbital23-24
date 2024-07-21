@@ -15,7 +15,7 @@ class _MarketMoversPage extends State<MarketMoversPage> {
   final AlpacaService alpacaService = AlpacaService();
   
   bool _isLoading = false;
-  final List<String> _categories = ['Most Active', 'Top Gainers', 'Top Losers',];
+  final List<String> _categories = ['Most Active', 'Top Gainers', 'Top Losers'];
   String _selectedCategory = 'Most Active';
   List<Map<String, dynamic>> _stocks = [];
 
@@ -77,7 +77,7 @@ class _MarketMoversPage extends State<MarketMoversPage> {
                     },
                     child: Text(
                       category,
-                      style: UIText.small,
+                      style: UIText.small.copyWith(color: _selectedCategory == category ? UIColours.white : UIColours.primaryText),
                     ),
                   ),
                 );
@@ -162,10 +162,7 @@ class _MarketMoversPage extends State<MarketMoversPage> {
           ),
           Text(
             'Market Movers',
-            style: UIText.large.copyWith(
-              color: UIColours.white,
-              fontWeight: FontWeight.bold
-            ),
+            style: UIText.large.copyWith(color: UIColours.white),
           ),
         ],
       ),

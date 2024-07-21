@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:robinbank_app/core/stock/components/candle_chart.dart';
-import 'package:robinbank_app/core/stock/charts/chart_type.dart';
 import 'package:robinbank_app/core/stock/components/line_chart.dart';
 import 'package:robinbank_app/core/stock/components/news_article.dart';
 import 'package:robinbank_app/core/stock/components/stock_metrics_panel.dart';
@@ -32,18 +31,20 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   Map<String, dynamic> _stockMetrics = {};
   List<NewsArticle> _newsArticles = [];
 
-  ChartType selectedChartType = ChartType.line;
+  final List<String> _categories = ['Line', 'Area', 'Candle', 'Hollow Candle'];
+  String _selectedCategory = 'Line';
   final UserPositionService userPositionService = UserPositionService();
 
   @override
   void initState() {
     super.initState();
-    _loadStates();
+    _loadStates(_selectedCategory);
   }
 
-  Future<void> _loadStates() async {
+  Future<void> _loadStates(String category) async {
     setState(() {
       _isLoading = true;
+      _selectedCategory = category;
     });
     try {
       final stockMetrics = await _alpacaService.getStockMetrics(widget.symbol);
@@ -77,13 +78,12 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
           : RefreshIndicator(
               backgroundColor: UIColours.white,
               color: UIColours.blue,
-              onRefresh: _loadStates,
+              onRefresh: () => _loadStates(_selectedCategory),
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
                   child: Column(
-                    mainAxisSize: MainAxisSize.max,
                     children: [
                       StockMetricsPanel(
                         stockMetrics: _stockMetrics
@@ -222,73 +222,47 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   }
 
   Widget buildChartTypeToggle() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          TextButton(
-            onPressed: () {
-              setState(() {
-                selectedChartType = ChartType.line;
-              });
-            },
-            style: TextButton.styleFrom(
-              backgroundColor: selectedChartType == ChartType.line ? UIColours.blue : null,
-              // primary: selectedChartType == ChartType.line ? Colors.white : null,
+    return Container(
+      color: UIColours.white,
+      height: 40,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: _categories.map((category) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(4, 10, 4, 10),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                backgroundColor: _selectedCategory == category ? UIColours.blue : UIColours.background2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  _selectedCategory = category;
+                });
+              },
+              child: Text(
+                category,
+                style: UIText.small.copyWith(color: _selectedCategory == category ? UIColours.white : UIColours.primaryText),
+              ),
             ),
-            child: const Text('Line'),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                selectedChartType = ChartType.area;
-              });
-            },
-            style: TextButton.styleFrom(
-              backgroundColor: selectedChartType == ChartType.area ? UIColours.blue : null,
-              // primary: selectedChartType == ChartType.area ? Colors.white : null,
-            ),
-            child: const Text('Area'),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                selectedChartType = ChartType.candle;
-              });
-            },
-            style: TextButton.styleFrom(
-              backgroundColor: selectedChartType == ChartType.candle ? UIColours.blue : null,
-              // primary: selectedChartType == ChartType.candle ? Colors.white : null,
-            ),
-            child: const Text('Candle'),
-          ),
-          TextButton(
-            onPressed: () {
-              setState(() {
-                selectedChartType = ChartType.hollowCandle;
-              });
-            },
-            style: TextButton.styleFrom(
-              backgroundColor: selectedChartType == ChartType.hollowCandle ? UIColours.blue : null,
-              // primary: selectedChartType == ChartType.hollowCandle ? Colors.white : null,
-            ),
-            child: const Text('Hollow Candle'),
-          ),
-        ],
+          );
+        }).toList(),
       ),
     );
   }
 
   Widget buildSelectedChartType() {
-    switch (selectedChartType) {
-      case ChartType.line:
+    switch (_selectedCategory) {
+      case 'Line':
         return LineChart(symbol: widget.symbol, isGradient: true);
-      case ChartType.area:
+      case 'Area':
         return LineChart(symbol: widget.symbol, isGradient: false);
-      case ChartType.candle:
+      case 'Candle':
         return CandleChart(symbol: widget.symbol, isHollowCandle: false);
-      case ChartType.hollowCandle:
+      case 'Hollow Candle':
         return CandleChart(symbol: widget.symbol, isHollowCandle: true);
       default:
         return Container();

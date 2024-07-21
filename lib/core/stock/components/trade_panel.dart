@@ -40,7 +40,7 @@ class _TradePanelState extends State<TradePanel> {
 
   Future<void> _loadStates() async {
     try {
-      bool isMarketOpen = await _alpacaService.getIsMarketOpen();
+      bool isMarketOpen = await _alpacaService.getIsMarketOpenNow();
       Map<String, dynamic> stockMetrics = await _alpacaService.getStockMetrics(widget.symbol);
       setState(() {
         _isMarketOpen = isMarketOpen;
