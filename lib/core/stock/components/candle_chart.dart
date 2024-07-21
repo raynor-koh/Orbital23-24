@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:robinbank_app/components/chart_data_point.dart';
+import 'package:robinbank_app/core/stock/charts/chart_data_point.dart';
+import 'package:robinbank_app/core/stock/charts/custom_trackball_behaviour.dart';
+import 'package:robinbank_app/core/stock/charts/custom_x_axis.dart';
+import 'package:robinbank_app/core/stock/charts/custom_y_axis.dart';
+import 'package:robinbank_app/core/stock/charts/custom_zoom_pan_behaviour.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
-import 'package:robinbank_app/ui/ui_text.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class CandleChart extends StatefulWidget {
@@ -21,6 +23,7 @@ class CandleChart extends StatefulWidget {
 }
 
 class _CandlestickChartState extends State<CandleChart> {
+  final AlpacaService alpacaService = AlpacaService();
   late Future<List<ChartDataPoint>> _chartDataPointsFuture;
   late TrackballBehavior _trackballBehaviour;
   late ZoomPanBehavior _zoomPanBehaviour;
@@ -28,32 +31,12 @@ class _CandlestickChartState extends State<CandleChart> {
   @override
   void initState() {
     super.initState();
-    _chartDataPointsFuture = AlpacaService().getChartDataPoints(widget.symbol);
-    _trackballBehaviour = TrackballBehavior(
-      enable: true,
-      lineType: TrackballLineType.vertical,
-      lineColor: UIColours.blue,
-      lineWidth: 1,
-      lineDashArray: [2, 1],
-      hideDelay: 3000,
-      activationMode: ActivationMode.longPress,
-      tooltipDisplayMode: TrackballDisplayMode.nearestPoint,
-      tooltipSettings: InteractiveTooltip(
-        enable: true,
-        canShowMarker: false,
-        color: UIColours.white,
-        borderWidth: 0.0,
-        borderRadius: 4,
-        borderColor: Colors.transparent,
-        textStyle: UIText.xsmall,
-        format: 'point.x\nOpen: point.open\nHigh: point.high\nLow: point.low\nClose: point.close',
-      ),
+    _chartDataPointsFuture = alpacaService.getChartDataPoints(widget.symbol);
+    _trackballBehaviour = CustomTrackballBehaviour.create(
+      tooltipFormat: 'point.x\nOpen: point.open\nHigh: point.high\nLow: point.low\nClose: point.close',
+      isMarkerVisible: false,
     );
-    _zoomPanBehaviour = ZoomPanBehavior(
-      enablePinching: true,
-      enablePanning: true,
-      zoomMode: ZoomMode.x,
-    );
+    _zoomPanBehaviour = CustomZoomPanBehaviour.create();
   }
 
   @override
@@ -68,12 +51,9 @@ class _CandlestickChartState extends State<CandleChart> {
               color: UIColours.blue,
             ),
           );
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
         } else {
           final chartDataPoints = snapshot.data!;
+          final bool isHollowCandle = widget.isHollowCandle;
           return Column(
             children: [
               SizedBox(
@@ -95,7 +75,7 @@ class _CandlestickChartState extends State<CandleChart> {
                       lowValueMapper: (ChartDataPoint point, _) => point.low,
                       closeValueMapper: (ChartDataPoint point, _) => point.close,
                       enableTooltip: true,
-                      enableSolidCandles: !widget.isHollowCandle,
+                      enableSolidCandles: !isHollowCandle,
                       bearColor: Colors.red,
                       bullColor: Colors.green,
                       borderWidth: 1.5,
@@ -110,27 +90,8 @@ class _CandlestickChartState extends State<CandleChart> {
                       ] : [],
                     ),
                   ],
-                  primaryXAxis: DateTimeAxis(
-                    dateFormat: DateFormat('HH.mm'),
-                    autoScrollingDelta: 50,
-                    autoScrollingDeltaType: DateTimeIntervalType.minutes,
-                    autoScrollingMode: AutoScrollingMode.end,
-                    isVisible: true,
-                    labelStyle: UIText.xsmall,
-                    majorGridLines: const MajorGridLines(
-                      width: 1,
-                      color: UIColours.background2,
-                    ),
-                    plotOffset: 0,
-                    labelPosition: ChartDataLabelPosition.inside,
-                    labelAlignment: LabelAlignment.center,
-                    edgeLabelPlacement: EdgeLabelPlacement.shift,
-                    crossesAt: 0,
-                  ),
-                  primaryYAxis: const NumericAxis(
-                    anchorRangeToVisiblePoints: true,
-                    isVisible: false,
-                  ),
+                  primaryXAxis: CustomXAxis.create(autoScrollingDelta: 50),
+                  primaryYAxis: CustomYAxis.create(),
                 ),
               ),
             ],

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:robinbank_app/components/chart_data_point.dart';
-import 'package:robinbank_app/components/news_article.dart';
+import 'package:robinbank_app/core/stock/charts/chart_data_point.dart';
+import 'package:robinbank_app/core/stock/components/news_article.dart';
 import 'package:robinbank_app/env.dart';
 import 'package:robinbank_app/utils/constants.dart';
 
@@ -10,7 +10,7 @@ class AlpacaService {
   final String _apiSecret = Env.apiSecret;
 
   Future<List<Map<String, String>>> searchStock(String query) async {
-    final url = Uri.parse('${Constants.alpacaQueryUri}/$query');
+    final url = Uri.parse('${Constants.alpacaTradingAPIBaseURL}/v2/assets/$query');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
@@ -29,37 +29,8 @@ class AlpacaService {
     }
   }
 
-  Future<Map<String, dynamic>> getStockMetrics(String symbol) async {
-    final url = Uri.parse('${Constants.alpacaBaseUrl}/v2/stocks/snapshots?symbols=$symbol&feed=iex');
-    final response = await http.get(url, headers: {
-      'APCA-API-KEY-ID': _apiKey,
-      'APCA-API-SECRET-KEY': _apiSecret,
-    });
-
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      final latestTradePrice = data[symbol]['latestTrade']['p'];
-      final previousClosePrice = data[symbol]['prevDailyBar']['c'];
-      final priceDifference = latestTradePrice - previousClosePrice;
-      final percentageChange = (priceDifference / previousClosePrice) * 100;
-      return {
-        'latestTradePrice': latestTradePrice,
-        'high': data[symbol]['dailyBar']['h'],
-        'low': data[symbol]['dailyBar']['l'],
-        'volume': data[symbol]['dailyBar']['v'],
-        'numOfTrades': data[symbol]['dailyBar']['n'],
-        'volumeWeightedAveragePrice': data[symbol]['dailyBar']['vw'],
-        'previousClosePrice': previousClosePrice,
-        'priceDifference': priceDifference,
-        'percentageChange': percentageChange,
-      };
-    } else {
-      throw Exception('Failed to load stock metrics');
-    }
-  }
-
   Future<List<NewsArticle>> getNewsArticles(String symbol) async {
-    final url = Uri.parse('https://data.alpaca.markets/v1beta1/news?sort=desc&symbols=$symbol&limit=5');
+    final url = Uri.parse('https://data.alpaca.markets/v1beta1/news?symbols=$symbol&limit=8');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
@@ -74,17 +45,87 @@ class AlpacaService {
         return [];
       }
     } else {
-      throw Exception('Failed to load news articles');
+      throw Exception('Failed to get news articles');
     }
   }
 
-  Future<List<ChartDataPoint>> getChartDataPoints(String symbol) async {
-    final url = Uri.parse('${Constants.alpacaBaseUrl}/v2/stocks/$symbol/bars?timeframe=1Min&adjustment=raw&feed=iex&sort=asc');
-    // final url = Uri.parse('https://data.alpaca.markets/v2/stocks/AAPL/bars?timeframe=1Min&start=2024-07-12&limit=10000&adjustment=raw&feed=iex&sort=asc'); // for testing when market is closed
+  Future<bool> getIsMarketOpenNow() async {
+    final url = Uri.parse('${Constants.alpacaTradingAPIBaseURL}/v2/clock');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
     });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['is_open'];
+    } else {
+      throw Exception('Failed to get market is open now');
+    }
+  }
+
+  Future<String> getLastMarketOpenDate() async {
+    final url = Uri.parse('${Constants.alpacaTradingAPIBaseURL}/v2/calendar');
+    final response = await http.get(url, headers: {
+      'APCA-API-KEY-ID': _apiKey,
+      'APCA-API-SECRET-KEY': _apiSecret,
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      for (int i = data.length - 1; i >= 0; i--) {
+        final date = DateTime.parse(data[i]['date']);
+        if (date.isBefore(DateTime.now()) || date.isAtSameMomentAs(DateTime.now())) {
+          return data[i]['date'];
+        }
+      }
+      return data.first['date'];
+    } else {
+      throw Exception('Failed to get last market open date');
+    }
+  }
+
+  Future<Map<String, dynamic>> getStockMetrics(String symbol) async {
+    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v2/stocks/snapshots?symbols=$symbol&feed=iex');
+    final response = await http.get(url, headers: {
+      'APCA-API-KEY-ID': _apiKey,
+      'APCA-API-SECRET-KEY': _apiSecret,
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final dailyHigh = data[symbol]['dailyBar']['h'];
+      final dailyLow = data[symbol]['dailyBar']['l'];
+      final dailyVolume = data[symbol]['dailyBar']['v'];
+      final dailyTrades = data[symbol]['dailyBar']['n'];
+      final latestTradePrice = data[symbol]['latestTrade']['p'];
+      final previousClosePrice = data[symbol]['prevDailyBar']['c'];
+      final priceDifference = latestTradePrice - previousClosePrice;
+      final percentageChange = (priceDifference / previousClosePrice) * 100;
+      return {
+        'dailyHigh': dailyHigh,
+        'dailyLow': dailyLow,
+        'dailyVolume': dailyVolume,
+        'dailyTrades': dailyTrades,
+        'latestTradePrice': latestTradePrice,
+        'priceDifference': priceDifference,
+        'percentageChange': percentageChange,
+      };
+    } else {
+      throw Exception('Failed to get stock metrics');
+    }
+  }
+
+  Future<List<ChartDataPoint>> getChartDataPoints(String symbol) async {
+    final date = await getLastMarketOpenDate();
+
+    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v2/stocks/$symbol/bars?timeframe=1Min&start=$date&end=$date&feed=iex&sort=asc');
+    final response = await http.get(url, headers: {
+      'APCA-API-KEY-ID': _apiKey,
+      'APCA-API-SECRET-KEY': _apiSecret,
+    });
+
+    // print('HELLLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO $date');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -104,7 +145,76 @@ class AlpacaService {
         return [];
       }
     } else {
-      throw Exception('Failed to load chart data points');
+      throw Exception('Failed to get chart data points');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getMostActiveStocks() async {
+    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v1beta1/screener/stocks/most-actives?top=20');
+    final response = await http.get(url, headers: {
+      'APCA-API-KEY-ID': _apiKey,
+      'APCA-API-SECRET-KEY': _apiSecret,
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final mostActiveStocks = data['most_actives'];
+      if (mostActiveStocks != null) {
+        return List<Map<String, dynamic>>.from(mostActiveStocks.map((stock) => {
+          'symbol': stock['symbol'],
+          'volume': stock['volume'],
+        }));
+      } else {
+        return [];
+      }
+    } else {
+      throw Exception('Failed to get most active stocks');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getTopGainers() async {
+    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v1beta1/screener/stocks/movers?top=20');
+    final response = await http.get(url, headers: {
+      'APCA-API-KEY-ID': _apiKey,
+      'APCA-API-SECRET-KEY': _apiSecret,
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final topGainers = data['gainers'];
+      if (topGainers != null) {
+        return List<Map<String, dynamic>>.from(topGainers.map((stock) => {
+          'symbol': stock['symbol'],
+          'percentageChange': stock['percent_change'],
+        }));
+      } else {
+        return [];
+      }
+    } else {
+      throw Exception('Failed to get top gainers');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getTopLosers() async {
+    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v1beta1/screener/stocks/movers?top=20');
+    final response = await http.get(url, headers: {
+      'APCA-API-KEY-ID': _apiKey,
+      'APCA-API-SECRET-KEY': _apiSecret,
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final topGainers = data['losers'];
+      if (topGainers != null) {
+        return List<Map<String, dynamic>>.from(topGainers.map((stock) => {
+          'symbol': stock['symbol'],
+          'percentageChange': stock['percent_change'],
+        }));
+      } else {
+        return [];
+      }
+    } else {
+      throw Exception('Failed to get top gainers');
     }
   }
 }

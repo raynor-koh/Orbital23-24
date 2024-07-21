@@ -5,7 +5,6 @@ import 'package:robinbank_app/ui/ui_colours.dart';
 class UIText {
   UIText._();
 
-  // text
   static final TextStyle brand = GoogleFonts.openSansCondensed(
     textStyle: const TextStyle(
       fontSize: 40,
