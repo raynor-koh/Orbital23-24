@@ -24,96 +24,66 @@ class _HomePageState extends State<HomePage> {
   final AlpacaService alpacaService = AlpacaService();
   final TransactionService transactionService = TransactionService();
 
+  late Future<Map<String, dynamic>> _portfolioDataFuture;
+
   @override
   void initState() {
     super.initState();
     String userId = Provider.of<UserProvider>(context, listen: false).user.id;
     userPositionService.getUserPosition(context, userId);
+    _portfolioDataFuture = _fetchPortfolioData();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<AccountPosition> userAccountPosition =
-        Provider.of<UserPositionProvider>(context)
-            .userPosition
-            .accountPositions;
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(
-            height: 8,
-          ),
-          buildStatisticsPanel(context),
-          const SizedBox(
-            height: 4,
-          ),
-          buildIconButtonsPanel(context),
-          const SizedBox(
-            height: 4,
-          ),
-          Align(
-            alignment: const AlignmentDirectional(-1, 0),
-            child: Text(
-              'Your Position(s)',
-              style: UIText.medium,
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _portfolioDataFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData) {
+          return const Center(child: Text('No data available'));
+        } else {
+          final data = snapshot.data!;
+          return Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 8),
+                buildStatisticsPanel(context, data),
+                const SizedBox(height: 4),
+                buildIconButtonsPanel(context),
+                const SizedBox(height: 4),
+                Align(
+                  alignment: const AlignmentDirectional(-1, 0),
+                  child: Text(
+                    'Your Position(s)',
+                    style: UIText.medium,
+                  ),
+                ),
+                Expanded(
+                  child: data['stockCards'].isEmpty
+                      ? const Center(child: Text('No positions available'))
+                      : ListView(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          scrollDirection: Axis.vertical,
+                          children: data['stockCards'],
+                        ),
+                ),
+              ],
             ),
-          ),
-          Expanded(
-            child: FutureBuilder(future: Future.wait(
-              userAccountPosition.map(
-                (position) async {
-                  Map<String, dynamic> stockMetrics =
-                      await alpacaService.getStockMetrics(position.symbol);
-                  double marketValue =
-                      stockMetrics['latestTradePrice'] * position.quantity;
-                  num initialInvestment =
-                      position.price * (position.quantity.toDouble());
-                  double pnl = marketValue - initialInvestment;
-                  double pnlPercentage = pnl / initialInvestment * 100;
-                  return StockCard(
-                    symbol: position.symbol,
-                    name: position.name,
-                    marketValue: marketValue,
-                    quantity: position.quantity,
-                    pnl: pnl,
-                    pnlPercentage: pnlPercentage,
-                  );
-                },
-              ),
-            ), builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isNotEmpty) {
-                  return ListView(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    scrollDirection: Axis.vertical,
-                    children:
-                        snapshot.data!.map((stockCard) => stockCard).toList(),
-                  );
-                } else {
-                  return const Center(child: Text('No positions available'));
-                }
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text('Error: ${snapshot.error}'),
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            }),
-          )
-        ],
-      ),
+          );
+        }
+      },
     );
   }
 
-  Widget buildStatisticsPanel(BuildContext context) {
-    User user = Provider.of<UserProvider>(context).user;
-    UserPosition userPosition =
-        Provider.of<UserPositionProvider>(context).userPosition;
+  Widget buildStatisticsPanel(BuildContext context, Map<String, dynamic> data) {
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
@@ -131,7 +101,7 @@ class _HomePageState extends State<HomePage> {
               style: UIText.small.copyWith(color: UIColours.secondaryText),
             ),
             Text(
-              userPosition.accountBalance.toStringAsFixed(2),
+              data['netAccountValue'].toStringAsFixed(2),
               style: UIText.heading,
             ),
             const SizedBox(
@@ -153,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                           UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
-                      '8,794.40',
+                      data['marketValue'].toStringAsFixed(2),
                       style: UIText.medium,
                     ),
                   ],
@@ -169,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                           UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
-                      userPosition.buyingPower.toStringAsFixed(2),
+                      data['buyingPower'].toStringAsFixed(2),
                       style: UIText.medium,
                     ),
                   ],
@@ -185,8 +155,14 @@ class _HomePageState extends State<HomePage> {
                           UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
-                      '-18.40',
-                      style: UIText.medium.copyWith(color: UIColours.red),
+                      data['daysPnL'] > 0
+                          ? '+${data['daysPnL'].toStringAsFixed(2)}'
+                          : data['daysPnL'].toStringAsFixed(2),
+                      style: data['daysPnL'] == 0
+                          ? UIText.medium.copyWith()
+                          : data['daysPnL'] < 0
+                              ? UIText.medium.copyWith(color: UIColours.red)
+                              : UIText.medium.copyWith(color: UIColours.green),
                     ),
                   ],
                 ),
@@ -387,5 +363,47 @@ class _HomePageState extends State<HomePage> {
 
     // Close the confirmation dialog
     Navigator.of(context).pop();
+  }
+
+  Future<Map<String, dynamic>> _fetchPortfolioData() async {
+    UserPosition userPosition =
+        Provider.of<UserPositionProvider>(context, listen: false).userPosition;
+    List<AccountPosition> positions = userPosition.accountPositions;
+
+    double totalMarketValue = 0;
+    double totalPnL = 0;
+    List<StockCard> stockCards = [];
+
+    for (var position in positions) {
+      Map<String, dynamic> stockMetrics =
+          await alpacaService.getStockMetrics(position.symbol);
+      double currentPrice = stockMetrics['latestTradePrice'];
+      double marketValue = currentPrice * position.quantity;
+      double pnl = marketValue - (position.price * position.quantity);
+      double pnlPercentage = (pnl / (position.price * position.quantity)) * 100;
+
+      totalMarketValue += marketValue;
+      totalPnL += pnl;
+
+      stockCards.add(StockCard(
+        symbol: position.symbol,
+        name: position.name,
+        marketValue: marketValue,
+        quantity: position.quantity,
+        pnl: pnl,
+        pnlPercentage: pnlPercentage,
+      ));
+    }
+
+    double netAccountValue = userPosition.accountBalance + totalMarketValue;
+    double buyingPower = userPosition.buyingPower + 0;
+
+    return {
+      'netAccountValue': netAccountValue,
+      'marketValue': totalMarketValue,
+      'buyingPower': buyingPower,
+      'daysPnL': totalPnL,
+      'stockCards': stockCards,
+    };
   }
 }
