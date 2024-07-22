@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robinbank_app/core/home/stock_card.dart';
+import 'package:robinbank_app/core/home/components/position_card.dart';
 import 'package:robinbank_app/models/account_position.dart';
 import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
@@ -43,23 +43,52 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 8),
             buildStatisticsPanel(context),
-            const SizedBox(
-              height: 4,
-            ),
+            const SizedBox(height: 4),
             buildIconButtonsPanel(context),
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 16),
             Align(
               alignment: const AlignmentDirectional(-1, 0),
               child: Text(
                 'Your Position(s)',
                 style: UIText.medium,
               ),
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: Text(
+                      'Stock',
+                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Mkt Val/Qty',
+                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'P&L',
+                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(
+              height: 2,
+              color: UIColours.background2,
             ),
             Expanded(
               child: FutureBuilder(
@@ -72,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                     position.price * (position.quantity.toDouble());
                 double pnl = marketValue - initialInvestment;
                 double pnlPercentage = pnl / initialInvestment * 100;
-                return StockCard(
+                return PositionCard(
                   symbol: position.symbol,
                   name: position.name,
                   marketValue: marketValue,
@@ -99,7 +128,10 @@ class _HomePageState extends State<HomePage> {
                   }
                 } else if (snapshot.hasError) {
                   return Center(
-                    child: Text('Error: ${snapshot.error}'),
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: UIText.small,
+                      ),
                   );
                 } else {
                   return const Center(

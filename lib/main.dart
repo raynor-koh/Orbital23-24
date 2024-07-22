@@ -4,7 +4,7 @@ import 'package:robinbank_app/core/navigation/pages/main_wrapper.dart';
 import 'package:robinbank_app/core/search/search_page.dart';
 import 'package:robinbank_app/core/authentication/pages/sign_in_page.dart';
 import 'package:robinbank_app/core/authentication/pages/sign_up_page.dart';
-import 'package:robinbank_app/core/trending/market_movers_page.dart';
+import 'package:robinbank_app/core/trending/pages/market_movers_page.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/auth_service.dart';
