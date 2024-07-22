@@ -1,6 +1,12 @@
 part of 'nav_drawer_bloc.dart';
 
-enum NavDrawerDestination { homePage, userDataPage, testPage1, signOut }
+enum NavDrawerDestination {
+  homePage,
+  userDataPage,
+  testPage1,
+  signOut,
+  transactionHistory
+}
 
 class NavDrawerState extends Equatable {
   final NavDrawerDestination selectedDestination;

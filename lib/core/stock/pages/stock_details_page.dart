@@ -32,7 +32,13 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   Map<String, dynamic> _stockMetrics = {};
   List<NewsArticle> _newsArticles = [];
 
-  final List<String> _categories = ['Line', 'Area', 'Candle', 'Hollow Candle', 'OHLC'];
+  final List<String> _categories = [
+    'Line',
+    'Area',
+    'Candle',
+    'Hollow Candle',
+    'OHLC'
+  ];
   String _selectedCategory = 'Line';
   final UserPositionService userPositionService = UserPositionService();
 
@@ -86,9 +92,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
                   child: Column(
                     children: [
-                      StockMetricsPanel(
-                        stockMetrics: _stockMetrics
-                      ),
+                      StockMetricsPanel(stockMetrics: _stockMetrics),
                       const SizedBox(height: 4),
                       buildChartTypeToggle(),
                       const SizedBox(height: 4),
@@ -187,38 +191,38 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Container(
-          constraints: const BoxConstraints(maxWidth: 300),
-          child: Text(
-            article.headline,
-            style: UIText.small,
+          Container(
+            constraints: const BoxConstraints(maxWidth: 300),
+            child: Text(
+              article.headline,
+              style: UIText.small,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'By ${article.author} on ${article.updatedAt}',
+            style: UIText.xsmall,
             overflow: TextOverflow.ellipsis,
-            maxLines: 2,
           ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          'By ${article.author} on ${article.updatedAt}',
-          style: UIText.xsmall,
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(height: 2),
-        GestureDetector(
-          onTap: () => _launchURL(article.url),
-          child: Text(
-            'Read more',
-            style: UIText.xsmall.copyWith(color: UIColours.blue),
+          const SizedBox(height: 2),
+          GestureDetector(
+            onTap: () => _launchURL(article.url),
+            child: Text(
+              'Read more',
+              style: UIText.xsmall.copyWith(color: UIColours.blue),
+            ),
           ),
-        ),
-        const Divider(),
+          const Divider(),
         ],
       ),
     );
   }
 
   void _launchURL(String url) async {
-   if (!await launchUrl(Uri.parse(url))) {
-        throw Exception('Could not launch url');
+    if (!await launchUrl(Uri.parse(url))) {
+      throw Exception('Could not launch url');
     }
   }
 
@@ -234,7 +238,9 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                backgroundColor: _selectedCategory == category ? UIColours.blue : UIColours.background2,
+                backgroundColor: _selectedCategory == category
+                    ? UIColours.blue
+                    : UIColours.background2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -246,7 +252,10 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
               },
               child: Text(
                 category,
-                style: UIText.small.copyWith(color: _selectedCategory == category ? UIColours.white : UIColours.primaryText),
+                style: UIText.small.copyWith(
+                    color: _selectedCategory == category
+                        ? UIColours.white
+                        : UIColours.primaryText),
               ),
             ),
           );

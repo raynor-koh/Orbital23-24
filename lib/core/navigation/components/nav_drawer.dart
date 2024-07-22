@@ -39,6 +39,11 @@ class NavDrawer extends StatelessWidget {
       "TestPage1",
       IconlyBold.home,
     ),
+    NavDrawerItem(
+      NavDrawerDestination.transactionHistory,
+      "Transaction History",
+      IconlyBold.activity,
+    ),
     NavDrawerItem(null, "Sign Out", null),
   ];
 

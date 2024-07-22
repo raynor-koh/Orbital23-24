@@ -4,6 +4,7 @@ import 'package:robinbank_app/core/navigation/bloc/nav_drawer_bloc.dart';
 import 'package:robinbank_app/core/navigation/components/nav_drawer.dart';
 import 'package:robinbank_app/core/home/home_page.dart';
 import 'package:robinbank_app/pages/test_page1.dart';
+import 'package:robinbank_app/pages/transaction_history_page.dart';
 import 'package:robinbank_app/pages/user_data_page.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -78,6 +79,8 @@ class _MainWrapperState extends State<MainWrapper> {
         return "UserDataPage";
       case NavDrawerDestination.testPage1:
         return "TestPage1";
+      case NavDrawerDestination.transactionHistory:
+        return "TransactionHistory";
       default:
         return "HowDidYouGetHere";
     }
@@ -91,6 +94,8 @@ class _MainWrapperState extends State<MainWrapper> {
         return const UserDataPage();
       case NavDrawerDestination.testPage1:
         return const TestPage1();
+      case NavDrawerDestination.transactionHistory:
+        return TransactionHistoryPage();
       default:
         return const Scaffold();
     }
