@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:robinbank_app/bloc/nav_drawer/nav_drawer_bloc.dart';
-import 'package:robinbank_app/components/nav_drawer.dart';
-import 'package:robinbank_app/pages/home_page.dart';
-import 'package:robinbank_app/pages/transaction_history_page.dart';
+import 'package:robinbank_app/core/navigation/bloc/nav_drawer_bloc.dart';
+import 'package:robinbank_app/core/navigation/components/nav_drawer.dart';
+import 'package:robinbank_app/core/home/home_page.dart';
+import 'package:robinbank_app/pages/test_page1.dart';
+import 'package:robinbank_app/pages/user_data_page.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
@@ -22,7 +23,7 @@ class _MainWrapperState extends State<MainWrapper> {
   void initState() {
     super.initState();
     bloc = NavDrawerBloc();
-    navDrawerItem = getContentForState(bloc.state.selectedDestination);
+    navDrawerItem = _getContentForState(bloc.state.selectedDestination);
   }
 
   @override
@@ -31,7 +32,7 @@ class _MainWrapperState extends State<MainWrapper> {
       create: (BuildContext context) => bloc,
       child: BlocConsumer<NavDrawerBloc, NavDrawerState>(
         listener: (BuildContext context, NavDrawerState state) {
-          navDrawerItem = getContentForState(state.selectedDestination);
+          navDrawerItem = _getContentForState(state.selectedDestination);
         },
         buildWhen: (previous, current) {
           return previous.selectedDestination != current.selectedDestination;
@@ -42,7 +43,7 @@ class _MainWrapperState extends State<MainWrapper> {
         builder: (BuildContext context, NavDrawerState state) {
           return Scaffold(
             drawer: NavDrawer(),
-            appBar: buildAppBar(state),
+            appBar: _buildAppBar(state),
             body: AnimatedSwitcher(
               switchInCurve: Curves.easeInExpo,
               switchOutCurve: Curves.easeOutExpo,
@@ -55,39 +56,43 @@ class _MainWrapperState extends State<MainWrapper> {
     );
   }
 
-  AppBar buildAppBar(NavDrawerState state) {
+  AppBar _buildAppBar(NavDrawerState state) {
     return AppBar(
       iconTheme: const IconThemeData(
         color: UIColours.white,
       ),
       title: Text(
-        getAppBarTitle(state.selectedDestination),
+        _getAppBarTitle(state.selectedDestination),
         style: UIText.large.copyWith(color: UIColours.white),
       ),
-      centerTitle: false,
+      titleSpacing: 4,
       backgroundColor: UIColours.blue,
     );
   }
 
-  String getAppBarTitle(NavDrawerDestination selectedDestination) {
+  String _getAppBarTitle(NavDrawerDestination selectedDestination) {
     switch (selectedDestination) {
       case NavDrawerDestination.homePage:
         return "HomePage";
-      case NavDrawerDestination.transactionHistory:
-        return "TransactionHistory";
+      case NavDrawerDestination.userDataPage:
+        return "UserDataPage";
+      case NavDrawerDestination.testPage1:
+        return "TestPage1";
       default:
-        return "AppBarTitle";
+        return "HowDidYouGetHere";
     }
   }
 
-  Widget getContentForState(NavDrawerDestination selectedDestination) {
+  Widget _getContentForState(NavDrawerDestination selectedDestination) {
     switch (selectedDestination) {
       case NavDrawerDestination.homePage:
         return const HomePage();
-      case NavDrawerDestination.transactionHistory:
-        return TransactionHistoryPage();
+      case NavDrawerDestination.userDataPage:
+        return const UserDataPage();
+      case NavDrawerDestination.testPage1:
+        return const TestPage1();
       default:
-        return Container();
+        return const Scaffold();
     }
   }
 }

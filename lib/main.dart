@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robinbank_app/pages/main_wrapper.dart';
-import 'package:robinbank_app/pages/search_page.dart';
-import 'package:robinbank_app/pages/sign_in_page.dart';
-import 'package:robinbank_app/pages/sign_up_page.dart';
+import 'package:robinbank_app/core/navigation/pages/main_wrapper.dart';
+import 'package:robinbank_app/core/search/search_page.dart';
+import 'package:robinbank_app/core/authentication/pages/sign_in_page.dart';
+import 'package:robinbank_app/core/authentication/pages/sign_up_page.dart';
+import 'package:robinbank_app/core/trending/market_movers_page.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/auth_service.dart';
@@ -43,13 +44,17 @@ class _MyAppState extends State<MyApp> {
           : const MainWrapper(),
       theme: ThemeData(
         scaffoldBackgroundColor: UIColours.background1,
+        textSelectionTheme: const TextSelectionThemeData(
+          cursorColor: UIColours.blue,
+        ),
       ),
       debugShowCheckedModeBanner: false,
       routes: {
         '/signinpage': (context) => const SignInPage(),
         '/signuppage': (context) => const SignUpPage(),
         '/mainwrapper': (context) => const MainWrapper(),
-        '/searchpage': (context) => const SearchPage()
+        '/searchpage': (context) => const SearchPage(),
+        '/marketmoverspage': (context) => const MarketMoversPage(),
       },
     );
   }

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robinbank_app/components/stock_card.dart';
+import 'package:robinbank_app/core/home/stock_card.dart';
 import 'package:robinbank_app/models/account_position.dart';
-import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
-import 'package:robinbank_app/services/transaction_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -22,68 +20,106 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final UserPositionService userPositionService = UserPositionService();
   final AlpacaService alpacaService = AlpacaService();
-  final TransactionService transactionService = TransactionService();
-
-  late Future<Map<String, dynamic>> _portfolioDataFuture;
 
   @override
   void initState() {
     super.initState();
     String userId = Provider.of<UserProvider>(context, listen: false).user.id;
     userPositionService.getUserPosition(context, userId);
-    _portfolioDataFuture = _fetchPortfolioData();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: _portfolioDataFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData) {
-          return const Center(child: Text('No data available'));
-        } else {
-          final data = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 8),
-                buildStatisticsPanel(context, data),
-                const SizedBox(height: 4),
-                buildIconButtonsPanel(context),
-                const SizedBox(height: 4),
-                Align(
-                  alignment: const AlignmentDirectional(-1, 0),
-                  child: Text(
-                    'Your Position(s)',
-                    style: UIText.medium,
-                  ),
-                ),
-                Expanded(
-                  child: data['stockCards'].isEmpty
-                      ? const Center(child: Text('No positions available'))
-                      : ListView(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          scrollDirection: Axis.vertical,
-                          children: data['stockCards'],
-                        ),
-                ),
-              ],
+    List<AccountPosition> userAccountPosition =
+        Provider.of<UserPositionProvider>(context)
+            .userPosition
+            .accountPositions;
+    return PopScope(
+      canPop: false,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(
+              height: 8,
             ),
-          );
-        }
-      },
+            buildStatisticsPanel(context),
+            const SizedBox(
+              height: 4,
+            ),
+            buildIconButtonsPanel(context),
+            const SizedBox(
+              height: 8,
+            ),
+            Align(
+              alignment: const AlignmentDirectional(-1, 0),
+              child: Text(
+                'Your Position(s)',
+                style: UIText.medium,
+              ),
+            ),
+            Expanded(
+              child: FutureBuilder(
+                  future: Future.wait(userAccountPosition.map((position) async {
+                Map<String, dynamic> stockMetrics =
+                    await alpacaService.getStockMetrics(position.symbol);
+                double marketValue =
+                    stockMetrics['latestTradePrice'] * position.quantity;
+                num initialInvestment =
+                    position.price * (position.quantity.toDouble());
+                double pnl = marketValue - initialInvestment;
+                double pnlPercentage = pnl / initialInvestment * 100;
+                return StockCard(
+                  symbol: position.symbol,
+                  name: position.name,
+                  marketValue: marketValue,
+                  quantity: position.quantity,
+                  pnl: pnl,
+                  pnlPercentage: pnlPercentage,
+                );
+              })), builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  if (snapshot.data!.isNotEmpty) {
+                    return ListView(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      scrollDirection: Axis.vertical,
+                      children:
+                          snapshot.data!.map((stockCard) => stockCard).toList(),
+                    );
+                  } else {
+                    return Center(
+                      child: Text(
+                        'No positions available',
+                        style: UIText.small,
+                      ),
+                    );
+                  }
+                } else if (snapshot.hasError) {
+                  return Center(
+                    child: Text('Error: ${snapshot.error}'),
+                  );
+                } else {
+                  return const Center(
+                    child: RefreshProgressIndicator(
+                      backgroundColor: UIColours.white,
+                      color: UIColours.blue,
+                    ),
+                  );
+                }
+              }),
+            )
+          ],
+        ),
+      ),
     );
   }
 
-  Widget buildStatisticsPanel(BuildContext context, Map<String, dynamic> data) {
+  Widget buildStatisticsPanel(BuildContext context) {
+    UserPosition userPosition =
+        Provider.of<UserPositionProvider>(context).userPosition;
     return Container(
       decoration: BoxDecoration(
         color: UIColours.white,
@@ -97,11 +133,11 @@ class _HomePageState extends State<HomePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Net Account Value',
+              'Net Account Value (USD)',
               style: UIText.small.copyWith(color: UIColours.secondaryText),
             ),
             Text(
-              data['netAccountValue'].toStringAsFixed(2),
+              userPosition.accountBalance.toStringAsFixed(2),
               style: UIText.heading,
             ),
             const SizedBox(
@@ -123,7 +159,7 @@ class _HomePageState extends State<HomePage> {
                           UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
-                      data['marketValue'].toStringAsFixed(2),
+                      '8,794.40',
                       style: UIText.medium,
                     ),
                   ],
@@ -139,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                           UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
-                      data['buyingPower'].toStringAsFixed(2),
+                      userPosition.buyingPower.toStringAsFixed(2),
                       style: UIText.medium,
                     ),
                   ],
@@ -155,14 +191,8 @@ class _HomePageState extends State<HomePage> {
                           UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
-                      data['daysPnL'] > 0
-                          ? '+${data['daysPnL'].toStringAsFixed(2)}'
-                          : data['daysPnL'].toStringAsFixed(2),
-                      style: data['daysPnL'] == 0
-                          ? UIText.medium.copyWith()
-                          : data['daysPnL'] < 0
-                              ? UIText.medium.copyWith(color: UIColours.red)
-                              : UIText.medium.copyWith(color: UIColours.green),
+                      '-18.40',
+                      style: UIText.medium.copyWith(color: UIColours.red),
                     ),
                   ],
                 ),
@@ -216,7 +246,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () {},
                 ),
                 Text(
-                  'Transactions',
+                  'Orders',
                   style: UIText.small,
                 ),
               ],
@@ -229,12 +259,13 @@ class _HomePageState extends State<HomePage> {
                     size: 32,
                     color: UIColours.blue,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/marketmoverspage');
+                  },
                 ),
                 Text(
-                  'Performance',
+                  'Trending',
                   style: UIText.small,
-                  softWrap: true,
                 ),
               ],
             ),
@@ -247,7 +278,7 @@ class _HomePageState extends State<HomePage> {
                     color: UIColours.blue,
                   ),
                   onPressed: () {
-                    _showResetAccountDialogue(context);
+                    _showResetBalanceDialogue(context);
                   },
                 ),
                 Text(
@@ -262,21 +293,44 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _showResetAccountDialogue(BuildContext context) async {
+  Future<void> _showResetBalanceDialogue(BuildContext context) async {
     double? newBalance;
     return showDialog<void>(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          //title: const Text('Reset Account Balance'),
+          backgroundColor: UIColours.background1,
+          shape: ContinuousRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[
-                const Text('Enter new starting balance:'),
+              children: [
+                Text(
+                  'Reset Starting Balance',
+                  style: UIText.large,
+                ),
                 TextField(
                   keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(hintText: "New Balance"),
+                  decoration: InputDecoration(
+                    hintText: "New Balance",
+                    hintStyle:
+                        UIText.small.copyWith(color: UIColours.secondaryText),
+                    enabledBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: UIColours.secondaryText,
+                        width: 1.5,
+                      ),
+                    ),
+                    focusedBorder: const UnderlineInputBorder(
+                      borderSide: BorderSide(
+                        color: UIColours.blue,
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                  textAlignVertical: TextAlignVertical.bottom,
                   onChanged: (value) {
                     newBalance = double.tryParse(value);
                   },
@@ -284,18 +338,24 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
-          actions: <Widget>[
+          actions: [
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: UIText.small,
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Confirm'),
+              child: Text(
+                'Confirm',
+                style: UIText.small.copyWith(color: UIColours.blue),
+              ),
               onPressed: () {
                 if (newBalance != null) {
-                  _confirmReset(context, newBalance!);
+                  _showConfirmResetBalanceDiagloue(context, newBalance!);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -311,33 +371,56 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _confirmReset(BuildContext context, double newBalance) async {
+  Future<void> _showConfirmResetBalanceDiagloue(
+      BuildContext context, double newBalance) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirm Reset'),
+          backgroundColor: UIColours.white,
+          shape: ContinuousRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          title: Text(
+            'Reset',
+            style: UIText.large.copyWith(color: UIColours.red),
+          ),
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[
-                const Text('Are you sure you want to reset your account?'),
-                Text('New Balance: \$${newBalance.toStringAsFixed(2)}'),
+              children: [
+                Text(
+                  'All your positions will be erased and your balance will be set to ${newBalance.toStringAsFixed(2)}',
+                  style: UIText.small,
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  'Are you sure to proceed?',
+                  style: UIText.small,
+                ),
               ],
             ),
           ),
-          actions: <Widget>[
+          actions: [
             TextButton(
-              child: const Text('Cancel'),
+              child: Text(
+                'Cancel',
+                style: UIText.small,
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Confirm'),
+              child: Text(
+                'Confirm',
+                style: UIText.small.copyWith(color: UIColours.blue),
+              ),
               onPressed: () {
-                Navigator.of(context).pop();
-                _resetAccountBalance(context, newBalance);
+                Navigator.of(context).pushNamed("/mainwrapper");
+                _resetBalance(context, newBalance);
               },
             ),
           ],
@@ -346,64 +429,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _resetAccountBalance(BuildContext context, double newBalance) {
+  void _resetBalance(BuildContext context, double newBalance) {
     String userId = Provider.of<UserProvider>(context, listen: false).user.id;
-    // Update the user account balance in the provider
     userPositionService.resetUserPosition(context, userId, newBalance);
     userPositionService.getUserPosition(context, userId);
-    transactionService.resetTransactions(context, userId);
 
-    // Display a success message
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content:
-            Text('Account balance reset to \$${newBalance.toStringAsFixed(2)}'),
+      const SnackBar(
+        content: Text('Balance has been reset'),
       ),
     );
 
-    // Close the confirmation dialog
     Navigator.of(context).pop();
-  }
-
-  Future<Map<String, dynamic>> _fetchPortfolioData() async {
-    UserPosition userPosition =
-        Provider.of<UserPositionProvider>(context, listen: false).userPosition;
-    List<AccountPosition> positions = userPosition.accountPositions;
-
-    double totalMarketValue = 0;
-    double totalPnL = 0;
-    List<StockCard> stockCards = [];
-
-    for (var position in positions) {
-      Map<String, dynamic> stockMetrics =
-          await alpacaService.getStockMetrics(position.symbol);
-      double currentPrice = stockMetrics['latestTradePrice'];
-      double marketValue = currentPrice * position.quantity;
-      double pnl = marketValue - (position.price * position.quantity);
-      double pnlPercentage = (pnl / (position.price * position.quantity)) * 100;
-
-      totalMarketValue += marketValue;
-      totalPnL += pnl;
-
-      stockCards.add(StockCard(
-        symbol: position.symbol,
-        name: position.name,
-        marketValue: marketValue,
-        quantity: position.quantity,
-        pnl: pnl,
-        pnlPercentage: pnlPercentage,
-      ));
-    }
-
-    double netAccountValue = userPosition.accountBalance + totalMarketValue;
-    double buyingPower = userPosition.buyingPower + 0;
-
-    return {
-      'netAccountValue': netAccountValue,
-      'marketValue': totalMarketValue,
-      'buyingPower': buyingPower,
-      'daysPnL': totalPnL,
-      'stockCards': stockCards,
-    };
   }
 }

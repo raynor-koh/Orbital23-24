@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:robinbank_app/main.dart';
-import 'package:robinbank_app/pages/main_wrapper.dart';
-import 'package:robinbank_app/pages/sign_in_page.dart';
+import 'package:robinbank_app/core/navigation/pages/main_wrapper.dart';
+import 'package:robinbank_app/core/authentication/pages/sign_in_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
@@ -88,7 +88,6 @@ class AuthService {
             MaterialPageRoute(builder: (context) => const MyApp()),
             (route) => false,
           );
-          // Navigator.pushNamed(context, '/mainwrapper');
         },
       );
     } catch (error) {
@@ -97,7 +96,6 @@ class AuthService {
     }
   }
 
-  // Get User Data
   void getUserData(
     BuildContext context,
   ) async {
@@ -136,7 +134,6 @@ class AuthService {
     }
   }
 
-  // Sign Out
   void signOutUser(BuildContext context) async {
     final navigator = Navigator.of(context);
     SharedPreferences prefs = await SharedPreferences.getInstance();

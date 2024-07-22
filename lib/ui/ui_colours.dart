@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class UIColours {
   UIColours._();
 
-  // colours
   static const Color white = Color.fromRGBO(255, 255, 255, 1.0);
 
   static const Color background1 = Color.fromRGBO(242, 242, 242, 1.0);

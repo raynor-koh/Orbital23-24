@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
-import 'package:robinbank_app/pages/stock_details_page.dart';
+import 'package:robinbank_app/core/stock/pages/stock_details_page.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -14,10 +14,13 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final AlpacaService alpacaService = AlpacaService();
+  
   late TextEditingController _searchController;
-  List<Map<String, String>> _searchResults = [];
   bool _isLoading = false;
-
+  bool _isNoMatchesFound = false;
+  List<Map<String, String>> _searchResults = [];
+  
   @override
   void initState() {
     super.initState();
@@ -40,7 +43,8 @@ class _SearchPageState extends State<SearchPage> {
           children: [
             Expanded(
               child: CupertinoSearchTextField(
-                prefixIcon: Icon(IconlyLight.search),
+                prefixIcon: const Icon(IconlyLight.search),
+                suffixIcon: const Icon(Icons.close),
                 placeholder: 'Symbol',
                 controller: _searchController,
                 onSubmitted: _performSearch,
@@ -59,9 +63,54 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _buildSearchResults(),
+        ? const Center(
+            child: RefreshProgressIndicator(
+              backgroundColor: UIColours.white,
+              color: UIColours.blue,
+            ),
+          )
+        : _isNoMatchesFound
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 80,
+                      color: UIColours.red,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Sorry, no matches have been found',
+                      style: UIText.small,
+                    ),
+                  ],
+                ),
+              )
+            : _buildSearchResults(),
     );
+  }
+
+  void _performSearch(String query) async {
+    setState(() {
+      _isLoading = true;
+      _isNoMatchesFound = false;
+    });
+
+    try {
+      List<Map<String, String>> results = await alpacaService.searchStock(query.toUpperCase());
+      setState(() {
+        _searchResults = results;
+      });
+    } catch (e) {
+      setState(() {
+        _isNoMatchesFound = true;
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   Widget _buildSearchResults() {
@@ -87,29 +136,5 @@ class _SearchPageState extends State<SearchPage> {
         );
       },
     );
-  }
-
-  void _performSearch(String query) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      List<Map<String, String>> results = await AlpacaService().searchStock(query.toUpperCase());
-      setState(() {
-        _searchResults = results;
-      });
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('No such stock found!'),
-          duration: Duration(seconds: 3),
-        ),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 }

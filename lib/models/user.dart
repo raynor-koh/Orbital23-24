@@ -1,12 +1,11 @@
 import 'dart:convert';
-import 'dart:developer';
 
 class User {
   final String id;
   final String name;
   final String email;
   final String token;
-  final String password; // May not need to store the password
+  final String password;
 
   User({
     required this.id,
