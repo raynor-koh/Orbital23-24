@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:robinbank_app/core/trending/mover_chart.dart';
+import 'package:robinbank_app/core/trending/components/mover_chart.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 

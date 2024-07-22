@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:robinbank_app/core/stock/components/candle_chart.dart';
 import 'package:robinbank_app/core/stock/components/line_chart.dart';
 import 'package:robinbank_app/core/stock/components/news_article.dart';
@@ -133,9 +134,13 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                 widget.symbol,
                 style: UIText.large.copyWith(color: UIColours.white),
               ),
-              Text(
-                widget.name,
-                style: UIText.small.copyWith(color: UIColours.white),
+              Container(
+                constraints: const BoxConstraints(maxWidth: 250),
+                child: Text(
+                  widget.name,
+                  style: UIText.small.copyWith(color: UIColours.white),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
@@ -191,22 +196,19 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            constraints: const BoxConstraints(maxWidth: 300),
-            child: Text(
-              article.headline,
-              style: UIText.small,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-            ),
-          ),
-          const SizedBox(height: 2),
           Text(
-            'By ${article.author} on ${article.updatedAt}',
+            article.headline,
+            style: UIText.small.copyWith(fontWeight: FontWeight.bold),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'By ${article.author} on ${DateFormat.yMMMd().format(DateTime.parse(article.updatedAt))}',
             style: UIText.xsmall,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           GestureDetector(
             onTap: () => _launchURL(article.url),
             child: Text(
@@ -214,7 +216,9 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
               style: UIText.xsmall.copyWith(color: UIColours.blue),
             ),
           ),
-          const Divider(),
+          const Divider(
+            height: 12,
+          ),
         ],
       ),
     );

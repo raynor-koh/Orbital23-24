@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robinbank_app/core/home/stock_card.dart';
+import 'package:robinbank_app/core/home/components/position_card.dart';
 import 'package:robinbank_app/models/account_position.dart';
 import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
