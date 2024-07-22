@@ -8,21 +8,19 @@ import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-class CandleChart extends StatefulWidget {
+class OHLCChart extends StatefulWidget {
   final String symbol;
-  final bool isHollowCandle;
 
-  const CandleChart({
+  const OHLCChart({
     super.key,
     required this.symbol,
-    required this.isHollowCandle,
   });
 
   @override
-  State<CandleChart> createState() => _CandlestickChartState();
+  State<OHLCChart> createState() => _OHLCChartState();
 }
 
-class _CandlestickChartState extends State<CandleChart> {
+class _OHLCChartState extends State<OHLCChart> {
   final AlpacaService alpacaService = AlpacaService();
   late Future<List<ChartDataPoint>> _chartDataPointsFuture;
   late TrackballBehavior _trackballBehaviour;
@@ -53,7 +51,6 @@ class _CandlestickChartState extends State<CandleChart> {
           );
         } else {
           final chartDataPoints = snapshot.data!;
-          final bool isHollowCandle = widget.isHollowCandle;
           return Column(
             children: [
               SizedBox(
@@ -67,7 +64,7 @@ class _CandlestickChartState extends State<CandleChart> {
                   trackballBehavior: _trackballBehaviour,
                   zoomPanBehavior: _zoomPanBehaviour,
                   series: [
-                    CandleSeries<ChartDataPoint, DateTime>(
+                    HiloOpenCloseSeries<ChartDataPoint, DateTime>(
                       dataSource: chartDataPoints,
                       xValueMapper: (ChartDataPoint point, _) => point.dateTime,
                       openValueMapper: (ChartDataPoint point, _) => point.open,
@@ -75,7 +72,6 @@ class _CandlestickChartState extends State<CandleChart> {
                       lowValueMapper: (ChartDataPoint point, _) => point.low,
                       closeValueMapper: (ChartDataPoint point, _) => point.close,
                       enableTooltip: true,
-                      enableSolidCandles: !isHollowCandle,
                       bearColor: Colors.red,
                       bullColor: Colors.green,
                       borderWidth: 1.5,

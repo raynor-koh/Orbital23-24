@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:robinbank_app/core/stock/components/candle_chart.dart';
 import 'package:robinbank_app/core/stock/components/line_chart.dart';
 import 'package:robinbank_app/core/stock/components/news_article.dart';
+import 'package:robinbank_app/core/stock/components/ohlc_chart.dart';
 import 'package:robinbank_app/core/stock/components/stock_metrics_panel.dart';
 import 'package:robinbank_app/core/stock/components/trade_panel.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
@@ -31,7 +32,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   Map<String, dynamic> _stockMetrics = {};
   List<NewsArticle> _newsArticles = [];
 
-  final List<String> _categories = ['Line', 'Area', 'Candle', 'Hollow Candle'];
+  final List<String> _categories = ['Line', 'Area', 'Candle', 'Hollow Candle', 'OHLC'];
   String _selectedCategory = 'Line';
   final UserPositionService userPositionService = UserPositionService();
 
@@ -264,6 +265,8 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
         return CandleChart(symbol: widget.symbol, isHollowCandle: false);
       case 'Hollow Candle':
         return CandleChart(symbol: widget.symbol, isHollowCandle: true);
+      case 'OHLC':
+        return OHLCChart(symbol: widget.symbol);
       default:
         return Container();
     }

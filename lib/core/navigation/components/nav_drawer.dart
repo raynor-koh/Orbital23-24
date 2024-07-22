@@ -30,13 +30,13 @@ class NavDrawer extends StatelessWidget {
       IconlyBold.home,
     ),
     NavDrawerItem(
-      NavDrawerDestination.testPage1,
-      "TestPage1",
+      NavDrawerDestination.userDataPage,
+      "UserDataPage",
       IconlyBold.profile,
     ),
     NavDrawerItem(
-      NavDrawerDestination.testPage2,
-      "TestPage2",
+      NavDrawerDestination.testPage1,
+      "TestPage1",
       IconlyBold.home,
     ),
     NavDrawerItem(null, "Sign Out", null),

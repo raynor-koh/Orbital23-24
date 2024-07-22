@@ -57,7 +57,12 @@ class _LineChartState extends State<LineChart> {
           final chartDataPoints = snapshot.data!;
           final isGradient = widget.isGradient;
           final isPositiveTrend = chartDataPoints.isNotEmpty && (chartDataPoints.first.close ?? 0) < (chartDataPoints.last.close ?? 0);
-          final lineColor = isPositiveTrend ? UIColours.green : UIColours.red;
+          final lineColour = isGradient
+            ? isPositiveTrend ? UIColours.green : UIColours.red 
+            : Colors.transparent;
+          final areaColour = isGradient
+            ? null
+            : isPositiveTrend ? UIColours.green.withOpacity(0.7) : UIColours.red.withOpacity(0.7);
           final gradientColours = isPositiveTrend
               ? [Colors.green.withOpacity(0.5), Colors.green.withOpacity(0.01)]
               : [Colors.red.withOpacity(0.5), Colors.red.withOpacity(0.01)];
@@ -79,8 +84,8 @@ class _LineChartState extends State<LineChart> {
                       xValueMapper: (ChartDataPoint point, _) => point.dateTime,
                       yValueMapper: (ChartDataPoint point, _) => point.close,
                       enableTooltip: true,
-                      color: lineColor,
-                      width: 2,
+                      color: lineColour,
+                      width: 1,
                       animationDuration: 500,
                     ),
                     AreaSeries<ChartDataPoint, DateTime>(
@@ -97,7 +102,7 @@ class _LineChartState extends State<LineChart> {
                             );
                           }
                         : null,
-                      color: isGradient ? null : lineColor,
+                      color: areaColour,
                       animationDuration: 500,
                     ),
                   ],

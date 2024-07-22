@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:robinbank_app/core/stock/charts/chart_data_point.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
+import 'package:robinbank_app/ui/ui_text.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class MoverChart extends StatefulWidget {
@@ -47,16 +48,30 @@ class _MoverChart extends State<MoverChart> {
           final closeValues = chartDataPoints.map((point) => point.close ?? 0.0).toList();
           final isPositiveTrend = closeValues.isNotEmpty && closeValues.first < closeValues.last;
           final lineColor = isPositiveTrend ? UIColours.green : UIColours.red;
-          return SizedBox(
-            width: 60,
-            height: 40,
-            child: SfSparkLineChart(
-              data: closeValues,
-              color: lineColor,
-              axisLineColor: Colors.transparent,
-              axisLineWidth: 0,
-            ),
-          );
+          if (chartDataPoints.length >= 2) {
+            return SizedBox(
+              width: 60,
+              height: 40,
+              child: SfSparkLineChart(
+                data: closeValues,
+                color: lineColor,
+                width: 1.2,
+                axisLineColor: Colors.transparent,
+                axisLineWidth: 0,
+              ),
+            );
+          } else {
+            return SizedBox(
+              width: 60,
+              height: 40,
+              child: Center(
+                child: Text(
+                  'No data',
+                  style: UIText.xsmall.copyWith(color: UIColours.secondaryText),
+                ),
+              ),
+            );
+          }
         }
       },
     );

@@ -65,23 +65,31 @@ class AlpacaService {
   }
 
   Future<String> getLastMarketOpenDate() async {
+    final dateTimeNow = DateTime.now().toUtc();
+
     final url = Uri.parse('${Constants.alpacaTradingAPIBaseURL}/v2/calendar');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
     });
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      for (int i = data.length - 1; i >= 0; i--) {
-        final date = DateTime.parse(data[i]['date']);
-        if (date.isBefore(DateTime.now()) || date.isAtSameMomentAs(DateTime.now())) {
-          return data[i]['date'];
-        }
-      }
-      return data.first['date'];
+    if (await getIsMarketOpenNow()) {
+      return '${dateTimeNow.year}-${dateTimeNow.month.toString().padLeft(2, '0')}-${dateTimeNow.day.toString().padLeft(2, '0')}';
     } else {
-      throw Exception('Failed to get last market open date');
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        for (int i = data.length - 1; i >= 0; i--) {
+          final date = data[i]['date'];
+          final time = data[i]['open'];
+          final dateTime = DateTime.parse('$date $time').toUtc();
+          if (dateTime.isBefore(dateTimeNow)) {
+            return date;
+          }
+        }
+        return '';
+      } else {
+        throw Exception('Failed to get last market open date');
+      }
     }
   }
 
@@ -119,13 +127,11 @@ class AlpacaService {
   Future<List<ChartDataPoint>> getChartDataPoints(String symbol) async {
     final date = await getLastMarketOpenDate();
 
-    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v2/stocks/$symbol/bars?timeframe=1Min&start=$date&end=$date&feed=iex&sort=asc');
+    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v2/stocks/$symbol/bars?timeframe=1Min&start=$date&end=${date}T19%3A59%3A00Z&feed=iex&sort=asc');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
     });
-
-    // print('HELLLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO $date');
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);

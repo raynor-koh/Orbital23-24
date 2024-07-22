@@ -130,6 +130,7 @@ class _MarketMoversPage extends State<MarketMoversPage> {
                           ),
                         ),
                         const Divider(
+                          height: 4,
                           indent: 8,
                           endIndent: 8,
                           color: UIColours.background2,
