@@ -417,7 +417,7 @@ class _HomePageState extends State<HomePage> {
 
     double totalMarketValue = 0;
     double totalPnL = 0;
-    List<StockCard> stockCards = [];
+    List<PositionCard> stockCards = [];
 
     for (var position in positions) {
       Map<String, dynamic> stockMetrics =
@@ -430,7 +430,7 @@ class _HomePageState extends State<HomePage> {
       totalMarketValue += marketValue;
       totalPnL += pnl;
 
-      stockCards.add(StockCard(
+      stockCards.add(PositionCard(
         symbol: position.symbol,
         name: position.name,
         marketValue: marketValue,
