@@ -24,7 +24,7 @@ class _MoverChart extends State<MoverChart> {
   @override
   void initState() {
     super.initState();
-    _chartDataPointsFuture = alpacaService.getChartDataPoints(widget.symbol);
+    _chartDataPointsFuture = alpacaService.getSparkChartDataPoints(widget.symbol);
   }
 
   @override
