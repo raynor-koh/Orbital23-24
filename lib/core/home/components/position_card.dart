@@ -33,9 +33,13 @@ class PositionCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
         child: Container(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+          padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
           decoration: BoxDecoration(
             color: UIColours.white,
+            border: Border.all(
+              color: UIColours.background2,
+              width: 1,
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -49,7 +53,7 @@ class PositionCard extends StatelessWidget {
                       symbol,
                       style: UIText.medium.copyWith(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Text(
                       name,
                       style: UIText.xsmall,
@@ -68,7 +72,7 @@ class PositionCard extends StatelessWidget {
                       marketValue.toStringAsFixed(2),
                       style: UIText.medium
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Text(
                       '$quantity',
                       style: UIText.xsmall,
@@ -85,7 +89,7 @@ class PositionCard extends StatelessWidget {
                       '${isPositive ? '+' : ''}${pnl.toStringAsFixed(2)}',
                       style: UIText.medium.copyWith(color: isPositive ? UIColours.green : UIColours.red),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Text(
                       '${isPositive ? '+' : ''}${pnlPercentage.toStringAsFixed(2)}%',
                       style: UIText.xsmall.copyWith(color: isPositive ? UIColours.green : UIColours.red),

@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
             buildStatisticsPanel(context),
             const SizedBox(height: 4),
             buildIconButtonsPanel(context),
-            const SizedBox(height: 16),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
             Align(
               alignment: const AlignmentDirectional(-1, 0),
               child: Text(
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                 style: UIText.medium,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
               child: Row(
@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const Divider(
-              height: 2,
+              height: 8,
               color: UIColours.background2,
             ),
             Expanded(
@@ -152,6 +152,9 @@ class _HomePageState extends State<HomePage> {
   Widget buildStatisticsPanel(BuildContext context) {
     UserPosition userPosition = Provider.of<UserPositionProvider>(context).userPosition;
     return Container(
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height * 0.2,
+      ),
       decoration: BoxDecoration(
         color: UIColours.white,
         borderRadius: BorderRadius.circular(12),
@@ -159,29 +162,28 @@ class _HomePageState extends State<HomePage> {
       child: Padding(
         padding: const EdgeInsetsDirectional.fromSTEB(8, 16, 8, 16),
         child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Net Account Value (USD)',
-              style: UIText.small.copyWith(color: UIColours.secondaryText),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Net Account Value (USD)',
+                  style: UIText.small.copyWith(color: UIColours.secondaryText),
+                ),
+                Text(
+                  userPosition.accountBalance.toStringAsFixed(2),
+                  style: UIText.heading,
+                ),
+              ],
             ),
-            Text(
-              userPosition.accountBalance.toStringAsFixed(2),
-              style: UIText.heading,
-            ),
-            const SizedBox(
-              height: 16,
-            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             Row(
-              mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -196,8 +198,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -212,8 +212,6 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
                 Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -236,91 +234,54 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildIconButtonsPanel(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: UIColours.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Column(
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return Container(
+          decoration: BoxDecoration(
+            color: UIColours.white,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.candlestick_chart_outlined,
-                    size: 32,
-                    color: UIColours.blue,
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/searchpage');
-                  },
-                ),
-                Text(
-                  'Trade',
-                  style: UIText.small,
-                ),
+                _buildIconColumn(context, Icons.candlestick_chart_outlined, 'Trade', () {
+                  Navigator.pushNamed(context, '/searchpage');
+                }, 32),
+                _buildIconColumn(context, Icons.receipt_long_outlined, 'Orders', () {}, 32),
+                _buildIconColumn(context, Icons.analytics_outlined, 'Trending', () {
+                  Navigator.pushNamed(context, '/marketmoverspage');
+                }, 32),
+                _buildIconColumn(context, Icons.restart_alt_outlined, 'Reset', () {
+                  _showResetBalanceDialogue(context);
+                }, 32),
               ],
             ),
-            Column(
-              children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.receipt_long_outlined,
-                    size: 32,
-                    color: UIColours.blue,
-                  ),
-                  onPressed: () {},
-                ),
-                Text(
-                  'Orders',
-                  style: UIText.small,
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.analytics_outlined,
-                    size: 32,
-                    color: UIColours.blue,
-                  ),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/marketmoverspage');
-                  },
-                ),
-                Text(
-                  'Trending',
-                  style: UIText.small,
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.restart_alt_outlined,
-                    size: 32,
-                    color: UIColours.blue,
-                  ),
-                  onPressed: () {
-                    _showResetBalanceDialogue(context);
-                  },
-                ),
-                Text(
-                  'Reset',
-                  style: UIText.small,
-                ),
-              ],
-            ),
-          ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildIconColumn(BuildContext context, IconData icon, String label, VoidCallback onPressed, double iconSize) {
+    return Column(
+      children: [
+        IconButton(
+          icon: Icon(
+            icon,
+            size: iconSize,
+            color: UIColours.blue,
+          ),
+          onPressed: onPressed,
         ),
-      ),
+        Text(
+          label,
+          style: UIText.small,
+        ),
+      ],
     );
   }
 
