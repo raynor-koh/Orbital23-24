@@ -9,7 +9,7 @@ import 'package:robinbank_app/utils/constants.dart';
 import 'package:robinbank_app/utils/utils.dart';
 
 class UserPositionService {
-  void getUserPosition(BuildContext context, String userId) async {
+  Future<void> getUserPosition(BuildContext context, String userId) async {
     try {
       var userPositonProvider =
           Provider.of<UserPositionProvider>(context, listen: false);
@@ -21,6 +21,7 @@ class UserPositionService {
           });
       ;
       userPositonProvider.setUserPosition(response.body);
+      return;
     } catch (error) {
       log(error.toString());
       showSnackBar(context, error.toString());
@@ -83,7 +84,7 @@ class UserPositionService {
     }
   }
 
-  Future<int> executeSellTrade(
+  Future<void> executeSellTrade(
       BuildContext context, String userId, Map<String, dynamic> payload) async {
     try {
       var body = json.encode(payload);
@@ -105,11 +106,11 @@ class UserPositionService {
         String buyMessage = jsonResponse['message'];
         showSnackBar(context, buyMessage);
       }
-      return 0;
+      return;
     } catch (error) {
       log(error.toString());
       showSnackBar(context, error.toString());
-      return 1;
+      return;
     }
   }
 }
