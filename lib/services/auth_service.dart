@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:robinbank_app/main.dart';
 import 'package:robinbank_app/core/navigation/pages/main_wrapper.dart';
 import 'package:robinbank_app/core/authentication/pages/sign_in_page.dart';
+import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
@@ -139,6 +140,9 @@ class AuthService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('x-auth-token', '');
     await prefs.remove("x-auth-token");
+
+    // Reset all your providers here
+
     navigator.pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const SignInPage()),
       (route) => false,
