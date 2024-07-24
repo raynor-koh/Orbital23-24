@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:robinbank_app/models/user.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
-import 'package:robinbank_app/services/transaction_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -26,14 +25,13 @@ class TradePanel extends StatefulWidget {
 class _TradePanelState extends State<TradePanel> {
   final AlpacaService _alpacaService = AlpacaService();
   final UserPositionService _userPositionService = UserPositionService();
-  final TransactionService _transactionService = TransactionService();
 
   bool _isMarketOpen = true;
   Map<String, dynamic> _stockMetrics = {};
   final List<bool> _selectedSide = [true, false];
   bool _isBuy = true;
   int _quantity = 1;
-
+  
   @override
   void initState() {
     super.initState();
@@ -43,8 +41,7 @@ class _TradePanelState extends State<TradePanel> {
   Future<void> _loadStates() async {
     try {
       bool isMarketOpen = await _alpacaService.getIsMarketOpenNow();
-      Map<String, dynamic> stockMetrics =
-          await _alpacaService.getStockMetrics(widget.symbol);
+      Map<String, dynamic> stockMetrics = await _alpacaService.getStockMetrics(widget.symbol);
       setState(() {
         _isMarketOpen = isMarketOpen;
         _stockMetrics = stockMetrics;
@@ -78,8 +75,7 @@ class _TradePanelState extends State<TradePanel> {
                   borderWidth: 1,
                   borderRadius: BorderRadius.circular(4),
                   selectedColor: Colors.white,
-                  selectedBorderColor:
-                      _isBuy ? Colors.green[700] : Colors.red[700],
+                  selectedBorderColor: _isBuy ? Colors.green[700] : Colors.red[700],
                   fillColor: _isBuy ? Colors.green[200] : Colors.red[200],
                   constraints: const BoxConstraints(
                     minHeight: 30.0,
@@ -146,20 +142,11 @@ class _TradePanelState extends State<TradePanel> {
                       'quantity': _quantity,
                       'price': _stockMetrics['latestTradePrice'],
                     };
-                    Map<String, dynamic> transactionPayload = {
-                      ...payload,
-                      'isBuy': _isBuy,
-                      'timeStamp': DateTime.now().toUtc().toIso8601String(),
-                    };
                     if (_isBuy) {
-                      await _userPositionService.executeBuyTrade(
-                          context, user.id, payload);
+                      await _userPositionService.executeBuyTrade(context, user.id, payload);
                     } else {
-                      await _userPositionService.executeSellTrade(
-                          context, user.id, payload);
+                      await _userPositionService.executeSellTrade(context, user.id, payload);
                     }
-                    await _transactionService.addTransaction(
-                        context, user.id, transactionPayload);
                     Navigator.of(context).pushNamed("/mainwrapper");
                   },
                   child: Text(

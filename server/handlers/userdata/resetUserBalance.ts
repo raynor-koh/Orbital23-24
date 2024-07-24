@@ -1,4 +1,5 @@
-import { User, UserPosition } from "../../models";
+import User from "../../models/user";
+import UserPosition from "../../models/userPosition";
 
 export const resetBalanceHandler = async (request: any, response: any) => {
   try {

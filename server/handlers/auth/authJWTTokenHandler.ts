@@ -1,4 +1,4 @@
-import { User } from "../../models";
+import User from "../../models/user";
 
 export const authJWTTokenHandler = async (request: any, response: any) => {
   // Auth is middleware

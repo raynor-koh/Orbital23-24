@@ -1,6 +1,6 @@
 import * as bcryptjs from "bcryptjs";
 import * as jwt from "jsonwebtoken";
-import { User } from "../../models";
+import User from "../../models/user";
 
 export const authSignInHandler = async (request: any, response: any) => {
   try {

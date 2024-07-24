@@ -3,7 +3,6 @@ import express from "express";
 import mongoose from "mongoose";
 import authRouter from "./routes/auth";
 import userRouter from "./routes/user";
-import transactionRouter from "./routes/transaction";
 import cors from "cors";
 
 dotenv.config({ path: "../.env" });
@@ -14,7 +13,6 @@ app.use(cors());
 app.use(express.json());
 app.use(authRouter);
 app.use("/user", userRouter);
-app.use("/transaction", transactionRouter);
 
 const DB = process.env.MONGODB_DATABASE as string;
 
