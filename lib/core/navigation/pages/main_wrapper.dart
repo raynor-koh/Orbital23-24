@@ -77,8 +77,6 @@ class _MainWrapperState extends State<MainWrapper> {
         return "Home";
       case NavDrawerDestination.userDataPage:
         return "UserDataPage";
-      case NavDrawerDestination.testPage1:
-        return "TestPage1";
       case NavDrawerDestination.transactionHistory:
         return "TransactionHistory";
       default:
@@ -92,8 +90,6 @@ class _MainWrapperState extends State<MainWrapper> {
         return const HomePage();
       case NavDrawerDestination.userDataPage:
         return const UserDataPage();
-      case NavDrawerDestination.testPage1:
-        return const TestPage1();
       case NavDrawerDestination.transactionHistory:
         return TransactionHistoryPage();
       default:

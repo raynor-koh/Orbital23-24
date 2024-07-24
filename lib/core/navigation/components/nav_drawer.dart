@@ -35,11 +35,6 @@ class NavDrawer extends StatelessWidget {
       IconlyBold.profile,
     ),
     NavDrawerItem(
-      NavDrawerDestination.testPage1,
-      "TestPage1",
-      IconlyBold.home,
-    ),
-    NavDrawerItem(
       NavDrawerDestination.transactionHistory,
       "Transaction History",
       IconlyBold.activity,
