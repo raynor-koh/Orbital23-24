@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:robinbank_app/core/stock/pages/stock_details_page.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
+import 'package:robinbank_app/ui/ui_text.dart';
 
 class PositionCard extends StatelessWidget {
   final String symbol;
@@ -22,79 +23,78 @@ class PositionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isPositive = pnl >= 0;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) => StockDetailsPage(symbol: symbol, name: name),
         ));
       },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+          decoration: BoxDecoration(
             color: UIColours.white,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300)),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    symbol,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(name,
-                      style: const TextStyle(color: Colors.grey, fontSize: 12))
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    marketValue.toStringAsFixed(2),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  Text(
-                    '$quantity',
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '${pnl >= 0 ? '+' : ''}${pnl.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      color: pnl >= 0 ? Colors.green : Colors.red,
-                      fontWeight: FontWeight.bold,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      symbol,
+                      style: UIText.medium.copyWith(fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${pnlPercentage >= 0 ? '+' : ''}${pnlPercentage.toStringAsFixed(2)}%',
-                    style: TextStyle(
-                      color: pnlPercentage >= 0 ? Colors.green : Colors.red,
+                    const SizedBox(height: 4),
+                    Text(
+                      name,
+                      style: UIText.xsmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            )
-          ],
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      marketValue.toStringAsFixed(2),
+                      style: UIText.medium
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '$quantity',
+                      style: UIText.xsmall,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${isPositive ? '+' : ''}${pnl.toStringAsFixed(2)}',
+                      style: UIText.medium.copyWith(color: isPositive ? UIColours.green : UIColours.red),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${isPositive ? '+' : ''}${pnlPercentage.toStringAsFixed(2)}%',
+                      style: UIText.xsmall.copyWith(color: isPositive ? UIColours.green : UIColours.red),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
