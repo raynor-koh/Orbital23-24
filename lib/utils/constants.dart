@@ -1,6 +1,6 @@
 class Constants {
   // The uri below is used for testing purposes
-  // static String serverUri = 'http://172.28.192.1:3000';
+  // static String serverUri = 'http://172.30.128.1:3000';
 
   static String serverUri = 'https://orbital23-24.onrender.com';
 

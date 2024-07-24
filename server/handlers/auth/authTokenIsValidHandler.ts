@@ -1,5 +1,5 @@
 import * as jwt from "jsonwebtoken";
-import User from "../../models/user";
+import { User } from "../../models";
 
 export const authTokenIsValidHandler = async (request: any, response: any) => {
   try {
