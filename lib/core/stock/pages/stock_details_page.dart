@@ -33,13 +33,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   Map<String, dynamic> _stockMetrics = {};
   List<NewsArticle> _newsArticles = [];
 
-  final List<String> _categories = [
-    'Line',
-    'Area',
-    'Candle',
-    'Hollow Candle',
-    'OHLC'
-  ];
+  final List<String> _categories = ['Line', 'Area', 'Candle', 'Hollow Candle', 'OHLC'];
   String _selectedCategory = 'Line';
   final UserPositionService userPositionService = UserPositionService();
 
@@ -93,7 +87,9 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
                   padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
                   child: Column(
                     children: [
-                      StockMetricsPanel(stockMetrics: _stockMetrics),
+                      StockMetricsPanel(
+                        stockMetrics: _stockMetrics
+                      ),
                       const SizedBox(height: 4),
                       buildChartTypeToggle(),
                       const SizedBox(height: 4),
@@ -225,8 +221,8 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   }
 
   void _launchURL(String url) async {
-    if (!await launchUrl(Uri.parse(url))) {
-      throw Exception('Could not launch url');
+   if (!await launchUrl(Uri.parse(url))) {
+        throw Exception('Could not launch url');
     }
   }
 
@@ -242,9 +238,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                backgroundColor: _selectedCategory == category
-                    ? UIColours.blue
-                    : UIColours.background2,
+                backgroundColor: _selectedCategory == category ? UIColours.blue : UIColours.background2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(4),
                 ),
@@ -256,10 +250,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
               },
               child: Text(
                 category,
-                style: UIText.small.copyWith(
-                    color: _selectedCategory == category
-                        ? UIColours.white
-                        : UIColours.primaryText),
+                style: UIText.small.copyWith(color: _selectedCategory == category ? UIColours.white : UIColours.primaryText),
               ),
             ),
           );

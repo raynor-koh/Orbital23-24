@@ -35,9 +35,9 @@ class NavDrawer extends StatelessWidget {
       IconlyBold.profile,
     ),
     NavDrawerItem(
-      NavDrawerDestination.transactionHistory,
-      "Transaction History",
-      IconlyBold.activity,
+      NavDrawerDestination.testPage1,
+      "TestPage1",
+      IconlyBold.home,
     ),
     NavDrawerItem(null, "Sign Out", null),
   ];
@@ -77,10 +77,8 @@ class NavDrawer extends StatelessWidget {
           ListView.builder(
             itemCount: navDrawerItems.length,
             shrinkWrap: true,
-            itemBuilder: (context, index) =>
-                BlocBuilder<NavDrawerBloc, NavDrawerState>(
-              builder: (context, state) =>
-                  buildNavDrawerItem(navDrawerItems[index], state, context),
+            itemBuilder: (context, index) => BlocBuilder<NavDrawerBloc, NavDrawerState>(
+                  builder: (context, state) => buildNavDrawerItem(navDrawerItems[index], state, context),
             ),
           ),
         ],
@@ -88,8 +86,7 @@ class NavDrawer extends StatelessWidget {
     );
   }
 
-  Widget buildNavDrawerItem(
-      NavDrawerItem data, NavDrawerState state, BuildContext context) {
+  Widget buildNavDrawerItem(NavDrawerItem data, NavDrawerState state, BuildContext context) {
     if (data.destination == null) {
       return ElevatedButton(
         onPressed: () => signOutUser(context),
@@ -134,8 +131,7 @@ class NavDrawer extends StatelessWidget {
     }
   }
 
-  void tapNavDrawerItem(
-      BuildContext context, NavDrawerDestination destination) {
+  void tapNavDrawerItem(BuildContext context, NavDrawerDestination destination) {
     BlocProvider.of<NavDrawerBloc>(context).add(NavigateTo(destination));
   }
 }
