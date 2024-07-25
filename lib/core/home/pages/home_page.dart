@@ -26,9 +26,15 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    // String userId = Provider.of<UserProvider>(context, listen: false).user.id;
+    // userPositionService.getUserPosition(context, userId);
+    // _portfolioDataFuture = _fetchPortfolioData(userId);
+    _initializeData();
+  }
+
+  void _initializeData() {
     String userId = Provider.of<UserProvider>(context, listen: false).user.id;
-    userPositionService.getUserPosition(context, userId);
-    _portfolioDataFuture = _fetchPortfolioData();
+    _portfolioDataFuture = _fetchPortfolioData(userId);
   }
 
   @override
@@ -44,39 +50,43 @@ class _HomePageState extends State<HomePage> {
           return const Center(child: Text('No data available'));
         } else {
           final data = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const SizedBox(height: 8),
-                buildStatisticsPanel(context, data),
-                const SizedBox(height: 4),
-                buildIconButtonsPanel(context),
-                const SizedBox(height: 4),
-                Align(
-                  alignment: const AlignmentDirectional(-1, 0),
-                  child: Text(
-                    'Your Position(s)',
-                    style: UIText.medium,
-                  ),
-                ),
-                Expanded(
-                  child: data['stockCards'].isEmpty
-                      ? const Center(child: Text('No positions available'))
-                      : ListView(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          scrollDirection: Axis.vertical,
-                          children: data['stockCards'],
-                        ),
-                ),
-              ],
-            ),
-          );
+          return _builHomePageContent(data);
         }
       },
+    );
+  }
+
+  Widget _builHomePageContent(Map<String, dynamic> data) {
+    return Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 8),
+          buildStatisticsPanel(context, data),
+          const SizedBox(height: 4),
+          buildIconButtonsPanel(context),
+          const SizedBox(height: 4),
+          Align(
+            alignment: const AlignmentDirectional(-1, 0),
+            child: Text(
+              'Your Position(s)',
+              style: UIText.medium,
+            ),
+          ),
+          Expanded(
+            child: data['stockCards'].isEmpty
+                ? const Center(child: Text('No positions available'))
+                : ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    scrollDirection: Axis.vertical,
+                    children: data['stockCards'],
+                  ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -410,7 +420,8 @@ class _HomePageState extends State<HomePage> {
     Navigator.of(context).pop();
   }
 
-  Future<Map<String, dynamic>> _fetchPortfolioData() async {
+  Future<Map<String, dynamic>> _fetchPortfolioData(String userId) async {
+    await userPositionService.getUserPosition(context, userId);
     UserPosition userPosition =
         Provider.of<UserPositionProvider>(context, listen: false).userPosition;
     List<AccountPosition> positions = userPosition.accountPositions;
