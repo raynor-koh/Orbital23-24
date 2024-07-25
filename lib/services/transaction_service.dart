@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:robinbank_app/models/transaction.dart';
+import 'package:robinbank_app/core/transaction/components/transaction.dart';
 import 'package:robinbank_app/utils/constants.dart';
 import 'package:robinbank_app/utils/utils.dart';
 import 'package:http/http.dart' as http;

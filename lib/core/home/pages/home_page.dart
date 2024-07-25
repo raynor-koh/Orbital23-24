@@ -19,8 +19,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final UserPositionService userPositionService = UserPositionService();
   final AlpacaService alpacaService = AlpacaService();
+  final UserPositionService userPositionService = UserPositionService();
   final TransactionService transactionService = TransactionService();
 
   late Future<Map<String, dynamic>> _portfolioDataFuture;
@@ -28,9 +28,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // String userId = Provider.of<UserProvider>(context, listen: false).user.id;
-    // userPositionService.getUserPosition(context, userId);
-    // _portfolioDataFuture = _fetchPortfolioData(userId);
     _initializeData();
   }
 
@@ -57,7 +54,12 @@ class _HomePageState extends State<HomePage> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData) {
-              return const Center(child: Text('No data available'));
+              return Center(
+                child: Text(
+                  'No data available',
+                  style: UIText.small,
+                ),
+              );
             } else {
               final data = snapshot.data!;
               return _builHomePageContent(data);
@@ -247,7 +249,9 @@ class _HomePageState extends State<HomePage> {
                 _buildIconColumn(context, Icons.candlestick_chart_outlined, 'Trade', () {
                   Navigator.pushNamed(context, '/searchpage');
                 }, 32),
-                _buildIconColumn(context, Icons.receipt_long_outlined, 'Orders', () {}, 32),
+                _buildIconColumn(context, Icons.receipt_long_outlined, 'Orders', () {
+                  Navigator.pushNamed(context, '/transactionhistorypage');
+                }, 32),
                 _buildIconColumn(context, Icons.analytics_outlined, 'Trending', () {
                   Navigator.pushNamed(context, '/marketmoverspage');
                 }, 32),
