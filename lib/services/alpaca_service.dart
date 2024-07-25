@@ -81,7 +81,7 @@ class AlpacaService {
         for (int i = data.length - 1; i >= 0; i--) {
           final date = data[i]['date'];
           final time = data[i]['open'];
-          final dateTime = DateTime.parse('$date $time').toUtc();
+          final dateTime = DateTime.parse('$date $time').add(const Duration(hours: 4));
           if (dateTime.isBefore(dateTimeNow)) {
             return date;
           }
@@ -152,6 +152,37 @@ class AlpacaService {
       }
     } else {
       throw Exception('Failed to get chart data points');
+    }
+  }
+
+    Future<List<ChartDataPoint>> getSparkChartDataPoints(String symbol) async {
+    final date = await getLastMarketOpenDate();
+
+    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v2/stocks/$symbol/bars?timeframe=1Min&start=$date&end=${date}T19%3A59%3A00Z&feed=sip&sort=asc');
+    final response = await http.get(url, headers: {
+      'APCA-API-KEY-ID': _apiKey,
+      'APCA-API-SECRET-KEY': _apiSecret,
+    });
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final bars = data['bars'];
+      if (bars != null) {
+        return bars.map<ChartDataPoint>((bar) {
+          return ChartDataPoint(
+            dateTime: DateTime.parse(bar['t']),
+            open: bar['o'],
+            high: bar['h'],
+            low: bar['l'],
+            close: bar['c'],
+            volume: bar['v'],
+          );
+        }).toList();
+      } else {
+        return [];
+      }
+    } else {
+      throw Exception('Failed to get spark chart data points');
     }
   }
 
