@@ -35,6 +35,10 @@ class PositionCard extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
           decoration: BoxDecoration(
             color: UIColours.white,
+            border: Border.all(
+              color: UIColours.background2,
+              width: 1,
+            ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -65,7 +69,7 @@ class PositionCard extends StatelessWidget {
                   children: [
                     Text(
                       marketValue.toStringAsFixed(2),
-                      style: UIText.medium
+                      style: UIText.medium,
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -82,9 +86,8 @@ class PositionCard extends StatelessWidget {
                   children: [
                     Text(
                       '${pnl >= 0 ? '+' : ''}${pnl.toStringAsFixed(2)}',
-                      style: TextStyle(
-                        color: pnl >= 0 ? Colors.green : Colors.red,
-                        fontWeight: FontWeight.bold,
+                      style: UIText.medium.copyWith(
+                        color: pnl >= 0 ? UIColours.green : UIColours.red,
                       ),
                     ),
                     const SizedBox(height: 2),
