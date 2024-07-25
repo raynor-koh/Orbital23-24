@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:robinbank_app/core/stock/pages/stock_details_page.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
+import 'package:robinbank_app/ui/ui_text.dart';
 
 class PositionCard extends StatelessWidget {
   final String symbol;
@@ -31,24 +32,27 @@ class PositionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: UIColours.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300)),
+          color: UIColours.white,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Row(
           children: [
             Expanded(
-              flex: 2,
+              flex: 4,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     symbol,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
+                    style: UIText.medium.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(height: 4),
-                  Text(name,
-                      style: const TextStyle(color: Colors.grey, fontSize: 12))
+                  const SizedBox(height: 2),
+                  Text(
+                    name,
+                    style: UIText.xsmall,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),
@@ -59,15 +63,12 @@ class PositionCard extends StatelessWidget {
                 children: [
                   Text(
                     marketValue.toStringAsFixed(2),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 16),
+                    style: UIText.medium
                   ),
-                  const SizedBox(
-                    width: 12,
-                  ),
+                  const SizedBox(height: 2),
                   Text(
                     '$quantity',
-                    style: const TextStyle(color: Colors.grey, fontSize: 12),
+                    style: UIText.xsmall,
                   ),
                 ],
               ),
@@ -84,16 +85,16 @@ class PositionCard extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Text(
                     '${pnlPercentage >= 0 ? '+' : ''}${pnlPercentage.toStringAsFixed(2)}%',
-                    style: TextStyle(
-                      color: pnlPercentage >= 0 ? Colors.green : Colors.red,
+                    style: UIText.xsmall.copyWith(
+                      color: pnlPercentage >= 0 ? UIColours.green : UIColours.red
                     ),
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

@@ -54,7 +54,7 @@ class _OHLCChartState extends State<OHLCChart> {
           return Column(
             children: [
               SizedBox(
-                height: 270,
+                height: MediaQuery.of(context).size.height * 0.4,
                 child: SfCartesianChart(
                   backgroundColor: UIColours.background1,
                   borderColor: UIColours.background2,
