@@ -78,8 +78,7 @@ class _TradePanelState extends State<TradePanel> {
                   borderWidth: 1,
                   borderRadius: BorderRadius.circular(4),
                   selectedColor: Colors.white,
-                  selectedBorderColor:
-                      _isBuy ? Colors.green[700] : Colors.red[700],
+                  selectedBorderColor: _isBuy ? Colors.green[700] : Colors.red[700],
                   fillColor: _isBuy ? Colors.green[200] : Colors.red[200],
                   constraints: const BoxConstraints(
                     minHeight: 30.0,

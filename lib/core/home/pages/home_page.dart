@@ -65,67 +65,74 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _builHomePageContent(Map<String, dynamic> data) {
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 8),
-            buildStatisticsPanel(context, data),
-            const SizedBox(height: 4),
-            buildIconButtonsPanel(context),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-            Align(
-              alignment: const AlignmentDirectional(-1, 0),
-              child: Text(
-                'Your Position(s)',
-                style: UIText.medium,
+    return PopScope(
+      canPop: false,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 8),
+              buildStatisticsPanel(context, data),
+              const SizedBox(height: 4),
+              buildIconButtonsPanel(context),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+              Align(
+                alignment: const AlignmentDirectional(-1, 0),
+                child: Text(
+                  'Your Position(s)',
+                  style: UIText.medium,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: Text(
-                      'Stock',
-                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        'Stock',
+                        style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Mkt Val/Qty',
-                      style: UIText.small.copyWith(color: UIColours.secondaryText),
-                      textAlign: TextAlign.right,
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Mkt Val/Qty',
+                        style: UIText.small.copyWith(color: UIColours.secondaryText),
+                        textAlign: TextAlign.right,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'P&L',
-                      style: UIText.small.copyWith(color: UIColours.secondaryText),
-                      textAlign: TextAlign.right,
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'P&L',
+                        style: UIText.small.copyWith(color: UIColours.secondaryText),
+                        textAlign: TextAlign.right,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            data['stockCards'].isEmpty
-                ? const Center(child: Text('No positions available'))
-                : ListView(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    children: data['stockCards'],
-                  ),
-          ],
+              const Divider(
+                height: 8,
+                color: UIColours.background2,
+              ),
+              data['stockCards'].isEmpty
+                  ? const Center(child: Text('No positions available'))
+                  : ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      children: data['stockCards'],
+                    ),
+            ],
+          ),
         ),
       ),
     );
@@ -159,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -398,8 +405,8 @@ class _HomePageState extends State<HomePage> {
                 style: UIText.small.copyWith(color: UIColours.blue),
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed("/mainwrapper");
                 _resetBalance(context, newBalance);
+                Navigator.of(context).pushNamed("/mainwrapper");
               },
             ),
           ],

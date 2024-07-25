@@ -31,7 +31,7 @@ class _OHLCChartState extends State<OHLCChart> {
     super.initState();
     _chartDataPointsFuture = alpacaService.getChartDataPoints(widget.symbol);
     _trackballBehaviour = CustomTrackballBehaviour.create(
-      tooltipFormat: 'point.x\nOpen: point.open\nHigh: point.high\nLow: point.low\nClose: point.close',
+      tooltipFormat: 'point.x UTC\nOpen: point.open\nHigh: point.high\nLow: point.low\nClose: point.close',
       isMarkerVisible: false,
     );
     _zoomPanBehaviour = CustomZoomPanBehaviour.create();
