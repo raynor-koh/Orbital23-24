@@ -6,6 +6,7 @@ import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
+import 'package:robinbank_app/services/transaction_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -20,6 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final UserPositionService userPositionService = UserPositionService();
   final AlpacaService alpacaService = AlpacaService();
+  final TransactionService transactionService = TransactionService();
 
   late Future<Map<String, dynamic>> _portfolioDataFuture;
 
@@ -398,8 +400,8 @@ class _HomePageState extends State<HomePage> {
                 style: UIText.small.copyWith(color: UIColours.blue),
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed("/mainwrapper");
                 _resetBalance(context, newBalance);
+                Navigator.of(context).pushNamed("/mainwrapper");
               },
             ),
           ],
@@ -412,6 +414,7 @@ class _HomePageState extends State<HomePage> {
     String userId = Provider.of<UserProvider>(context, listen: false).user.id;
     userPositionService.resetUserPosition(context, userId, newBalance);
     userPositionService.getUserPosition(context, userId);
+    transactionService.resetTransactions(context, userId);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
