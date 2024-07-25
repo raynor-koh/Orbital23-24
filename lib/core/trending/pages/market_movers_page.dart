@@ -56,89 +56,63 @@ class _MarketMoversPage extends State<MarketMoversPage> {
       appBar: _buildAppBar(context),
       body: Column(
         children: [
-          Container(
-            color: UIColours.white,
-            height: 48,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: _categories.map((category) {
-                return Padding(
-                  padding: const EdgeInsets.fromLTRB(4, 10, 4, 10),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-                      backgroundColor: _selectedCategory == category ? UIColours.blue : UIColours.background2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    onPressed: () {
-                      _loadStates(category);
-                    },
-                    child: Text(
-                      category,
-                      style: UIText.small.copyWith(color: _selectedCategory == category ? UIColours.white : UIColours.primaryText),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
+          _buildSelectionPanel(),
           Expanded(
             child: _isLoading
-                ? const Center(
-                    child: RefreshProgressIndicator(
-                      backgroundColor: UIColours.white,
-                      color: UIColours.blue,
-                    ),
-                  )
-                : RefreshIndicator(
-                  backgroundColor: UIColours.white,
-                  color: UIColours.blue,
-                    onRefresh: () => _loadStates(_selectedCategory),
-                    child: ListView(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  'Symbol',
-                                  style: UIText.small.copyWith(color: UIColours.secondaryText),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 4,
-                                child: Center(
-                                  child: Text(
-                                    'Spark Chart',
-                                    style: UIText.small.copyWith(color: UIColours.secondaryText),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  _selectedCategory == 'Most Active' ? 'Volume' : 'Change (%)',
-                                  style: UIText.small.copyWith(color: UIColours.secondaryText),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Divider(
-                          height: 4,
-                          indent: 8,
-                          endIndent: 8,
-                          color: UIColours.background2,
-                        ),
-                        ..._stocks.map((stock) => MoverCard(stock: stock, category: _selectedCategory)),
-                      ],
-                    ),
+              ? const Center(
+                  child: RefreshProgressIndicator(
+                    backgroundColor: UIColours.white,
+                    color: UIColours.blue,
                   ),
+                )
+              : RefreshIndicator(
+                backgroundColor: UIColours.white,
+                color: UIColours.blue,
+                  onRefresh: () => _loadStates(_selectedCategory),
+                  child: ListView(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(8, 24, 8, 0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'Symbol',
+                                style: UIText.small.copyWith(color: UIColours.secondaryText),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 4,
+                              child: Center(
+                                child: Text(
+                                  'Spark Chart',
+                                  style: UIText.small.copyWith(color: UIColours.secondaryText),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                _selectedCategory == 'Most Active' ? 'Volume' : 'Change (%)',
+                                style: UIText.small.copyWith(color: UIColours.secondaryText),
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(
+                        height: 4,
+                        indent: 8,
+                        endIndent: 8,
+                        color: UIColours.background2,
+                      ),
+                      ..._stocks.map((stock) => MoverCard(stock: stock,
+                                                          category: _selectedCategory)),
+                    ],
+                  ),
+                ),
           ),
         ],
       ),
@@ -166,6 +140,37 @@ class _MarketMoversPage extends State<MarketMoversPage> {
             style: UIText.large.copyWith(color: UIColours.white),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSelectionPanel() {
+    return Container(
+      color: UIColours.white,
+      height: 48,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: _categories.map((category) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(4, 10, 4, 10),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                backgroundColor: _selectedCategory == category ? UIColours.blue : UIColours.background2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              onPressed: () {
+                _loadStates(category);
+              },
+              child: Text(
+                category,
+                style: UIText.small.copyWith(color: _selectedCategory == category ? UIColours.white : UIColours.primaryText),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
