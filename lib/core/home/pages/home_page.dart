@@ -37,55 +37,65 @@ class _HomePageState extends State<HomePage> {
     _portfolioDataFuture = _fetchPortfolioData(userId);
   }
 
+  Future<void> _refreshData() async {
+    setState(() {
+      _initializeData();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: _portfolioDataFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData) {
-          return const Center(child: Text('No data available'));
-        } else {
-          final data = snapshot.data!;
-          return _builHomePageContent(data);
-        }
-      },
-    );
+    return RefreshIndicator(
+        onRefresh: _refreshData,
+        child: FutureBuilder<Map<String, dynamic>>(
+          future: _portfolioDataFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData) {
+              return const Center(child: Text('No data available'));
+            } else {
+              final data = snapshot.data!;
+              return _builHomePageContent(data);
+            }
+          },
+        ));
   }
 
   Widget _builHomePageContent(Map<String, dynamic> data) {
-    return Padding(
-      padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 8),
-          buildStatisticsPanel(context, data),
-          const SizedBox(height: 4),
-          buildIconButtonsPanel(context),
-          const SizedBox(height: 4),
-          Align(
-            alignment: const AlignmentDirectional(-1, 0),
-            child: Text(
-              'Your Position(s)',
-              style: UIText.medium,
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 8),
+            buildStatisticsPanel(context, data),
+            const SizedBox(height: 4),
+            buildIconButtonsPanel(context),
+            const SizedBox(height: 4),
+            Align(
+              alignment: const AlignmentDirectional(-1, 0),
+              child: Text(
+                'Your Position(s)',
+                style: UIText.medium,
+              ),
             ),
-          ),
-          Expanded(
-            child: data['stockCards'].isEmpty
+            data['stockCards'].isEmpty
                 ? const Center(child: Text('No positions available'))
                 : ListView(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    scrollDirection: Axis.vertical,
                     children: data['stockCards'],
                   ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
