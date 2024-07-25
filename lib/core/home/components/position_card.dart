@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:robinbank_app/core/stock/pages/stock_details_page.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
-import 'package:robinbank_app/ui/ui_text.dart';
 
 class PositionCard extends StatelessWidget {
   final String symbol;

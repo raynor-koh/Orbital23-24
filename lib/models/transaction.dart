@@ -31,9 +31,8 @@ class Transaction {
       symbol: map['symbol'] ?? '',
       quantity: map['quantity'] ?? 0,
       price: map['price'].toDouble() ?? 0.0,
-      timeStamp: DateTime.parse(map['timeStamp']).toLocal(),
+      timeStamp: DateTime.parse(map['timeStamp']).toLocal() ?? DateTime.now(),
       isBuy: map['isBuy'] ?? false,
     );
   }
 }
-
