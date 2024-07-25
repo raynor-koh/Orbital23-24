@@ -86,6 +86,37 @@ class _HomePageState extends State<HomePage> {
                 style: UIText.medium,
               ),
             ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: Text(
+                      'Stock',
+                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'Mkt Val/Qty',
+                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 2,
+                    child: Text(
+                      'P&L',
+                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      textAlign: TextAlign.right,
+                    ),
+                  ),
+                ],
+              ),
+            ),
             data['stockCards'].isEmpty
                 ? const Center(child: Text('No positions available'))
                 : ListView(
