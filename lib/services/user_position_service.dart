@@ -54,7 +54,7 @@ class UserPositionService {
     }
   }
 
-  Future<int> executeBuyTrade(
+  Future<bool> executeBuyTrade(
       BuildContext context, String userId, Map<String, dynamic> payload) async {
     try {
       var body = json.encode(payload);
@@ -71,20 +71,21 @@ class UserPositionService {
         var jsonResponse = jsonDecode(response.body);
         String buyMessage = jsonResponse['message'];
         showSnackBar(context, buyMessage);
+        return true;
       } else {
         var jsonResponse = jsonDecode(response.body);
         String buyMessage = jsonResponse['message'];
         showSnackBar(context, buyMessage);
       }
-      return 0;
+      return false;
     } catch (error) {
       log(error.toString());
       showSnackBar(context, error.toString());
-      return 1;
+      return false;
     }
   }
 
-  Future<void> executeSellTrade(
+  Future<bool> executeSellTrade(
       BuildContext context, String userId, Map<String, dynamic> payload) async {
     try {
       var body = json.encode(payload);
@@ -101,16 +102,18 @@ class UserPositionService {
         var jsonResponse = jsonDecode(response.body);
         String sellMessage = jsonResponse['message'];
         showSnackBar(context, sellMessage);
+        return true;
       } else {
         var jsonResponse = jsonDecode(response.body);
         String buyMessage = jsonResponse['message'];
         showSnackBar(context, buyMessage);
       }
-      return;
+      return false;
+      ;
     } catch (error) {
       log(error.toString());
       showSnackBar(context, error.toString());
-      return;
+      return false;
     }
   }
 }

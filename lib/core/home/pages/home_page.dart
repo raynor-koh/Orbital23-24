@@ -26,9 +26,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    // String userId = Provider.of<UserProvider>(context, listen: false).user.id;
-    // userPositionService.getUserPosition(context, userId);
-    // _portfolioDataFuture = _fetchPortfolioData(userId);
     _initializeData();
   }
 
@@ -95,14 +92,16 @@ class _HomePageState extends State<HomePage> {
                     flex: 4,
                     child: Text(
                       'Stock',
-                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      style:
+                          UIText.small.copyWith(color: UIColours.secondaryText),
                     ),
                   ),
                   Expanded(
                     flex: 2,
                     child: Text(
                       'Mkt Val/Qty',
-                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      style:
+                          UIText.small.copyWith(color: UIColours.secondaryText),
                       textAlign: TextAlign.right,
                     ),
                   ),
@@ -110,7 +109,8 @@ class _HomePageState extends State<HomePage> {
                     flex: 2,
                     child: Text(
                       'P&L',
-                      style: UIText.small.copyWith(color: UIColours.secondaryText),
+                      style:
+                          UIText.small.copyWith(color: UIColours.secondaryText),
                       textAlign: TextAlign.right,
                     ),
                   ),
@@ -235,14 +235,18 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                _buildIconColumn(context, Icons.candlestick_chart_outlined, 'Trade', () {
+                _buildIconColumn(
+                    context, Icons.candlestick_chart_outlined, 'Trade', () {
                   Navigator.pushNamed(context, '/searchpage');
                 }, 32),
-                _buildIconColumn(context, Icons.receipt_long_outlined, 'Orders', () {}, 32),
-                _buildIconColumn(context, Icons.analytics_outlined, 'Trending', () {
+                _buildIconColumn(
+                    context, Icons.receipt_long_outlined, 'Orders', () {}, 32),
+                _buildIconColumn(context, Icons.analytics_outlined, 'Trending',
+                    () {
                   Navigator.pushNamed(context, '/marketmoverspage');
                 }, 32),
-                _buildIconColumn(context, Icons.restart_alt_outlined, 'Reset', () {
+                _buildIconColumn(context, Icons.restart_alt_outlined, 'Reset',
+                    () {
                   _showResetBalanceDialogue(context);
                 }, 32),
               ],
@@ -253,7 +257,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildIconColumn(BuildContext context, IconData icon, String label, VoidCallback onPressed, double iconSize) {
+  Widget _buildIconColumn(BuildContext context, IconData icon, String label,
+      VoidCallback onPressed, double iconSize) {
     return Column(
       children: [
         IconButton(
