@@ -29,73 +29,79 @@ class PositionCard extends StatelessWidget {
           builder: (context) => StockDetailsPage(symbol: symbol, name: name),
         ));
       },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: UIColours.white,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 4,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    symbol,
-                    style: UIText.medium.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    name,
-                    style: UIText.xsmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
+          decoration: BoxDecoration(
+            color: UIColours.white,
+            border: Border.all(
+              color: UIColours.background2,
+              width: 1,
             ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    marketValue.toStringAsFixed(2),
-                    style: UIText.medium
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '$quantity',
-                    style: UIText.xsmall,
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '${pnl >= 0 ? '+' : ''}${pnl.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      color: pnl >= 0 ? Colors.green : Colors.red,
-                      fontWeight: FontWeight.bold,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      symbol,
+                      style: UIText.medium.copyWith(fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    '${pnlPercentage >= 0 ? '+' : ''}${pnlPercentage.toStringAsFixed(2)}%',
-                    style: UIText.xsmall.copyWith(
-                      color: pnlPercentage >= 0 ? UIColours.green : UIColours.red
+                    const SizedBox(height: 4),
+                    Text(
+                      name,
+                      style: UIText.xsmall,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      marketValue.toStringAsFixed(2),
+                      style: UIText.medium,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '$quantity',
+                      style: UIText.xsmall,
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      '${pnl >= 0 ? '+' : ''}${pnl.toStringAsFixed(2)}',
+                      style: UIText.medium.copyWith(
+                        color: pnl >= 0 ? UIColours.green : UIColours.red,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${pnlPercentage >= 0 ? '+' : ''}${pnlPercentage.toStringAsFixed(2)}%',
+                      style: UIText.xsmall.copyWith(
+                        color: pnlPercentage >= 0 ? UIColours.green : UIColours.red
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -158,7 +158,7 @@ class AlpacaService {
     Future<List<ChartDataPoint>> getSparkChartDataPoints(String symbol) async {
     final date = await getLastMarketOpenDate();
 
-    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v2/stocks/$symbol/bars?timeframe=1Min&start=$date&end=${date}T19%3A59%3A00Z&feed=sip&sort=asc');
+    final url = Uri.parse('${Constants.alpacaMarketDataAPIBaseURL}/v2/stocks/$symbol/bars?timeframe=1Min&start=$date&end=$date&feed=iex&sort=asc');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,

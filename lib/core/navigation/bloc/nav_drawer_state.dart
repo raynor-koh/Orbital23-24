@@ -2,9 +2,8 @@ part of 'nav_drawer_bloc.dart';
 
 enum NavDrawerDestination {
   homePage,
-  userDataPage,
+  profilePage,
   signOut,
-  transactionHistory
 }
 
 class NavDrawerState extends Equatable {

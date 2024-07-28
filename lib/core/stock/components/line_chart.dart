@@ -35,7 +35,7 @@ class _LineChartState extends State<LineChart> {
     super.initState();
     _chartDataPointsFuture = alpacaService.getChartDataPoints(widget.symbol);
     _trackballBehaviour = CustomTrackballBehaviour.create(
-      tooltipFormat: 'point.x\nClose: point.y',
+      tooltipFormat: 'point.x UTC\nClose: point.y',
       isMarkerVisible: true,
     );
     _zoomPanBehaviour = CustomZoomPanBehaviour.create();

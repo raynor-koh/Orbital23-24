@@ -6,6 +6,7 @@ import 'package:robinbank_app/models/user_position.dart';
 import 'package:robinbank_app/providers/user_position_provider.dart';
 import 'package:robinbank_app/providers/user_provider.dart';
 import 'package:robinbank_app/services/alpaca_service.dart';
+import 'package:robinbank_app/services/transaction_service.dart';
 import 'package:robinbank_app/services/user_position_service.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
@@ -18,8 +19,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final UserPositionService userPositionService = UserPositionService();
   final AlpacaService alpacaService = AlpacaService();
+  final UserPositionService userPositionService = UserPositionService();
+  final TransactionService transactionService = TransactionService();
 
   late Future<Map<String, dynamic>> _portfolioDataFuture;
 
@@ -52,7 +54,12 @@ class _HomePageState extends State<HomePage> {
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData) {
-              return const Center(child: Text('No data available'));
+              return Center(
+                child: Text(
+                  'No data available',
+                  style: UIText.small,
+                ),
+              );
             } else {
               final data = snapshot.data!;
               return _builHomePageContent(data);
@@ -62,70 +69,77 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _builHomePageContent(Map<String, dynamic> data) {
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 8),
-            buildStatisticsPanel(context, data),
-            const SizedBox(height: 4),
-            buildIconButtonsPanel(context),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-            Align(
-              alignment: const AlignmentDirectional(-1, 0),
-              child: Text(
-                'Your Position(s)',
-                style: UIText.medium,
+    return PopScope(
+      canPop: false,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsetsDirectional.fromSTEB(8, 0, 8, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 8),
+              buildStatisticsPanel(context, data),
+              const SizedBox(height: 4),
+              buildIconButtonsPanel(context),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+              Align(
+                alignment: const AlignmentDirectional(-1, 0),
+                child: Text(
+                  'Your Position(s)',
+                  style: UIText.medium,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 4,
-                    child: Text(
-                      'Stock',
-                      style:
-                          UIText.small.copyWith(color: UIColours.secondaryText),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        'Stock',
+                        style: UIText.small
+                            .copyWith(color: UIColours.secondaryText),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'Mkt Val/Qty',
-                      style:
-                          UIText.small.copyWith(color: UIColours.secondaryText),
-                      textAlign: TextAlign.right,
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Mkt Val/Qty',
+                        style: UIText.small
+                            .copyWith(color: UIColours.secondaryText),
+                        textAlign: TextAlign.right,
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      'P&L',
-                      style:
-                          UIText.small.copyWith(color: UIColours.secondaryText),
-                      textAlign: TextAlign.right,
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        'P&L',
+                        style: UIText.small
+                            .copyWith(color: UIColours.secondaryText),
+                        textAlign: TextAlign.right,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            data['stockCards'].isEmpty
-                ? const Center(child: Text('No positions available'))
-                : ListView(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    children: data['stockCards'],
-                  ),
-          ],
+              const Divider(
+                height: 8,
+                color: UIColours.background2,
+              ),
+              data['stockCards'].isEmpty
+                  ? const Center(child: Text('No positions available'))
+                  : ListView(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      children: data['stockCards'],
+                    ),
+            ],
+          ),
         ),
       ),
     );
@@ -159,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.03),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -239,8 +253,10 @@ class _HomePageState extends State<HomePage> {
                     context, Icons.candlestick_chart_outlined, 'Trade', () {
                   Navigator.pushNamed(context, '/searchpage');
                 }, 32),
-                _buildIconColumn(
-                    context, Icons.receipt_long_outlined, 'Orders', () {}, 32),
+                _buildIconColumn(context, Icons.receipt_long_outlined, 'Orders',
+                    () {
+                  Navigator.pushNamed(context, '/transactionhistorypage');
+                }, 32),
                 _buildIconColumn(context, Icons.analytics_outlined, 'Trending',
                     () {
                   Navigator.pushNamed(context, '/marketmoverspage');
@@ -403,8 +419,8 @@ class _HomePageState extends State<HomePage> {
                 style: UIText.small.copyWith(color: UIColours.blue),
               ),
               onPressed: () {
-                Navigator.of(context).pushNamed("/mainwrapper");
                 _resetBalance(context, newBalance);
+                Navigator.of(context).pushNamed("/mainwrapper");
               },
             ),
           ],
@@ -417,6 +433,7 @@ class _HomePageState extends State<HomePage> {
     String userId = Provider.of<UserProvider>(context, listen: false).user.id;
     userPositionService.resetUserPosition(context, userId, newBalance);
     userPositionService.getUserPosition(context, userId);
+    transactionService.resetTransactions(context, userId);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
