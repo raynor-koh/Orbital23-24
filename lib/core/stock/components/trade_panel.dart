@@ -151,14 +151,21 @@ class _TradePanelState extends State<TradePanel> {
                       'timeStamp': DateTime.now().toUtc().toIso8601String(),
                     };
                     if (_isBuy) {
-                      await _userPositionService.executeBuyTrade(
+                      bool success = await _userPositionService.executeBuyTrade(
                           context, user.id, payload);
+                      if (success) {
+                        await _transactionService.addTransaction(
+                            context, user.id, transactionPayload);
+                      }
                     } else {
-                      await _userPositionService.executeSellTrade(
-                          context, user.id, payload);
+                      bool success = await _userPositionService
+                          .executeSellTrade(context, user.id, payload);
+                      if (success) {
+                        await _transactionService.addTransaction(
+                            context, user.id, transactionPayload);
+                      }
                     }
-                    await _transactionService.addTransaction(
-                        context, user.id, transactionPayload);
+
                     Navigator.of(context).pushNamed("/mainwrapper");
                   },
                   child: Text(
