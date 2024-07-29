@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:robinbank_app/core/navigation/bloc/nav_drawer_bloc.dart';
 import 'package:robinbank_app/core/navigation/components/nav_drawer.dart';
 import 'package:robinbank_app/core/home/pages/home_page.dart';
-import 'package:robinbank_app/pages/user_data_page.dart';
+import 'package:robinbank_app/pages/profile_page.dart';
 import 'package:robinbank_app/ui/ui_colours.dart';
 import 'package:robinbank_app/ui/ui_text.dart';
 
@@ -85,7 +85,7 @@ class _MainWrapperState extends State<MainWrapper> {
       case NavDrawerDestination.homePage:
         return const HomePage();
       case NavDrawerDestination.profilePage:
-        return const UserDataPage();
+        return const ProfilePage();
       default:
         return const Scaffold();
     }

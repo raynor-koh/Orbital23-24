@@ -63,12 +63,12 @@ class StockTransactionCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Text(
               transaction.name,
               style: UIText.small,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -86,10 +86,10 @@ class StockTransactionCard extends StatelessWidget {
                   ],
                 ),
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Price',
+                      'Price per share',
                       style: UIText.medium.copyWith(color: UIColours.secondaryText),
                     ),
                     Text(
@@ -98,11 +98,24 @@ class StockTransactionCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Total price',
+                      style: UIText.medium.copyWith(color: UIColours.secondaryText),
+                    ),
+                    Text(
+                      (transaction.price * transaction.quantity).toStringAsFixed(2),
+                      style: UIText.medium,
+                    ),
+                  ],
+                ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             Text(
-              '${DateFormat('yyyy-MM-dd').format(transaction.timeStamp)}    ${DateFormat('HH:mm').format(transaction.timeStamp)}',
+              '${DateFormat('dd/MM/yyyy').format(transaction.timeStamp)}  ${DateFormat('HH:mm').format(transaction.timeStamp)}',
               style: UIText.small,
             ),
           ],

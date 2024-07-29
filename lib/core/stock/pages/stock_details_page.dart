@@ -33,13 +33,7 @@ class _StockDetailsPageState extends State<StockDetailsPage> {
   Map<String, dynamic> _stockMetrics = {};
   List<NewsArticle> _newsArticles = [];
 
-  final List<String> _categories = [
-    'Line',
-    'Area',
-    'Candle',
-    'Hollow Candle',
-    'OHLC'
-  ];
+  final List<String> _categories = ['Line', 'Area', 'Candle', 'Hollow Candle', 'OHLC'];
   String _selectedCategory = 'Line';
   final UserPositionService userPositionService = UserPositionService();
 
