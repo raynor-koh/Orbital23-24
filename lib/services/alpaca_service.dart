@@ -65,28 +65,21 @@ class AlpacaService {
   }
 
   Future<String> getLastMarketOpenDate() async {
-    final dateTimeNow = DateTime.now().toUtc();
+    final dateTimeNow = DateTime.now();
+    final dateNow = '${dateTimeNow.year}-${dateTimeNow.month.toString().padLeft(2, '0')}-${dateTimeNow.day.toString().padLeft(2, '0')}';
 
-    final url = Uri.parse('${Constants.alpacaTradingAPIBaseURL}/v2/calendar');
+    final url = Uri.parse('${Constants.alpacaTradingAPIBaseURL}/v2/calendar?end=$dateNow');
     final response = await http.get(url, headers: {
       'APCA-API-KEY-ID': _apiKey,
       'APCA-API-SECRET-KEY': _apiSecret,
     });
 
     if (await getIsMarketOpenNow()) {
-      return '${dateTimeNow.year}-${dateTimeNow.month.toString().padLeft(2, '0')}-${dateTimeNow.day.toString().padLeft(2, '0')}';
+      return dateNow;
     } else {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        for (int i = data.length - 1; i >= 0; i--) {
-          final date = data[i]['date'];
-          final time = data[i]['open'];
-          final dateTime = DateTime.parse('$date $time').add(const Duration(hours: 4));
-          if (dateTime.isBefore(dateTimeNow)) {
-            return date;
-          }
-        }
-        return '';
+        return data[data.length - 2]['date'];
       } else {
         throw Exception('Failed to get last market open date');
       }

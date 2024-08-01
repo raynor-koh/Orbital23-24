@@ -109,7 +109,6 @@ class UserPositionService {
         showSnackBar(context, buyMessage);
       }
       return false;
-      ;
     } catch (error) {
       log(error.toString());
       showSnackBar(context, error.toString());

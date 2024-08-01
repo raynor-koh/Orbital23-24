@@ -50,6 +50,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_localizations:
     sdk: flutter
+  timezone: ^0.9.4
 
 dev_dependencies:
   flutter_test:
